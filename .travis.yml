@@ -3,8 +3,8 @@ install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq build-essential
   - wget http://download.qt-project.org/official_releases/qt/5.3/5.3.2/qt-opensource-linux-x64-5.3.2.run
-  - chmod +x qt-linux-opensource-5.3.2-x86-offline.run
-  - sudo ./qt-linux-opensource-5.3.2-x86-offline.run
+  - chmod +x qt-linux-opensource-5.3.2-x64-offline.run
+  - sudo ./qt-linux-opensource-5.3.2-x64-offline.run
 script:
   - ls -lR /usr/include/qt5/
   - qmake projects.pro
