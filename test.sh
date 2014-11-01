@@ -1,2 +1,2 @@
 #!/bin/bash
-for i in `ls tests/`; do ./tests/$i/$i;done
+for i in $(ls -d */); do ./tests/$i/$i;done
