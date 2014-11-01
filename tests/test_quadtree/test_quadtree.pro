@@ -1,6 +1,7 @@
 SRC_PATH = ../../src
 
 QT += testlib
+QT -= gui
 TEMPLATE = app
 
 INCLUDEPATH += $$SRC_PATH
