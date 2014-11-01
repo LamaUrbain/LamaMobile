@@ -1,8 +1,10 @@
 install:
   - sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
   - sudo apt-get update -qq
-  - sudo apt-get install -qq qt5-qmake qtbase5-dev qtdeclarative5-dev
-  - sudo apt-get install -qq qt5-default qttools5-dev-tools
+  - sudo apt-get install -qq build-essential
+  - wget http://download.qt-project.org/official_releases/qt/5.3/5.3.2/qt-opensource-linux-x64-5.3.2.run
+  - chmod +x qt-linux-opensource-5.3.2-x86-offline.run
+  - sudo ./qt-linux-opensource-5.3.2-x86-offline.run
 script:
   - ls -lR /usr/include/qt5/
   - qmake projects.pro
