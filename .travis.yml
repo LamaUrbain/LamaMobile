@@ -1,8 +1,7 @@
 install:
-  - sudo apt-get update
-  - sudo apt-get install libqt4-dev qt4-qmake
-
+  - sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
+  - sudo apt-get update -qq
+  - sudo apt-get install libqt5-dev qt5-qmake
 script:
-  - qmake -project
   - qmake projects.pro
   - make
