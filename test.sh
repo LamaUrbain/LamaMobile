@@ -1,2 +1,2 @@
 #!/bin/bash
-for i in `for i in `find toto/ -name "test*"`; basename $i`; do ./tests/$i/$i;done
+for i in `find tests/ -name "test*"; basename $i`; do ./tests/$i/$i;done
