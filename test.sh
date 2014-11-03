@@ -1,2 +1,2 @@
 #!/bin/bash
-for i in `find tests/ -name "test*"; basename $i`; do ./tests/$i/$i;done
+for i in `find toto/ -maxdepth 1 -type d -name "test_*" -printf '%f\n'`; do ./tests/$i/$i;done
