@@ -1,2 +1,3 @@
 TEMPLATE = subdirs
-SUBDIRS += demo_quadtree
+SUBDIRS += demo_quadtree \
+    demo_mobilitydiagram
