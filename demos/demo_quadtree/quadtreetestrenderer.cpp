@@ -38,6 +38,32 @@ void QuadtreeTestRenderer::addRect(const QPoint &pos)
     update();
 }
 
+void QuadtreeTestRenderer::removeRect(const QPoint &pos)
+{
+    if (!_tree)
+        return;
+
+    QPointF ratio;
+    ratio.setX(width() / _tree->bounds().width());
+    ratio.setY(height() / _tree->bounds().height());
+
+    QPointF realPos;
+    realPos.setX(pos.x() / ratio.x());
+    realPos.setY(pos.y() / ratio.y());
+
+    QList<QuadtreeObject<int> *> list = _tree->query(QRectF(realPos, QSizeF(10.0, 10.0)));
+
+    foreach (QuadtreeObject<int> *obj, list)
+    {
+        if (obj->rect.contains(realPos))
+        {
+            _tree->remove(obj->rect);
+            update();
+            return;
+        }
+    }
+}
+
 void QuadtreeTestRenderer::paint(QPainter *painter)
 {
     if (painter && _tree)

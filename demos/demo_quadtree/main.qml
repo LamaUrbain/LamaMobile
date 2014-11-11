@@ -12,7 +12,13 @@ Window {
 
         MouseArea {
             anchors.fill: parent
-            onClicked: parent.addRect(Qt.point(mouse.x, mouse.y));
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
+            onClicked: {
+                if (mouse.button == Qt.LeftButton)
+                    parent.addRect(Qt.point(mouse.x, mouse.y));
+                else
+                    parent.removeRect(Qt.point(mouse.x, mouse.y));
+            }
         }
     }
 }

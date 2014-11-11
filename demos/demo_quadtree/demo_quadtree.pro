@@ -6,11 +6,9 @@ QT += qml quick
 INCLUDEPATH += $$SRC_PATH
 
 SOURCES += main.cpp \
-    mapwidget.cpp \
     quadtreetestrenderer.cpp
 
-HEADERS += mapwidget.h \
-    mapwidgetprivate.h \
+HEADERS += \
     $$SRC_PATH/quadtree.h \
     quadtreetestrenderer.h
 

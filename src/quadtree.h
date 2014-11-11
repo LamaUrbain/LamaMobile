@@ -25,6 +25,8 @@ public:
     void clear();
     void insert(const QRectF &rect, const T &obj);
     void insert(QuadtreeObject<T> *obj);
+    void remove(const QRectF &rect);
+    void removeAll(const QRectF &rect);
     QList<QuadtreeObject<T> *> query(const QRectF &rect) const;
     QList<QuadtreeObject<T> *> contents() const;
     QList<const Quadtree<T> *> nodes() const;
@@ -196,6 +198,75 @@ void Quadtree<T>::insert(QuadtreeObject<T> *obj)
         }
 
     _objects.append(obj);
+}
+
+template<typename T>
+void Quadtree<T>::remove(const QRectF &rect)
+{
+    for (typename QList<QuadtreeObject<T> *>::iterator it = _objects.begin();
+         it != _objects.end(); )
+    {
+        QuadtreeObject<T> *obj = *it;
+        if (obj && rect == obj->rect)
+        {
+            delete obj;
+            it = _objects.erase(it);
+        }
+        else
+            ++it;
+    }
+
+    for (quint8 i = 0; i < 4; ++i)
+        if (_nodes[i] && !_nodes[i]->isEmpty())
+        {
+            if (_nodes[i]->bounds().contains(rect))
+            {
+                _nodes[i]->remove(rect);
+                break;
+            }
+
+            if (rect.contains(_nodes[i]->bounds()))
+                continue;
+
+            if (_nodes[i]->bounds().intersects(rect))
+                _nodes[i]->remove(rect);
+        }
+}
+
+template<typename T>
+void Quadtree<T>::removeAll(const QRectF &rect)
+{
+    for (typename QList<QuadtreeObject<T> *>::iterator it = _objects.begin();
+         it != _objects.end(); )
+    {
+        QuadtreeObject<T> *obj = *it;
+        if (obj && rect.contains(obj->rect))
+        {
+            delete obj;
+            it = _objects.erase(it);
+        }
+        else
+            ++it;
+    }
+
+    for (quint8 i = 0; i < 4; ++i)
+        if (_nodes[i] && !_nodes[i]->isEmpty())
+        {
+            if (_nodes[i]->bounds().contains(rect))
+            {
+                _nodes[i]->removeAll(rect);
+                break;
+            }
+
+            if (rect.contains(_nodes[i]->bounds()))
+            {
+                _nodes[i]->clear();
+                continue;
+            }
+
+            if (_nodes[i]->bounds().intersects(rect))
+                _nodes[i]->removeAll(rect);
+        }
 }
 
 template<typename T>

@@ -17,6 +17,7 @@ public:
 
 public slots:
     void addRect(const QPoint &pos);
+    void removeRect(const QPoint &pos);
 
 private:
     void paintObjects(QPainter &painter, const QList<QuadtreeObject<int> *> &contents, const QPointF &ratio) const;
