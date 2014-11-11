@@ -6,9 +6,9 @@ QT += qml quick
 INCLUDEPATH += $$SRC_PATH
 
 SOURCES += main.cpp \
-        $$SRC_PATH/mobilitydiagram.cpp \
+        $$SRC_PATH/mobilitydiagram.cpp
 
-HEADERS += $$INCLUDEPATH/mobilitydiagram.h \
+HEADERS += $$SRC_PATH/mobilitydiagram.h
 
 RESOURCES += qml.qrc
 
