@@ -2,6 +2,7 @@ SRC_PATH = ../../src
 
 TEMPLATE = app
 QT += qml quick
+CONFIG += c++11
 
 INCLUDEPATH += $$SRC_PATH
 

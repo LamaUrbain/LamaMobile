@@ -41,7 +41,7 @@ MobilityDiagram::~MobilityDiagram()
 
 void MobilityDiagram::setColors(QMap<MobilityMean, QColor> const &newColors)
 {
-    if (newColors.size() != _meanCount)
+    if (newColors.size() != static_cast<int>(_meanCount))
         return;
     _meanColors = newColors;
 }
@@ -200,7 +200,7 @@ void MobilityDiagram::geometryChanged(const QRectF &, const QRectF &)
     setSizes(qMin(width(), height()));
 }
 
-bool MobilityDiagram::_isPointInDiagram(QPoint &point)
+bool MobilityDiagram::_isPointInDiagram(const QPoint &point)
 {
     const int size = _dimension.width() / 2;
     const int x = point.x() - size, y = size - point.y();

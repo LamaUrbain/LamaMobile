@@ -41,7 +41,7 @@ private slots:
 
 private:
     void            _onBoxClicked(MobilityMean mean, bool checked);
-    bool            _isPointInDiagram(QPoint& point);
+    bool            _isPointInDiagram(const QPoint &point);
     bool            _isMeanUsed(MobilityMean mean);
 
     bool                            _isDraging;
