@@ -105,10 +105,10 @@ bool Quadtree<T>::isEmpty() const
         return true;
 
     for (quint8 i = 0; i < 4; ++i)
-        if (_nodes[i])
+        if (_nodes[i] && !_nodes[i]->isEmpty())
             return false;
 
-    return true;
+    return _objects.isEmpty();
 }
 
 template<typename T>

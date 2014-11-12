@@ -265,6 +265,56 @@ void TestQuadtree::testInsertLarge()
     QVERIFY(contents.size() == 10000);
 }
 
+void TestQuadtree::testRemove()
+{
+    Quadtree<QString> tree(QRectF(0, 0, 1, 1));
+
+    // Le quadtree doit être vide
+    QVERIFY(tree.isEmpty());
+
+    for (int i = 0; i < 100; i += 10)
+        for (int j = 0; j < 100; j += 10)
+            tree.insert(QRectF(i / 100.0f, j / 100.0f, 0.1f, 0.1f), QString("%1:%2").arg(i).arg(j));
+
+    QList<QuadtreeObject<QString> *> contents = tree.contents();
+
+    // Le quadtree doit contenir 100 éléments
+    QVERIFY(contents.size() == 100);
+
+    for (int i = 0; i < 100; i += 10)
+        for (int j = 0; j < 100; j += 10)
+        {
+            // Vérification qu'un élément a été retiré à chaque fois
+            QVERIFY(tree.contents().size() == (100 - i - j / 10));
+            tree.remove(QRectF(i / 100.0f, j / 100.0f, 0.1f, 0.1f));
+        }
+
+    // Le quadtree doit être vide
+    QVERIFY(tree.isEmpty());
+}
+
+void TestQuadtree::testRemoveAll()
+{
+    Quadtree<QString> tree(QRectF(0, 0, 1, 1));
+
+    // Le quadtree doit être vide
+    QVERIFY(tree.isEmpty());
+
+    for (int i = 0; i < 100; i += 10)
+        for (int j = 0; j < 100; j += 10)
+            tree.insert(QRectF(i / 100.0f, j / 100.0f, 0.1f, 0.1f), QString("%1:%2").arg(i).arg(j));
+
+    QList<QuadtreeObject<QString> *> contents = tree.contents();
+
+    // Le quadtree doit contenir 100 éléments
+    QVERIFY(contents.size() == 100);
+
+    tree.removeAll(QRectF(0, 0, 1.1f, 1.1f));
+
+    // Le quadtree doit être vide
+    QVERIFY(tree.isEmpty());
+}
+
 void TestQuadtree::testQueryInteger()
 {
     Quadtree<QString> tree(QRectF(0, 0, 100, 100));

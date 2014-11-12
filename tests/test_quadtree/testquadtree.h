@@ -16,6 +16,8 @@ private slots:
     void testInsertInteger();
     void testInsertFloat();
     void testInsertLarge();
+    void testRemove();
+    void testRemoveAll();
     void testQueryInteger();
     void testQueryFloat();
     void testTreeStructure();
