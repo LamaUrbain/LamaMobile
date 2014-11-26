@@ -11,7 +11,7 @@ void MapWidgetStub::initMapWidget(MapWidget *view)
     if (!view)
         return;
 
-    static const int tilesCount = 8;
+    static const int tilesCount = 9;
     static MapTile tiles[tilesCount] =
     {
         MapTile(7, QPoint(65, 43), QPixmap(":/images/1.png")),
@@ -22,6 +22,7 @@ void MapWidgetStub::initMapWidget(MapWidget *view)
         MapTile(7, QPoint(63, 44), QPixmap(":/images/6.png")),
         MapTile(7, QPoint(66, 43), QPixmap(":/images/7.png")),
         MapTile(7, QPoint(66, 44), QPixmap(":/images/8.png")),
+        MapTile(7, QPoint(64, 45), QPixmap(":/images/9.png"))
     };
 
     for (int i = 0; i < tilesCount; ++i)

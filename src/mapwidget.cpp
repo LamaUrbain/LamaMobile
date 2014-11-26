@@ -110,20 +110,37 @@ void MapWidgetPrivate::generateCache()
 
     QList<QuadtreeObject<MapTile> *> tiles = _quadtree.query(viewRect);
 
+    QPoint basePos;
+    QPoint baseOffset;
+    bool hasBase = false;
+
     foreach (QuadtreeObject<MapTile> *tile, tiles)
     {
         const MapTile &obj = tile->object;
         if (obj.scale == _scale)
         {
             QPoint pos;
-            QPointF tileCoords;
 
-            QSizeF tileSize = MapWidgetPrivate::tileSize(obj.pos, _scale);
-            QPointF tileScale = QPointF(tileSize.width() / 256.0, tileSize.height() / 256.0);
+            if (!hasBase)
+            {
+                QPointF tileCoords;
 
-            tileCoords = MapWidgetPrivate::coordsFromPos(obj.pos, _scale);
-            pos.setX((int)((tileCoords.x() - _center.x()) / tileScale.x() + q->width() / 2));
-            pos.setY((int)((_center.y() - tileCoords.y()) / tileScale.y() + q->height() / 2));
+                QSizeF tileSize = MapWidgetPrivate::tileSize(obj.pos, _scale);
+                QPointF tileScale = QPointF(tileSize.width() / 256.0, tileSize.height() / 256.0);
+
+                tileCoords = MapWidgetPrivate::coordsFromPos(obj.pos, _scale);
+                pos.setX((int)((tileCoords.x() - _center.x()) / tileScale.x() + q->width() / 2));
+                pos.setY((int)((_center.y() - tileCoords.y()) / tileScale.y() + q->height() / 2));
+
+                basePos = obj.pos;
+                baseOffset = pos;
+                hasBase = true;
+            }
+            else
+            {
+                pos.setX((obj.pos.x() - basePos.x()) * 256 + baseOffset.x());
+                pos.setY(baseOffset.y() - (basePos.y() - obj.pos.y()) * 256);
+            }
 
             painter.drawPixmap(pos, obj.pixmap);
         }
