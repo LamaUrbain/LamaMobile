@@ -37,6 +37,7 @@ public:
 signals:
     void mapScaleChanged();
     void mapCenterChanged();
+    void mapTileRequired();
 
 public slots:
     quint8 getMapScale() const;
@@ -44,6 +45,8 @@ public slots:
 
     const QPointF &getMapCenter() const;
     void setMapCenter(const QPointF &center);
+
+    const QList<QPoint> &getMissingTiles() const;
 
 protected:
     virtual void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry);

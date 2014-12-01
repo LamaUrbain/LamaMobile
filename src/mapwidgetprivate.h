@@ -23,12 +23,16 @@ public:
     const QPointF &getMapCenter() const;
     void setMapCenter(const QPointF &center);
 
+    const QList<QPoint> &getMissingTiles() const;
+
     static QPoint posFromCoords(const QPointF &coords, quint8 scale);
     static QPointF coordsFromPos(const QPoint &pos, quint8 scale);
     static QSizeF tileSize(const QPoint &pos, quint8 scale);
 
 private:
     void generateCache();
+    void addMissingTiles(const QPoint &center, const QSize &size);
+    void removeMissingTile(const QPoint &pos);
 
 private:
     MapWidget * const q_ptr;
@@ -37,6 +41,7 @@ private:
     quint8 _scale;
     bool _changed;
     QPixmap _cache;
+    QList<QPoint> _missing;
 };
 
 #endif // MAPWIDGETPRIVATE_H

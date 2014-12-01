@@ -12,6 +12,13 @@ Window {
         anchors.fill: parent
     }
 
+    Rectangle {
+        width: mapWidget.width / 2
+        height: mapWidget.height / 2
+        color: "red"
+        opacity: 0.5
+    }
+
     Component.onCompleted: {
         stub.initMapWidget(mapWidget);
     }
