@@ -3,6 +3,30 @@
 #include "mapwidget.h"
 #include "mapwidgetprivate.h"
 
+struct WhirlLessThan
+{
+    QPoint center;
+
+    bool operator()(const QPoint &p1, const QPoint &p2)
+    {
+        if (p1 == p2)
+            return false;
+
+        int diff1 = qAbs(center.x() - p1.x()) + qAbs(center.y() - p1.y());
+        int diff2 = qAbs(center.x() - p2.x()) + qAbs(center.y() - p2.y());
+
+        if (diff1 < diff2)
+            return true;
+
+        return false;
+    }
+
+    bool operator()(const QuadtreeObject<MapTile> *p1, const QuadtreeObject<MapTile> *p2)
+    {
+        return this->operator()(p1->object.pos, p2->object.pos);
+    }
+};
+
 MapWidgetPrivate::MapWidgetPrivate(MapWidget *ptr)
     : q_ptr(ptr),
       _quadtree(QRectF(-180.0, -90.0, 360.0, 180.0)),
@@ -121,6 +145,10 @@ void MapWidgetPrivate::generateCache()
 
     QList<QuadtreeObject<MapTile> *> tiles = _quadtree.query(viewRect);
 
+    WhirlLessThan cmp;
+    cmp.center = centerPos;
+    qSort(tiles.begin(), tiles.end(), cmp);
+
     QPoint basePos;
     QPoint baseOffset;
     bool hasBase = false;
@@ -164,25 +192,6 @@ void MapWidgetPrivate::generateCache()
     if (!_missing.isEmpty())
         q->mapTileRequired();
 }
-
-struct WhirlLessThan
-{
-    QPoint center;
-
-    bool operator()(const QPoint &p1, const QPoint &p2)
-    {
-        if (p1 == p2)
-            return false;
-
-        int diff1 = qAbs(center.x() - p1.x()) + qAbs(center.y() - p1.y());
-        int diff2 = qAbs(center.x() - p2.x()) + qAbs(center.y() - p2.y());
-
-        if (diff1 < diff2)
-            return true;
-
-        return false;
-    }
-};
 
 void MapWidgetPrivate::addMissingTiles(const QPoint &center, const QSize &size)
 {

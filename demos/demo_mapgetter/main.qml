@@ -19,4 +19,11 @@ Window {
             }
         }
     }
+
+    Rectangle {
+        width: mapWidget.width / 2
+        height: mapWidget.height / 2
+        color: "red"
+        opacity: 0.5
+    }
 }
