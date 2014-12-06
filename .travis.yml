@@ -1,5 +1,5 @@
 install:
-  - sudo add-apt-repository --yes ppa:beineri/opt-qt54-beta
+  - sudo add-apt-repository --yes ppa:beineri/opt-qt54-rc-trusty
   - sudo apt-get update -qq
   - sudo apt-get install -qq qt54base qt54declarative
 script:
