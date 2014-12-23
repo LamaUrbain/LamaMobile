@@ -31,7 +31,9 @@ MapWidgetPrivate::MapWidgetPrivate(MapWidget *ptr)
     : q_ptr(ptr),
       _quadtree(QRectF(-180.0, -90.0, 360.0, 180.0)),
       _center(2.3488000, 48.8534100),
-      _scale(7)
+      _scale(7),
+      _changed(true),
+      _currentWheel(0)
 {
 }
 
@@ -98,6 +100,27 @@ void MapWidgetPrivate::setMapScale(quint8 scale)
 const QPointF &MapWidgetPrivate::getMapCenter() const
 {
     return _center;
+}
+
+void MapWidgetPrivate::wheel(int delta)
+{
+    if ((_currentWheel > 0 && delta < 0) || (_currentWheel < 0 && delta > 0))
+        _currentWheel = 0;
+
+    _currentWheel += delta;
+
+    if (_currentWheel >= 120)
+    {
+        Q_Q(MapWidget);
+        q->setMapScale(q->getMapScale() + 1);
+        _currentWheel = 0;
+    }
+    else if (_currentWheel <= -120)
+    {
+        Q_Q(MapWidget);
+        q->setMapScale(qMax<quint8>(1, q->getMapScale()) - 1);
+        _currentWheel = 0;
+    }
 }
 
 void MapWidgetPrivate::setMapCenter(const QPointF &center)
@@ -327,6 +350,19 @@ void MapWidget::setMapCenter(const QPointF &center)
 {
     Q_D(MapWidget);
     d->setMapCenter(center);
+}
+
+void MapWidget::wheelEvent(QWheelEvent *event)
+{
+    QPoint delta = event->angleDelta();
+
+    if (!delta.isNull())
+    {
+        Q_D(MapWidget);
+        d->wheel(delta.y());
+    }
+
+    event->accept();
 }
 
 void MapWidget::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)

@@ -49,6 +49,7 @@ public slots:
     const QList<QPoint> &getMissingTiles() const;
 
 protected:
+    virtual void wheelEvent(QWheelEvent *event);
     virtual void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry);
 
 private:

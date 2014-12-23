@@ -25,6 +25,8 @@ public:
 
     const QList<QPoint> &getMissingTiles() const;
 
+    void wheel(int delta);
+
     static QPoint posFromCoords(const QPointF &coords, quint8 scale);
     static QPointF coordsFromPos(const QPoint &pos, quint8 scale);
     static QSizeF tileSize(const QPoint &pos, quint8 scale);
@@ -40,6 +42,7 @@ private:
     QPointF _center;
     quint8 _scale;
     bool _changed;
+    int _currentWheel;
     QPixmap _cache;
     QList<QPoint> _missing;
 };
