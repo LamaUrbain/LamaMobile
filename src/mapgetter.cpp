@@ -4,13 +4,19 @@
 
 // This number is the maximum number of parallel
 // requests defined in QNetworkAccessManager
-static quint8 MaxPendingRequests = 6;
+static quint8 MaxPendingRequests = 3;
+static quint8 MaxNetworkGetters = 4;
 
 MapGetter::MapGetter(QObject *parent)
     : QObject(parent),
       _widget(NULL)
 {
-    connect(&_manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(onRequestFinished(QNetworkReply*)));
+    for (quint8 i = 0; i < MaxNetworkGetters; ++i)
+    {
+        Getter *getter = new Getter;
+        connect(&getter->_manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(onRequestFinished(QNetworkReply*)));
+        _getters.append(getter);
+    }
 }
 
 MapGetter::~MapGetter()
@@ -27,16 +33,45 @@ void MapGetter::setWidget(MapWidget *widget)
     }
 }
 
+MapGetter::Getter *MapGetter::getNextGetter() const
+{
+    Getter *next = NULL;
+
+    for (QList<Getter *>::const_iterator it = _getters.constBegin(); it != _getters.constEnd(); ++it)
+    {
+        Getter *getter = *it;
+        if (getter && getter->_pending.size() < MaxPendingRequests
+            && (!next || getter->_pending.size() < next->_pending.size()))
+        {
+            next = getter;
+        }
+    }
+
+    return next;
+}
+
+MapGetter::Getter *MapGetter::getManagerGetter(QNetworkAccessManager *manager) const
+{
+    for (QList<Getter *>::const_iterator it = _getters.constBegin(); it != _getters.constEnd(); ++it)
+    {
+        Getter *getter = *it;
+        if (getter && manager == &getter->_manager)
+            return getter;
+    }
+
+    return NULL;
+}
+
 void MapGetter::onTilesRequired()
 {
-    if (_pending.size() >= MaxPendingRequests)
+    if (_pending.size() >= MaxPendingRequests * MaxNetworkGetters)
         return;
 
     const QList<QPoint> &missing = _widget->getMissingTiles();
 
     for (QList<QPoint>::const_iterator it = missing.constBegin(); it != missing.constEnd(); ++it)
     {
-        if (_pending.size() >= MaxPendingRequests)
+        if (_pending.size() >= MaxPendingRequests * MaxNetworkGetters)
             return;
 
         const QPoint &pos = *it;
@@ -44,19 +79,19 @@ void MapGetter::onTilesRequired()
         if (_pending.contains(pos))
             continue;
 
-        QString base = "a";
-        int domain = qrand() % 3;
+        Getter *getter = getNextGetter();
+        if (!getter)
+            return;
 
-        if (domain == 1)
-            base = "b";
-        else if (domain == 2)
-            base = "c";
+        QString address = "http://tile.openstreetmap.org/%1/%2/%3.png";
+        QUrl url(address.arg(_widget->getMapScale()).arg(pos.x()).arg(pos.y()));
 
-        QString address = "http://%1.tile.openstreetmap.fr/osmfr/%2/%3/%4.png";
-        QUrl url(address.arg(base).arg(_widget->getMapScale()).arg(pos.x()).arg(pos.y()));
+        QNetworkRequest request(url);
+        request.setRawHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0");
 
         _pending.append(pos);
-        _manager.get(QNetworkRequest(url));
+        getter->_pending.append(pos);
+        getter->_manager.get(request);
 
         qDebug() << "Send:" << pos << url.toString();
     }
@@ -66,11 +101,14 @@ void MapGetter::onRequestFinished(QNetworkReply *reply)
 {
     if (reply)
     {
+        Getter *getter = getManagerGetter(reply->manager());
+
+        if (!getter)
+            return;
+
         QRegExp rx("/([0-9]+)/([0-9]+)/([0-9]+).png");
         rx.indexIn(reply->url().toString());
         QStringList list = rx.capturedTexts();
-
-        // TODO: use a struct to avoid the use of a regexp (faster and safer)
 
         qDebug() << "Receive:" << reply->url().toString() << list;
 
@@ -88,6 +126,7 @@ void MapGetter::onRequestFinished(QNetworkReply *reply)
             }
 
             _pending.removeAll(tile.pos);
+            getter->_pending.removeAll(tile.pos);
             onTilesRequired();
         }
     }

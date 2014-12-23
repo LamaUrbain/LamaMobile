@@ -10,6 +10,13 @@ class MapGetter : public QObject
 {
     Q_OBJECT
 
+private:
+    struct Getter
+    {
+        QNetworkAccessManager _manager;
+        QList<QPoint> _pending;
+    };
+
 public:
     MapGetter(QObject *parent = 0);
     virtual ~MapGetter();
@@ -22,8 +29,12 @@ private slots:
     void onRequestFinished(QNetworkReply *reply);
 
 private:
+    Getter *getNextGetter() const;
+    Getter *getManagerGetter(QNetworkAccessManager *manager) const;
+
+private:
     MapWidget *_widget;
-    QNetworkAccessManager _manager;
+    QList<Getter *> _getters;
     QList<QPoint> _pending;
 };
 
