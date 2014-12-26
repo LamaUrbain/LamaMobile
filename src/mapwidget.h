@@ -32,6 +32,7 @@ public:
     virtual ~MapWidget();
 
     void addTile(const MapTile &tile);
+    void removeTile(const MapTile &tile);
     virtual void paint(QPainter *painter);
 
 signals:

@@ -29,7 +29,6 @@ struct WhirlLessThan
 
 MapWidgetPrivate::MapWidgetPrivate(MapWidget *ptr)
     : q_ptr(ptr),
-      _quadtree(QRectF(-180.0, -90.0, 360.0, 180.0)),
       _center(2.3488000, 48.8534100),
       _scale(7),
       _changed(true),
@@ -52,21 +51,15 @@ void MapWidgetPrivate::addTile(const MapTile &tile)
 {
     if (!tile.pixmap.isNull() && tile.pixmap.width() > 0 && tile.pixmap.height() > 0)
     {
-        QRectF rect;
-
-        QPointF coords = MapWidgetPrivate::coordsFromPos(tile.pos, tile.scale);
-        QSizeF size = MapWidgetPrivate::tileSize(tile.pos, tile.scale);
-
-        rect.setX(coords.x());
-        rect.setY(coords.y());
-        rect.setWidth(size.width());
-        rect.setHeight(size.height());
-
-        _quadtree.remove(rect);
-        _quadtree.insert(rect, tile);
-
+        _tiles[tile.scale][tile.pos] = tile;
         displayChanged();
     }
+}
+
+void MapWidgetPrivate::removeTile(const MapTile &tile)
+{
+    _tiles[tile.scale].remove(tile.pos);
+    displayChanged();
 }
 
 void MapWidgetPrivate::paint(QPainter *painter)
@@ -77,7 +70,8 @@ void MapWidgetPrivate::paint(QPainter *painter)
     {
         if (_changed)
             generateCache();
-        painter->drawPixmap(-512, -512, _cache);
+        painter->fillRect(0, 0, q->width(), q->height(), Qt::white);
+        painter->drawPixmap(0, 0, _cache);
     }
 }
 
@@ -145,67 +139,35 @@ void MapWidgetPrivate::generateCache()
 
     _missing.clear();
 
-    QSize size(q->width() + 1024, q->height() + 1024);
+    // TODO: limiter les calculs (offset de décalage, position du centre)
+
+    QSize size(q->width(), q->height());
 
     QPixmap pix(size);
     QPainter painter(&pix);
     painter.fillRect(0, 0, pix.width(), pix.height(), Qt::white);
 
-    QRectF viewRect;
-    QSizeF viewSize;
-
     QPoint centerPos = MapWidgetPrivate::posFromCoords(_center, _scale);
-    QSizeF centerTileSize = MapWidgetPrivate::tileSize(centerPos, _scale);
-    QPointF centerScale = QPointF(centerTileSize.width() / 256.0, centerTileSize.height() / 256.0);
+    QPointF centerCoords = MapWidgetPrivate::coordsFromPos(centerPos, _scale);
+    QPoint offset = MapWidgetPrivate::pixelsFromCoords(_center, _scale) - MapWidgetPrivate::pixelsFromCoords(centerCoords, _scale);
+    QPoint centerPix = QPoint(size.width() / 2, size.height() / 2);
 
-    viewSize.setWidth((size.width() + 512) * centerScale.x());
-    viewSize.setHeight((size.height() + 512) * centerScale.y());
-    viewRect.setX(_center.x() - (viewSize.width() / 2.0));
-    viewRect.setY(_center.y() - (viewSize.height() / 2.0));
-    viewRect.setSize(viewSize);
+    addMissingTiles(centerPos, size, offset);
 
-    addMissingTiles(centerPos, size);
-
-    QList<QuadtreeObject<MapTile> *> tiles = _quadtree.query(viewRect);
-
-    WhirlLessThan cmp;
-    cmp.center = centerPos;
-    qSort(tiles.begin(), tiles.end(), cmp);
-
-    QPoint basePos;
-    QPoint baseOffset;
-    bool hasBase = false;
-
-    foreach (QuadtreeObject<MapTile> *tile, tiles)
+    foreach (QPoint pos, _missing)
     {
-        const MapTile &obj = tile->object;
-        if (obj.scale == _scale)
+        const QHash<QPoint, MapTile>::const_iterator it = _tiles[_scale].find(pos);
+
+        if (it != _tiles[_scale].end())
         {
-            QPoint pos;
+            const MapTile &tile = it.value();
 
-            if (!hasBase)
-            {
-                QPointF tileCoords;
+            QPoint tilePos;
+            tilePos.setX(centerPix.x() - (centerPos.x() - tile.pos.x()) * 256 - offset.x());
+            tilePos.setY(centerPix.y() - (centerPos.y() - tile.pos.y()) * 256 - offset.y());
 
-                QSizeF tileSize = MapWidgetPrivate::tileSize(obj.pos, _scale);
-                QPointF tileScale = QPointF(tileSize.width() / 256.0, tileSize.height() / 256.0);
-
-                tileCoords = MapWidgetPrivate::coordsFromPos(obj.pos, _scale);
-                pos.setX((int)((tileCoords.x() - _center.x()) / tileScale.x() + size.width() / 2));
-                pos.setY((int)((_center.y() - tileCoords.y()) / tileScale.y() + size.height() / 2));
-
-                basePos = obj.pos;
-                baseOffset = pos;
-                hasBase = true;
-            }
-            else
-            {
-                pos.setX((obj.pos.x() - basePos.x()) * 256 + baseOffset.x());
-                pos.setY(baseOffset.y() - (basePos.y() - obj.pos.y()) * 256);
-            }
-
-            painter.drawPixmap(pos, obj.pixmap);
-            removeMissingTile(obj.pos);
+            painter.drawPixmap(tilePos, tile.pixmap);
+            removeMissingTile(pos);
         }
     }
 
@@ -216,17 +178,21 @@ void MapWidgetPrivate::generateCache()
         q->mapTileRequired();
 }
 
-void MapWidgetPrivate::addMissingTiles(const QPoint &center, const QSize &size)
+void MapWidgetPrivate::addMissingTiles(const QPoint &center, const QSize &size, const QPoint &offset)
 {
-    quint8 w = (quint8)ceil(size.width() / 256.0);
-    quint8 h = (quint8)ceil(size.height() / 256.0);
+    QPoint centerPx = QPoint(size.width() / 2, size.height() / 2) - offset;
 
-    quint8 x = center.x() - (quint8)floor(w / 2.0);
-    quint8 y = center.y() - (quint8)floor(h / 2.0);
+    int leftNbr = (int)ceil(centerPx.x() / 256.0);
+    int rightNbr = (int)ceil((size.width() - centerPx.x()) / 256.0);
+    int topNbr = (int)ceil(centerPx.y() / 256.0);
+    int botNbr = (int)ceil((size.height() - centerPx.y()) / 256.0);
 
-    for (quint8 j = 0; j < h; ++j)
-        for (quint8 i = 0; i < w; ++i)
-            _missing.append(QPoint(x + i, y + j));
+    int offsetX = qMax(0, center.x() - leftNbr);
+    int offsetY = qMax(0, center.y() - topNbr);
+
+    for (int j = 0; j < topNbr + botNbr; ++j)
+        for (int i = 0; i < leftNbr + rightNbr; ++i)
+            _missing.append(QPoint(offsetX + i, offsetY + j));
 
     WhirlLessThan cmp;
     cmp.center = center;
@@ -244,7 +210,7 @@ QPoint MapWidgetPrivate::posFromCoords(const QPointF &coords, quint8 scale)
     // y = latitude
 
     QPoint pos;
-    pos.setX((int)((coords.x() + 180.0) / 360.0 * pow(2.0, scale)));
+    pos.setX((int)((coords.x() + 180.0) * pow(2.0, scale) / 360.0));
     pos.setY((int)((1.0 - log(tan(coords.y() * M_PI / 180.0) + 1.0 / cos(coords.y() * M_PI / 180.0)) / M_PI) / 2.0 * pow(2.0, scale)));
 
     return pos;
@@ -258,10 +224,23 @@ QPointF MapWidgetPrivate::coordsFromPos(const QPoint &pos, quint8 scale)
     qreal n = M_PI - 2.0 * M_PI * pos.y() / pow(2.0, scale);
 
     QPointF coords;
-    coords.setX(pos.x() / pow(2.0, scale) * 360.0 - 180);
-    coords.setY(180.0 / M_PI * atan(0.5 * (exp(n) - exp(-n))));
+    coords.setX(pos.x() * 360.0 / pow(2.0, scale) - 180);
+    coords.setY(180.0 * atan(0.5 * (exp(n) - exp(-n))) / M_PI);
 
     return coords;
+}
+
+QPoint MapWidgetPrivate::pixelsFromCoords(const QPointF &coords, quint8 scale)
+{
+    // x = longitude
+    // y = latitude
+
+    QPoint pixels;
+
+    pixels.setX((int)((coords.x() + 180.0) * (pow(2.0, scale) * 256) / 360.0));
+    pixels.setY((int)((1.0 - (log(tan(M_PI / 4.0 + coords.y() * M_PI / 180.0 / 2.0)) / M_PI)) / 2.0 * pow(2.0, scale) * 256));
+
+    return pixels;
 }
 
 QSizeF MapWidgetPrivate::tileSize(const QPoint &pos, quint8 scale)
@@ -320,6 +299,12 @@ void MapWidget::addTile(const MapTile &tile)
 {
     Q_D(MapWidget);
     d->addTile(tile);
+}
+
+void MapWidget::removeTile(const MapTile &tile)
+{
+    Q_D(MapWidget);
+    d->removeTile(tile);
 }
 
 void MapWidget::paint(QPainter *painter)

@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QNetworkAccessManager>
+#include <QPoint>
 
 class MapWidget;
 
@@ -11,10 +12,23 @@ class MapGetter : public QObject
     Q_OBJECT
 
 private:
+    struct Tile
+    {
+        Tile();
+        Tile(const QPoint &p, quint8 s);
+        Tile(const Tile &other);
+        Tile &operator=(const Tile &other);
+        bool operator==(const Tile &other);
+
+        QPoint pos;
+        quint8 scale;
+        QNetworkReply *reply;
+    };
+
     struct Getter
     {
         QNetworkAccessManager _manager;
-        QList<QPoint> _pending;
+        QList<Tile> _pending;
     };
 
 public:
@@ -27,6 +41,7 @@ public slots:
 private slots:
     void onTilesRequired();
     void onRequestFinished(QNetworkReply *reply);
+    void cancelRequests();
 
 private:
     Getter *getNextGetter() const;
@@ -35,7 +50,9 @@ private:
 private:
     MapWidget *_widget;
     QList<Getter *> _getters;
-    QList<QPoint> _pending;
+    QList<Tile> _pending;
+    QList<Tile> _errors;
+    QList<QNetworkReply *> _replies;
 };
 
 #endif // MAPGETTER_H
