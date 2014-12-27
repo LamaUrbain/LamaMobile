@@ -165,10 +165,22 @@ void MapWidgetPrivate::mouseMove(const QPoint &pos)
 
 void MapWidgetPrivate::setMapCenter(const QPointF &center)
 {
-    if (_center != center)
+    QPointF tmp(center);
+
+    if (tmp.x() > 180.0)
+        tmp.setX(180.0);
+    else if (tmp.x() < -180.0)
+        tmp.setX(-180.0);
+
+    if (tmp.y() > 85.0511)
+        tmp.setY(85.0511);
+    else if (tmp.y() < -85.0511)
+        tmp.setY(-85.0511);
+
+    if (_center != tmp)
     {
         Q_Q(MapWidget);
-        _center = center;
+        _center = tmp;
         updateCenterValues();
         q->mapCenterChanged();
         displayChanged();
