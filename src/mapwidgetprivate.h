@@ -34,6 +34,7 @@ public:
     QPoint posFromCoords(const QPointF &coords) const;
     QPointF coordsFromPos(const QPoint &pos) const;
     QPoint pixelsFromCoords(const QPointF &coords) const;
+    QPointF coordsFromPixels(const QPoint &pos) const;
     QSizeF tileSize(const QPoint &pos) const;
 
 private:

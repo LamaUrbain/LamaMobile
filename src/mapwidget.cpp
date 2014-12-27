@@ -153,6 +153,16 @@ void MapWidgetPrivate::mouseMove(const QPoint &pos)
         _scrollOffset.ry() -= yDiff;
         _scrollLastPos = pos;
 
+        if (_centerPos.x() * 256 + _centerOffset.x() - _scrollOffset.x() - 256 < 0)
+            _scrollOffset.setX(_centerPos.x() * 256 + _centerOffset.x() - 256);
+        else if (_centerPos.x() * 256 + _centerOffset.x() - _scrollOffset.x() - 256 > _tilesNumber * 256)
+            _scrollOffset.setX(_centerPos.x() * 256 + _centerOffset.x() - 256 - _tilesNumber * 256);
+
+        if (_centerPos.y() * 256 + _centerOffset.y() - _scrollOffset.y() - 256 < 0)
+            _scrollOffset.setY(_centerPos.y() * 256 + _centerOffset.y() - 256);
+        else if (_centerPos.y() * 256 + _centerOffset.y() - _scrollOffset.y() - 256 > _tilesNumber * 256)
+            _scrollOffset.setY(_centerPos.y() * 256 + _centerOffset.y() - 256 - _tilesNumber * 256);
+
         if (_scrollOffset.x() <= -512 || _scrollOffset.x() >= 0
             || _scrollOffset.y() <= -512 || _scrollOffset.y() >= 0)
         {
@@ -200,19 +210,15 @@ void MapWidgetPrivate::updateCenterValues()
 
 void MapWidgetPrivate::updateCenter()
 {
-    QSizeF size = tileSize(_centerPos);
-
     int xOffset = _scrollOffset.x() + 256;
     int yOffset = _scrollOffset.y() + 256;
 
     if (xOffset != 0 && yOffset != 0)
     {
-        QPointF center;
-
-        center.setX(_center.x() - xOffset * size.width() / 256.0);
-        center.setY(_center.y() + yOffset * size.height() / 256.0);
-
-        setMapCenter(center);
+        QPoint pos;
+        pos.setX(_centerPos.x() * 256 + _centerOffset.x() - xOffset);
+        pos.setY(_centerPos.y() * 256 + _centerOffset.y() - yOffset);
+        setMapCenter(coordsFromPixels(pos));
     }
 
     _scrollOffset = QPoint(-256, -256);
@@ -321,6 +327,18 @@ QPoint MapWidgetPrivate::pixelsFromCoords(const QPointF &coords) const
     pixels.setY((int)((1.0 - (log(tan(M_PI / 4.0 + coords.y() * M_PI / 180.0 / 2.0)) / M_PI)) / 2.0 * _tilesNumber * 256));
 
     return pixels;
+}
+
+QPointF MapWidgetPrivate::coordsFromPixels(const QPoint &pos) const
+{
+    // x = longitude
+    // y = latitude
+
+    QPointF coords;
+    coords.setX(pos.x() * 360.0 / (_tilesNumber * 256.0) - 180.0);
+    coords.setY((atan(sinh((1.0 - pos.y() * 2.0 / (_tilesNumber * 256.0)) * M_PI))) * 180.0 / M_PI);
+
+    return coords;
 }
 
 QSizeF MapWidgetPrivate::tileSize(const QPoint &pos) const
