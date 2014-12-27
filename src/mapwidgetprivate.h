@@ -28,22 +28,42 @@ public:
     const QList<QPoint> &getMissingTiles() const;
 
     void wheel(int delta);
+    void mouseRelease();
+    void mouseMove(const QPoint &pos);
 
-    static QPoint posFromCoords(const QPointF &coords, quint8 scale);
-    static QPointF coordsFromPos(const QPoint &pos, quint8 scale);
-    static QPoint pixelsFromCoords(const QPointF &coords, quint8 scale);
-    static QSizeF tileSize(const QPoint &pos, quint8 scale);
+    QPoint posFromCoords(const QPointF &coords) const;
+    QPointF coordsFromPos(const QPoint &pos) const;
+    QPoint pixelsFromCoords(const QPointF &coords) const;
+    QSizeF tileSize(const QPoint &pos) const;
 
 private:
+    void updateCenterValues();
+    void updateCenter();
     void generateCache();
     void addMissingTiles(const QPoint &center, const QSize &size, const QPoint &offset);
     void removeMissingTile(const QPoint &pos);
 
 private:
     MapWidget * const q_ptr;
+
+    // Tiles
     QHash<QPoint, MapTile> _tiles[20];
+
+    // Properties
     QPointF _center;
     quint8 _scale;
+
+    // Generation
+    QPoint _centerPos;
+    QPoint _centerOffset;
+    int _tilesNumber;
+
+    // Scroll
+    QPoint _scrollOffset;
+    bool _scrollValueSet;
+    QPoint _scrollLastPos;
+
+    // Other
     bool _changed;
     int _currentWheel;
     QPixmap _cache;
