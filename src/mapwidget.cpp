@@ -216,8 +216,10 @@ void MapWidgetPrivate::updateCenter()
     if (xOffset != 0 && yOffset != 0)
     {
         QPoint pos;
+
         pos.setX(_centerPos.x() * 256 + _centerOffset.x() - xOffset);
         pos.setY(_centerPos.y() * 256 + _centerOffset.y() - yOffset);
+
         setMapCenter(coordsFromPixels(pos));
     }
 
@@ -335,6 +337,7 @@ QPointF MapWidgetPrivate::coordsFromPixels(const QPoint &pos) const
     // y = latitude
 
     QPointF coords;
+
     coords.setX(pos.x() * 360.0 / (_tilesNumber * 256.0) - 180.0);
     coords.setY((atan(sinh((1.0 - pos.y() * 2.0 / (_tilesNumber * 256.0)) * M_PI))) * 180.0 / M_PI);
 
