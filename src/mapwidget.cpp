@@ -36,6 +36,13 @@ MapWidgetPrivate::MapWidgetPrivate(MapWidget *ptr)
       _changed(true),
       _currentWheel(0)
 {
+    Q_Q(MapWidget);
+
+    q->setAcceptedMouseButtons(Qt::LeftButton);
+    q->setRenderTarget(QQuickPaintedItem::FramebufferObject);
+    q->setOpaquePainting(true);
+    q->setFillColor(Qt::white);
+
     _tilesNumber = pow(2.0, _scale);
     updateCenterValues();
 }
@@ -74,7 +81,6 @@ void MapWidgetPrivate::paint(QPainter *painter)
     {
         if (_changed)
             generateCache();
-        painter->fillRect(0, 0, q->width(), q->height(), Qt::white);
         painter->drawPixmap(_scrollOffset, _cache);
     }
 }
@@ -251,9 +257,10 @@ void MapWidgetPrivate::addMissingTiles(const QPoint &center, const QSize &size, 
     int offsetX = qMax(0, center.x() - leftNbr);
     int offsetY = qMax(0, center.y() - topNbr);
 
-    for (int j = 0; j < topNbr + botNbr; ++j)
-        for (int i = 0; i < leftNbr + rightNbr; ++i)
-            _missing.append(QPoint(offsetX + i, offsetY + j));
+    for (int j = 0; j < qMin(topNbr + botNbr, _tilesNumber); ++j)
+        for (int i = 0; i < qMin(leftNbr + rightNbr, _tilesNumber); ++i)
+            if (offsetX + i < _tilesNumber && offsetY + j < _tilesNumber)
+                _missing.append(QPoint(offsetX + i, offsetY + j));
 
     WhirlLessThan cmp;
     cmp.center = center;
@@ -349,7 +356,6 @@ MapWidget::MapWidget(QQuickItem *parent)
     : QQuickPaintedItem(parent),
       d_ptr(new MapWidgetPrivate(this))
 {
-    setAcceptedMouseButtons(Qt::LeftButton);
 }
 
 MapWidget::~MapWidget()
