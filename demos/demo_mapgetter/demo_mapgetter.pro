@@ -20,3 +20,15 @@ QML_IMPORT_PATH =
 
 # Default rules for deployment.
 include(deployment.pri)
+
+
+winrt {
+    WINRT_MANIFEST.publisher = "LamaUrbain"
+    winphone:equals(WINSDK_VER, 8.1) {
+        WINRT_MANIFEST.capabilities += ID_CAP_NETWORKING
+        WINRT_MANIFEST.capabilities += ID_CAP_LOCATION
+        WINRT_MANIFEST.capabilities += ID_CAP_MAP
+    } else {
+        WINRT_MANIFEST.capabilities += internetClient
+    }
+}

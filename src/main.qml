@@ -1,13 +1,38 @@
 import QtQuick 2.2
 import QtQuick.Window 2.1
+import "main.js" as JSModule
 
 Window {
+    id: mainView
     visible: true
-    width: 900
-    height: 900
+    width: 480
+    height: 800
 
-    Rectangle {
-        id: main
+    Loader
+    {
+        id: viewLoader
         anchors.fill: parent
+        source: "qrc:/Views/Map.qml"
+    }
+
+    function navigateToSearch()
+    {
+        JSModule.navigateTo("qrc:/Views/ItinariesSearch.qml")
+    }
+
+    function navigateToMenu()
+    {
+        JSModule.navigateTo("qrc:/Views/Menu.qml")
+    }
+
+    function navigateToMap(departure, arrival)
+    {
+        JSModule.navigateTo("qrc:/Views/Map.qml")
+        JSModule.setWaypoints(departure, arrival)
+    }
+
+    function navigateBack()
+    {
+        JSModule.navigateBack()
     }
 }

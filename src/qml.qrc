@@ -1,5 +1,35 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>main.js</file>
+        <file>Constants.js</file>
+    </qresource>
+    <qresource prefix="/Views">
+        <file>Map.qml</file>
+        <file>ItinariesSearch.qml</file>
+        <file>Suggestions.qml</file>
+        <file>MobilitySettings.qml</file>
+        <file>Menu.qml</file>
+        <file>Favorites.qml</file>
+        <file>ViewsLogic.js</file>
+    </qresource>
+    <qresource prefix="/Components">
+        <file>CommandBar.qml</file>
+        <file>MenuHeader.qml</file>
+    </qresource>
+    <qresource prefix="/Controls">
+        <file>MenuButton.qml</file>
+        <file>SearchButton.qml</file>
+        <file>ReturnButton.qml</file>
+        <file>SwapButton.qml</file>
+        <file>ValidateButton.qml</file>
+    </qresource>
+    <qresource prefix="/Assets">
+        <file>Images/menuIcon.png</file>
+        <file>Images/returnIcon.png</file>
+        <file>Images/searchIcon.png</file>
+        <file>Images/swapIcon.png</file>
+        <file>Images/loupeIcon.png</file>
+        <file>Images/validateIcon.png</file>
     </qresource>
 </RCC>
