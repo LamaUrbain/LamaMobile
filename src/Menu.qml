@@ -5,7 +5,8 @@ import "qrc:/Controls" as Controls
 import "ViewsLogic.js" as ViewsLogic
 import "ViewsData.js" as ViewsData
 
-Rectangle {
+Rectangle
+{
     id: mainContent
     anchors.fill: parent
 
@@ -16,7 +17,7 @@ Rectangle {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.bottom: commandbar.top
+        anchors.bottom: commandBar.top
 
         Components.MenuHeader
         {
@@ -146,12 +147,11 @@ Rectangle {
                 }
             }
         }
-
     }
 
     Components.CommandBar
     {
-        id: commandbar
+        id: commandBar
 
         Controls.MapButton
         {
@@ -167,6 +167,5 @@ Rectangle {
             anchors.bottom: parent.bottom
         }
     }
-
 }
 

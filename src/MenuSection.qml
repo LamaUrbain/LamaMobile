@@ -56,6 +56,14 @@ Rectangle {
                     height: menuItems.anchors.topMargin * 2
                     width: height
                     source: "qrc:/Assets/Images/" + menuItemKey.toLowerCase() + "Icon.png"
+                    MouseArea
+                    {
+                        anchors.fill: parent
+                        onClicked:
+                        {
+                            menuSection.menuItemClicked(menuItemKey)
+                        }
+                    }
                 }
 
                 Text

@@ -1,8 +1,10 @@
-var lastView = "qrc:/Views/Map.qml"
+var lastView = "Map"
+var currentView = "Map"
 
 function navigateTo(name)
 {
-    lastView = viewLoader.source
+    lastView = currentView
+    currentView = name
     viewLoader.source = "qrc:/Views/" + name + ".qml"
     return (viewLoader.sourceComponent)
 }
