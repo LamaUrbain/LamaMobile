@@ -8,14 +8,15 @@
         <file>Map.qml</file>
         <file>ItinariesSearch.qml</file>
         <file>Suggestions.qml</file>
-        <file>MobilitySettings.qml</file>
         <file>Menu.qml</file>
-        <file>Favorites.qml</file>
         <file>ViewsLogic.js</file>
+        <file>ViewsData.js</file>
+        <file>Favorite.qml</file>
     </qresource>
     <qresource prefix="/Components">
         <file>CommandBar.qml</file>
         <file>MenuHeader.qml</file>
+        <file>MenuSection.qml</file>
     </qresource>
     <qresource prefix="/Controls">
         <file>MenuButton.qml</file>
@@ -23,6 +24,8 @@
         <file>ReturnButton.qml</file>
         <file>SwapButton.qml</file>
         <file>ValidateButton.qml</file>
+        <file>MapButton.qml</file>
+        <file>SettingsButton.qml</file>
     </qresource>
     <qresource prefix="/Assets">
         <file>Images/menuIcon.png</file>
@@ -31,5 +34,16 @@
         <file>Images/swapIcon.png</file>
         <file>Images/loupeIcon.png</file>
         <file>Images/validateIcon.png</file>
+        <file>Images/mapIcon.png</file>
+        <file>Images/alertIcon.png</file>
+        <file>Images/contributeIcon.png</file>
+        <file>Images/feedbackIcon.png</file>
+        <file>Images/helpIcon.png</file>
+        <file>Images/mobilityIcon.png</file>
+        <file>Images/newsIcon.png</file>
+        <file>Images/planetIcon.png</file>
+        <file>Images/reportIcon.png</file>
+        <file>Images/favoriteIcon.png</file>
+        <file>Images/settingsIcon.png</file>
     </qresource>
 </RCC>

@@ -6,6 +6,7 @@ import "qrc:/Controls" as Controls
 import "ViewsLogic.js" as ViewsLogic
 
 Rectangle {
+    id: mainContent
     anchors.fill: parent
 
     Rectangle
@@ -41,8 +42,19 @@ Rectangle {
                     spacing: Constants.fontSize
                     Text
                     {
+                        id: departurePrefix
                         text: "Départ:"
                         font.pixelSize: Constants.fontSize
+                        MouseArea
+                        {
+                            id: departureMA
+                            anchors.fill: parent
+                            onClicked: { ViewsLogic.displaySuggestionsView(mainContent, departureInput, departureInput.text) }
+                            onHoveredChanged:
+                            {
+                                departurePrefix.color = (departureMA.containsMouse) ? "#555" : "#000"
+                            }
+                        }
                     }
                     TextInput
                     {
@@ -77,8 +89,19 @@ Rectangle {
                     spacing: Constants.fontSize
                     Text
                     {
+                        id: arrivalPrefix
                         text: "Arrivée:"
                         font.pixelSize: Constants.fontSize
+                        MouseArea
+                        {
+                            id: arrivalMA
+                            anchors.fill: parent
+                            onClicked: { ViewsLogic.displaySuggestionsView(mainContent, arrivalInput, arrivalInput.text) }
+                            onHoveredChanged:
+                            {
+                                arrivalPrefix.color = (arrivalMA.containsMouse) ? "#555" : "#000"
+                            }
+                        }
                     }
                     TextInput
                     {

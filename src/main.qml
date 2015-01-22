@@ -15,24 +15,35 @@ Window {
         source: "qrc:/Views/Map.qml"
     }
 
+    function navigateFromMenu(name)
+    {
+        JSModule.navigateTo(name);
+    }
+
+    function navigateToProfileSettings()
+    {
+        JSModule.navigateTo("ProfileSettings");
+    }
+
     function navigateToSearch()
     {
-        JSModule.navigateTo("qrc:/Views/ItinariesSearch.qml")
+        JSModule.navigateTo("ItinariesSearch");
     }
 
     function navigateToMenu()
     {
-        JSModule.navigateTo("qrc:/Views/Menu.qml")
+        JSModule.navigateTo("Menu");
     }
 
     function navigateToMap(departure, arrival)
     {
-        JSModule.navigateTo("qrc:/Views/Map.qml")
-        JSModule.setWaypoints(departure, arrival)
+        JSModule.navigateTo("Map");
+        if (departure !== null && arrival !== null)
+            JSModule.setWaypoints(departure, arrival);
     }
 
     function navigateBack()
     {
-        JSModule.navigateBack()
+        JSModule.navigateBack();
     }
 }
