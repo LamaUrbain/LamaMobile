@@ -12,6 +12,7 @@
         <file>ViewsLogic.js</file>
         <file>ViewsData.js</file>
         <file>Favorite.qml</file>
+        <file>Mobility.qml</file>
     </qresource>
     <qresource prefix="/Components">
         <file>CommandBar.qml</file>
@@ -26,6 +27,7 @@
         <file>ValidateButton.qml</file>
         <file>MapButton.qml</file>
         <file>SettingsButton.qml</file>
+        <file>MapWidget.qml</file>
     </qresource>
     <qresource prefix="/Assets">
         <file>Images/menuIcon.png</file>
