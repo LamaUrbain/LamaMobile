@@ -30,6 +30,7 @@ public:
     void wheel(int delta);
     void mouseRelease();
     void mouseMove(const QPoint &pos);
+    void touchEvent(QTouchEvent *event);
 
     QPoint posFromCoords(const QPointF &coords) const;
     QPointF coordsFromPos(const QPoint &pos) const;
@@ -63,6 +64,7 @@ private:
     QPoint _scrollOffset;
     bool _scrollValueSet;
     QPoint _scrollLastPos;
+    bool _wheeling;
 
     // Other
     bool _changed;
