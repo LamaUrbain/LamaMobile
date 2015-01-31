@@ -33,6 +33,7 @@ MapWidgetPrivate::MapWidgetPrivate(MapWidget *ptr)
       _scale(7),
       _scrollOffset(-256, -256),
       _scrollValueSet(false),
+      _wheeling(false),
       _changed(true),
       _currentWheel(0)
 {
@@ -171,6 +172,50 @@ void MapWidgetPrivate::mouseMove(const QPoint &pos)
 
         q->update();
     }
+}
+
+void MapWidgetPrivate::touchEvent(QTouchEvent *event)
+{
+    switch (event->type())
+    {
+        case QEvent::TouchBegin:
+        case QEvent::TouchUpdate:
+        case QEvent::TouchEnd:
+        {
+            const QList<QTouchEvent::TouchPoint> &points = event->touchPoints();
+
+            if (points.size() == 2)
+            {
+                const QTouchEvent::TouchPoint &p0 = points.first();
+                const QTouchEvent::TouchPoint &p1 = points.last();
+
+                qreal scale = QLineF(p0.pos(), p1.pos()).length() / QLineF(p0.startPos(), p1.startPos()).length();
+
+                if (scale > 2.0)
+                {
+                    if (!_wheeling)
+                        wheel(120);
+                    _wheeling = true;
+                }
+                else if (scale < 0.6)
+                {
+                    if (!_wheeling)
+                        wheel(-120);
+                    _wheeling = true;
+                }
+
+                event->accept();
+                return;
+            }
+
+            break;
+        }
+        default:
+            break;
+    }
+
+    event->ignore();
+    _wheeling = false;
 }
 
 void MapWidgetPrivate::setMapCenter(const QPointF &center)
@@ -468,6 +513,12 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
     Q_D(MapWidget);
     d->mouseMove(event->pos());
     event->accept();
+}
+
+void MapWidget::touchEvent(QTouchEvent *event)
+{
+    Q_D(MapWidget);
+    d->touchEvent(event);
 }
 
 void MapWidget::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry)
