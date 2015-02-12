@@ -1,6 +1,7 @@
 import QtQuick 2.2
 import QtQuick.Window 2.1
 import "main.js" as JSModule
+import "qrc:/Views" as Views
 
 Window {
     id: mainView
@@ -8,11 +9,15 @@ Window {
     width: 480
     height: 800
 
+    Views.Map
+    {
+        id: mapView
+    }
+
     Loader
     {
         id: viewLoader
         anchors.fill: parent
-        source: "qrc:/Views/Map.qml"
     }
 
     function navigateFromMenu(name)
@@ -39,7 +44,7 @@ Window {
     {
         JSModule.navigateTo("Map");
         if (departure !== null && arrival !== null)
-            JSModule.setWaypoints(departure, arrival);
+            JSModule.setWaypoints(mapView, departure, arrival);
     }
 
     function navigateBack()
