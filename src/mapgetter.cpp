@@ -126,8 +126,6 @@ void MapGetter::onTilesRequired()
             _pending.append(tile);
             getter->_pending.append(tile);
         }
-
-        qDebug() << "Send:" << tile.scale << tile.pos << url.toString();
     }
 }
 
@@ -146,8 +144,6 @@ void MapGetter::onRequestFinished(QNetworkReply *reply)
 
             if (info.reply == reply)
             {
-                qDebug() << "Receive:" << reply->url().toString() << info.scale << info.pos;
-
                 MapTile tile;
                 tile.scale = info.scale;
                 tile.pos = info.pos;
@@ -155,7 +151,6 @@ void MapGetter::onRequestFinished(QNetworkReply *reply)
                 if (reply->error() == QNetworkReply::NoError
                     && tile.pixmap.loadFromData(reply->readAll()))
                 {
-                    qDebug() << "Tile:" << tile.scale << tile.pos;
                     _widget->addTile(tile);
                     _errors.removeAll(info);
                 }
