@@ -158,7 +158,7 @@ void MapGetter::onRequestFinished(QNetworkReply *reply)
                 {
                     if (_errors.contains(info))
                     {
-                        qDebug() << "Error:" << tile.pos;
+                        qDebug() << "Error:" << tile.scale << tile.pos << reply->errorString();
                         tile.pixmap = QPixmap(1, 1);
                         _widget->addTile(tile);
                         _errors.removeAll(info);
