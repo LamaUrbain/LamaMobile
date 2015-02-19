@@ -280,9 +280,11 @@ void MapWidgetPrivate::generateCache()
     QSize size(q->width() + 512, q->height() + 512);
     QPoint centerPix(size.width() / 2, size.height() / 2);
 
-    QPixmap pix(size);
-    QPainter painter(&pix);
-    painter.fillRect(0, 0, pix.width(), pix.height(), Qt::white);
+    if (_cache.size() != size)
+        _cache = QPixmap(size);
+
+    QPainter painter(&_cache);
+    painter.fillRect(0, 0, _cache.width(), _cache.height(), Qt::white);
 
     addMissingTiles(_centerPos, size, _centerOffset);
 
@@ -303,7 +305,6 @@ void MapWidgetPrivate::generateCache()
         }
     }
 
-    _cache = pix;
     _changed = false;
 
     if (!_missing.isEmpty())
