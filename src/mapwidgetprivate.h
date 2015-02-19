@@ -38,6 +38,10 @@ public:
     QPointF coordsFromPixels(const QPoint &pos) const;
     QSizeF tileSize(const QPoint &pos) const;
 
+    const QList<MapExtension *> &getExtension() const;
+    void addExtension(MapExtension *ext);
+    void removeExtension(MapExtension *ext);
+
 private:
     void updateCenterValues();
     void updateCenter();
@@ -65,6 +69,9 @@ private:
     bool _scrollValueSet;
     QPoint _scrollLastPos;
     bool _wheeling;
+
+    // Extensions
+    QList<MapExtension *> _extensions;
 
     // Other
     bool _changed;

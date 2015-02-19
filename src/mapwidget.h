@@ -5,6 +5,7 @@
 #include <QQuickPaintedItem>
 
 class MapWidgetPrivate;
+class MapExtension;
 
 struct MapTile
 {
@@ -34,6 +35,12 @@ public:
     void addTile(const MapTile &tile);
     void removeTile(const MapTile &tile);
     virtual void paint(QPainter *painter);
+
+    const QList<MapExtension *> &getExtensions() const;
+    void addExtension(MapExtension *ext);
+    void removeExtension(MapExtension *ext);
+
+    void repaint();
 
 signals:
     void mapScaleChanged();

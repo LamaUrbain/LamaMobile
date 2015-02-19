@@ -4,12 +4,13 @@ import Tests 1.0
 
 Window {
     visible: true
-    width: 360
-    height: 360
+    width: 600
+    height: 600
 
     MapWidget {
         id: mapWidget
         anchors.fill: parent
+        mapScale: 15
 
         MapGetter {
             id: mapGetter
@@ -18,12 +19,13 @@ Window {
                 mapGetter.setWidget(mapWidget);
             }
         }
-    }
 
-    Rectangle {
-        width: mapWidget.width / 2
-        height: mapWidget.height / 2
-        color: "red"
-        opacity: 0.5
+        ItineraryStub {
+            id: itineraryStub
+
+            Component.onCompleted: {
+                itineraryStub.initMapWidget(mapWidget);
+            }
+        }
     }
 }

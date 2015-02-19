@@ -2,6 +2,7 @@
 #include <QPainter>
 #include "mapwidget.h"
 #include "mapwidgetprivate.h"
+#include "mapextension.h"
 
 struct WhirlLessThan
 {
@@ -50,6 +51,8 @@ MapWidgetPrivate::MapWidgetPrivate(MapWidget *ptr)
 
 MapWidgetPrivate::~MapWidgetPrivate()
 {
+    qDeleteAll(_extensions);
+    _extensions.clear();
 }
 
 void MapWidgetPrivate::displayChanged()
@@ -286,6 +289,9 @@ void MapWidgetPrivate::generateCache()
     QPainter painter(&_cache);
     painter.fillRect(0, 0, _cache.width(), _cache.height(), Qt::white);
 
+    foreach (MapExtension *ext, _extensions)
+        ext->begin(&painter);
+
     addMissingTiles(_centerPos, size, _centerOffset);
 
     foreach (QPoint pos, _missing)
@@ -302,8 +308,14 @@ void MapWidgetPrivate::generateCache()
 
             painter.drawPixmap(tilePos, tile.pixmap);
             removeMissingTile(pos);
+
+            foreach (MapExtension *ext, _extensions)
+                ext->drawTile(&painter, pos, tilePos);
         }
     }
+
+    foreach (MapExtension *ext, _extensions)
+        ext->end(&painter);
 
     _changed = false;
 
@@ -405,6 +417,22 @@ QSizeF MapWidgetPrivate::tileSize(const QPoint &pos) const
     return size;
 }
 
+const QList<MapExtension *> &MapWidgetPrivate::getExtension() const
+{
+    return _extensions;
+}
+
+void MapWidgetPrivate::addExtension(MapExtension *ext)
+{
+    if (!_extensions.contains(ext))
+        _extensions.append(ext);
+}
+
+void MapWidgetPrivate::removeExtension(MapExtension *ext)
+{
+    _extensions.removeAll(ext);
+}
+
 MapTile::MapTile()
 {
 }
@@ -458,6 +486,30 @@ void MapWidget::paint(QPainter *painter)
 {
     Q_D(MapWidget);
     d->paint(painter);
+}
+
+const QList<MapExtension *> &MapWidget::getExtensions() const
+{
+    Q_D(const MapWidget);
+    return d->getExtension();
+}
+
+void MapWidget::addExtension(MapExtension *ext)
+{
+    Q_D(MapWidget);
+    d->addExtension(ext);
+}
+
+void MapWidget::removeExtension(MapExtension *ext)
+{
+    Q_D(MapWidget);
+    d->removeExtension(ext);
+}
+
+void MapWidget::repaint()
+{
+    Q_D(MapWidget);
+    d->displayChanged();
 }
 
 quint8 MapWidget::getMapScale() const
