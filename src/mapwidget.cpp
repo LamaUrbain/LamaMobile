@@ -289,7 +289,6 @@ void MapWidgetPrivate::generateCache()
         _cache = QPixmap(size);
 
     QPainter painter(&_cache);
-    painter.fillRect(0, 0, _cache.width(), _cache.height(), Qt::white);
 
     foreach (MapExtension *ext, _extensions)
         ext->begin(&painter);
@@ -300,13 +299,13 @@ void MapWidgetPrivate::generateCache()
     {
         const QHash<QPoint, MapTile>::const_iterator it = _tiles[_scale].find(pos);
 
+        QPoint tilePos;
+        tilePos.setX(centerPix.x() - (_centerPos.x() - pos.x()) * 256 - _centerOffset.x());
+        tilePos.setY(centerPix.y() - (_centerPos.y() - pos.y()) * 256 - _centerOffset.y());
+
         if (it != _tiles[_scale].end())
         {
             const MapTile &tile = it.value();
-
-            QPoint tilePos;
-            tilePos.setX(centerPix.x() - (_centerPos.x() - tile.pos.x()) * 256 - _centerOffset.x());
-            tilePos.setY(centerPix.y() - (_centerPos.y() - tile.pos.y()) * 256 - _centerOffset.y());
 
             painter.drawPixmap(tilePos, tile.pixmap);
             removeMissingTile(pos);
@@ -314,6 +313,8 @@ void MapWidgetPrivate::generateCache()
             foreach (MapExtension *ext, _extensions)
                 ext->drawTile(&painter, pos, tilePos);
         }
+        else
+            painter.fillRect(tilePos.x(), tilePos.y(), 256, 256, Qt::white);
     }
 
     foreach (MapExtension *ext, _extensions)
