@@ -91,6 +91,7 @@ void MapOverlayExtension::generateTilePoints(quint8 scale)
 void MapOverlayExtension::begin(QPainter *painter)
 {
     Q_UNUSED(painter);
+    _pending.clear();
 }
 
 void MapOverlayExtension::drawTile(QPainter *painter, const QPoint &pos, const QPoint &tilePos)
@@ -113,10 +114,10 @@ void MapOverlayExtension::drawTile(QPainter *painter, const QPoint &pos, const Q
     {
         const QPointF &pos = *pit;
 
-        int xOffset = qBound<qreal>(0, pos.x() - (int)pos.x(), 1) * 256 - indicatorHalfWidth;
-        int yOffset = qBound<qreal>(0, pos.y() - (int)pos.y(), 1) * 256 - indicatorHeight;
+        int xOffset = qBound<qreal>(0, pos.x() - (int)pos.x(), 1) * 256.0 - indicatorHalfWidth;
+        int yOffset = qBound<qreal>(0, pos.y() - (int)pos.y(), 1) * 256.0 - indicatorHeight;
 
-        painter->drawPixmap(tilePos.x() + xOffset, tilePos.y() + yOffset, _indicator);
+        _pending.append(QPoint(tilePos.x() + xOffset, tilePos.y() + yOffset));
 
         ++pit;
     }
@@ -124,5 +125,10 @@ void MapOverlayExtension::drawTile(QPainter *painter, const QPoint &pos, const Q
 
 void MapOverlayExtension::end(QPainter *painter)
 {
-    Q_UNUSED(painter);
+    for (QList<QPoint>::const_iterator it = _pending.constBegin(); it != _pending.constEnd(); ++it)
+    {
+        const QPoint &pos = *it;
+        painter->drawPixmap(pos, _indicator);
+    }
+    _pending.clear();
 }

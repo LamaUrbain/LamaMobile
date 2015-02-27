@@ -33,6 +33,7 @@ private:
     QHash<QPoint, MapTile> _tiles[20];
     QMultiHash<QPoint, QPointF> _tilePoints[20];
     QList<QPointF> _points;
+    QList<QPoint> _pending;
     QPixmap _indicator;
 };
 
