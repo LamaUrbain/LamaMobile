@@ -136,11 +136,6 @@ void MapWidgetPrivate::wheel(int delta)
     }
 }
 
-void MapWidgetPrivate::mouseRelease()
-{
-    _scrollValueSet = false;
-}
-
 void MapWidgetPrivate::mouseMove(const QPoint &pos)
 {
     Q_Q(MapWidget);
@@ -179,8 +174,70 @@ void MapWidgetPrivate::mouseMove(const QPoint &pos)
     }
 }
 
+void MapWidgetPrivate::wheelEvent(QWheelEvent *event)
+{
+    foreach (MapExtension *ext, _extensions)
+        if (ext->wheelEvent(event))
+        {
+            event->accept();
+            return;
+        }
+
+    QPoint delta = event->angleDelta();
+
+    if (!delta.isNull())
+        wheel(delta.y());
+
+    event->accept();
+}
+
+void MapWidgetPrivate::mousePressEvent(QMouseEvent *event)
+{
+    foreach (MapExtension *ext, _extensions)
+        if (ext->mousePressEvent(event))
+        {
+            event->accept();
+            return;
+        }
+
+    event->accept();
+}
+
+void MapWidgetPrivate::mouseReleaseEvent(QMouseEvent *event)
+{
+    foreach (MapExtension *ext, _extensions)
+        if (ext->mouseReleaseEvent(event))
+        {
+            event->accept();
+            return;
+        }
+
+    _scrollValueSet = false;
+    event->accept();
+}
+
+void MapWidgetPrivate::mouseMoveEvent(QMouseEvent *event)
+{
+    foreach (MapExtension *ext, _extensions)
+        if (ext->mouseMoveEvent(event))
+        {
+            event->accept();
+            return;
+        }
+
+    mouseMove(event->pos());
+    event->accept();
+}
+
 void MapWidgetPrivate::touchEvent(QTouchEvent *event)
 {
+    foreach (MapExtension *ext, _extensions)
+        if (ext->touchEvent(event))
+        {
+            event->accept();
+            return;
+        }
+
     switch (event->type())
     {
         case QEvent::TouchBegin:
@@ -541,34 +598,26 @@ void MapWidget::setMapCenter(const QPointF &center)
 
 void MapWidget::wheelEvent(QWheelEvent *event)
 {
-    QPoint delta = event->angleDelta();
-
-    if (!delta.isNull())
-    {
-        Q_D(MapWidget);
-        d->wheel(delta.y());
-    }
-
-    event->accept();
+    Q_D(MapWidget);
+    d->wheelEvent(event);
 }
 
 void MapWidget::mousePressEvent(QMouseEvent *event)
 {
-    event->accept();
+    Q_D(MapWidget);
+    d->mousePressEvent(event);
 }
 
 void MapWidget::mouseReleaseEvent(QMouseEvent *event)
 {
     Q_D(MapWidget);
-    d->mouseRelease();
-    event->accept();
+    d->mouseReleaseEvent(event);
 }
 
 void MapWidget::mouseMoveEvent(QMouseEvent *event)
 {
     Q_D(MapWidget);
-    d->mouseMove(event->pos());
-    event->accept();
+    d->mouseMoveEvent(event);
 }
 
 void MapWidget::touchEvent(QTouchEvent *event)

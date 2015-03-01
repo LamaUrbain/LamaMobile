@@ -28,8 +28,12 @@ public:
     const QList<QPoint> &getMissingTiles() const;
 
     void wheel(int delta);
-    void mouseRelease();
     void mouseMove(const QPoint &pos);
+
+    void wheelEvent(QWheelEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
     void touchEvent(QTouchEvent *event);
 
     QPoint posFromCoords(const QPointF &coords) const;
