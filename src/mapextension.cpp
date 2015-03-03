@@ -1,7 +1,8 @@
+#include "mapwidgetprivate.h"
 #include "mapextension.h"
 
 MapExtension::MapExtension(MapWidget *map)
-    : _map(map)
+    : QObject(), _map(map)
 {
 }
 
@@ -37,4 +38,9 @@ bool MapExtension::touchEvent(QTouchEvent *event)
 {
     Q_UNUSED(event);
     return false;
+}
+
+MapWidgetPrivate *MapExtension::getMapPrivate() const
+{
+    return _map->d_ptr;
 }

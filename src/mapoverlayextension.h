@@ -7,6 +7,8 @@
 
 class MapOverlayExtension : public MapExtension
 {
+    Q_OBJECT
+
 public:
     MapOverlayExtension(MapWidget *map);
     virtual ~MapOverlayExtension();
@@ -25,16 +27,29 @@ public:
     virtual void drawTile(QPainter *painter, const QPoint &pos, const QPoint &tilePos);
     virtual void end(QPainter *painter);
 
+    virtual bool mousePressEvent(QMouseEvent *event);
+    virtual bool mouseReleaseEvent(QMouseEvent *event);
+    virtual bool mouseMoveEvent(QMouseEvent *event);
+
+signals:
+    void pointMoved(int point, QPointF newCoords);
+
 private:
     void onTilesChanged();
     void generateTilePoints(quint8 scale);
+    int pointAt(const QPoint &pos) const;
 
 private:
+    typedef QPair<QPointF, int> PairPointF;
+    typedef QPair<QPoint, int> PairPoint;
+
     QHash<QPoint, MapTile> _tiles[20];
-    QMultiHash<QPoint, QPointF> _tilePoints[20];
+    QMultiHash<QPoint, PairPointF> _tilePoints[20];
     QList<QPointF> _points;
-    QList<QPoint> _pending;
+    QList<PairPoint> _pending;
     QPixmap _indicator;
+    QPixmap _selectedIndicator;
+    int _selectedPoint;
 };
 
 #endif // MAPOVERLAYEXTENSION_H

@@ -1,6 +1,7 @@
 #ifndef MAPEXTENSION
 #define MAPEXTENSION
 
+#include <QObject>
 #include <QPainter>
 #include <QPoint>
 #include <QWheelEvent>
@@ -8,8 +9,9 @@
 #include <QTouchEvent>
 
 class MapWidget;
+class MapWidgetPrivate;
 
-class MapExtension
+class MapExtension : public QObject
 {
 public:
     MapExtension(MapWidget *map);
@@ -24,6 +26,9 @@ public:
     virtual bool mouseReleaseEvent(QMouseEvent *event);
     virtual bool mouseMoveEvent(QMouseEvent *event);
     virtual bool touchEvent(QTouchEvent *event);
+
+protected:
+    MapWidgetPrivate *getMapPrivate() const;
 
 protected:
     MapWidget *_map;
