@@ -309,9 +309,25 @@ const QList<QPoint> &MapWidgetPrivate::getMissingTiles() const
     return _missing;
 }
 
+const QPoint &MapWidgetPrivate::getScrollOffset() const
+{
+    return _scrollOffset;
+}
+
+const QPoint &MapWidgetPrivate::getCenterPos() const
+{
+    return _centerPos;
+}
+
+const QPoint &MapWidgetPrivate::getCenterOffset() const
+{
+    return _centerOffset;
+}
+
 void MapWidgetPrivate::updateCenterValues()
 {
-    _centerPos = posFromCoords(_center);
+    QPointF centerPos = posFromCoords(_center);
+    _centerPos = QPoint((int)centerPos.x(), (int)centerPos.y());
     _centerOffset = pixelsFromCoords(_center) - pixelsFromCoords(coordsFromPos(_centerPos));
 }
 
@@ -410,14 +426,14 @@ void MapWidgetPrivate::removeMissingTile(const QPoint &pos)
     _missing.removeOne(pos);
 }
 
-QPoint MapWidgetPrivate::posFromCoords(const QPointF &coords) const
+QPointF MapWidgetPrivate::posFromCoords(const QPointF &coords) const
 {
     // x = longitude
     // y = latitude
 
-    QPoint pos;
-    pos.setX((int)((coords.x() + 180.0) * _tilesNumber / 360.0));
-    pos.setY((int)((1.0 - log(tan(coords.y() * M_PI / 180.0) + 1.0 / cos(coords.y() * M_PI / 180.0)) / M_PI) / 2.0 * _tilesNumber));
+    QPointF pos;
+    pos.setX((coords.x() + 180.0) * _tilesNumber / 360.0);
+    pos.setY((1.0 - log(tan(coords.y() * M_PI / 180.0) + 1.0 / cos(coords.y() * M_PI / 180.0)) / M_PI) / 2.0 * _tilesNumber);
 
     return pos;
 }

@@ -32,6 +32,8 @@ class MapWidget : public QQuickPaintedItem
     Q_PROPERTY(qreal mapScale READ getMapScale WRITE setMapScale NOTIFY mapScaleChanged)
     Q_PROPERTY(QPointF mapCenter READ getMapCenter WRITE setMapCenter NOTIFY mapCenterChanged)
 
+    friend class MapExtension;
+
 public:
     MapWidget(QQuickItem *parent = 0);
     virtual ~MapWidget();

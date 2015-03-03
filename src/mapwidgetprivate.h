@@ -9,6 +9,8 @@ class MapWidgetPrivate
 {
     Q_DECLARE_PUBLIC(MapWidget)
 
+    friend class MapExtension;
+
 public:
     MapWidgetPrivate(MapWidget *ptr);
     virtual ~MapWidgetPrivate();
@@ -27,6 +29,10 @@ public:
 
     const QList<QPoint> &getMissingTiles() const;
 
+    const QPoint &getScrollOffset() const;
+    const QPoint &getCenterPos() const;
+    const QPoint &getCenterOffset() const;
+
     void wheel(int delta);
     void mouseMove(const QPoint &pos);
 
@@ -36,7 +42,7 @@ public:
     void mouseMoveEvent(QMouseEvent *event);
     void touchEvent(QTouchEvent *event);
 
-    QPoint posFromCoords(const QPointF &coords) const;
+    QPointF posFromCoords(const QPointF &coords) const;
     QPointF coordsFromPos(const QPoint &pos) const;
     QPoint pixelsFromCoords(const QPointF &coords) const;
     QPointF coordsFromPixels(const QPoint &pos) const;

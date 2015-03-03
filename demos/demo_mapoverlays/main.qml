@@ -4,8 +4,8 @@ import Tests 1.0
 
 Window {
     visible: true
-    width: 600
-    height: 600
+    width: 800
+    height: 700
 
     MapWidget {
         id: mapWidget

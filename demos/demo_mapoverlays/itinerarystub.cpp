@@ -30,8 +30,8 @@ void ItineraryStub::initMapWidget(MapWidget *view)
     for (int i = 0; i < tilesCount; ++i)
         ext->addTile(tiles[i]);
 
-    ext->appendPoint(QPointF(2.33934, 48.85222));
-    ext->appendPoint(QPointF(2.35702, 48.85366));
+    ext->appendPoint(QPointF(2.33944, 48.85222));
+    ext->appendPoint(QPointF(2.35718, 48.85346));
 
     view->addExtension(ext);
 }

@@ -7,7 +7,9 @@ static const int indicatorHeight = 48;
 
 MapOverlayExtension::MapOverlayExtension(MapWidget *map)
     : MapExtension(map),
-      _indicator(":/images/map_indicator.png")
+      _indicator(":/images/map_indicator.png"),
+      _selectedIndicator(":/images/map_indicator_selected.png"),
+      _selectedPoint(-1)
 {
 }
 
@@ -74,18 +76,32 @@ void MapOverlayExtension::onTilesChanged()
 
 void MapOverlayExtension::generateTilePoints(quint8 scale)
 {
-    int tilesNumber = pow(2.0, scale);
+    int current = 0;
 
     for (QList<QPointF>::const_iterator it = _points.constBegin(); it != _points.constEnd(); ++it)
     {
         const QPointF &coords = *it;
-
-        QPointF pos;
-        pos.setX((coords.x() + 180.0) * tilesNumber / 360.0);
-        pos.setY((1.0 - log(tan(coords.y() * M_PI / 180.0) + 1.0 / cos(coords.y() * M_PI / 180.0)) / M_PI) / 2.0 * tilesNumber);
-
-        _tilePoints[scale].insert(QPoint((int)pos.x(), (int)pos.y()), pos);
+        QPointF pos = getMapPrivate()->posFromCoords(coords);
+        _tilePoints[scale].insert(QPoint((int)pos.x(), (int)pos.y()), PairPointF(pos, current));
+        ++current;
     }
+}
+
+int MapOverlayExtension::pointAt(const QPoint &pos) const
+{
+    const QPoint &offset = getMapPrivate()->getScrollOffset();
+
+    for (QList<PairPoint>::const_iterator it = _pending.constBegin(); it != _pending.constEnd(); ++it)
+    {
+        const QPoint &pending = (*it).first;
+
+        QRect bounds(pending.x() + offset.x(), pending.y() + offset.y(), indicatorHalfWidth * 2, indicatorHeight);
+
+        if (bounds.contains(pos))
+            return (*it).second;
+    }
+
+    return -1;
 }
 
 void MapOverlayExtension::begin(QPainter *painter)
@@ -102,7 +118,7 @@ void MapOverlayExtension::drawTile(QPainter *painter, const QPoint &pos, const Q
         generateTilePoints(scale);
 
     QHash<QPoint, MapTile>::const_iterator it = _tiles[scale].constFind(pos);
-    QMultiHash<QPoint, QPointF>::const_iterator pit = _tilePoints[scale].constFind(pos);
+    QMultiHash<QPoint, PairPointF>::const_iterator pit = _tilePoints[scale].constFind(pos);
 
     if (it != _tiles[scale].end())
     {
@@ -112,12 +128,12 @@ void MapOverlayExtension::drawTile(QPainter *painter, const QPoint &pos, const Q
 
     while (pit != _tilePoints[scale].constEnd() && pit.key() == pos)
     {
-        const QPointF &pos = *pit;
+        const QPointF &pos = (*pit).first;
 
-        int xOffset = qBound<qreal>(0, pos.x() - (int)pos.x(), 1) * 256.0 - indicatorHalfWidth;
-        int yOffset = qBound<qreal>(0, pos.y() - (int)pos.y(), 1) * 256.0 - indicatorHeight;
+        int xOffset = qBound<qreal>(0, pos.x() - (qreal)((int)pos.x()), 1) * 256.0 - indicatorHalfWidth;
+        int yOffset = qBound<qreal>(0, pos.y() - (qreal)((int)pos.y()), 1) * 256.0 - indicatorHeight;
 
-        _pending.append(QPoint(tilePos.x() + xOffset, tilePos.y() + yOffset));
+        _pending.append(PairPoint(QPoint(tilePos.x() + xOffset, tilePos.y() + yOffset), (*pit).second));
 
         ++pit;
     }
@@ -125,10 +141,64 @@ void MapOverlayExtension::drawTile(QPainter *painter, const QPoint &pos, const Q
 
 void MapOverlayExtension::end(QPainter *painter)
 {
-    for (QList<QPoint>::const_iterator it = _pending.constBegin(); it != _pending.constEnd(); ++it)
+    for (QList<PairPoint>::const_iterator it = _pending.constBegin(); it != _pending.constEnd(); ++it)
     {
-        const QPoint &pos = *it;
-        painter->drawPixmap(pos, _indicator);
+        const QPoint &pos = (*it).first;
+        painter->drawPixmap(pos, (*it).second == _selectedPoint ? _selectedIndicator : _indicator);
     }
-    _pending.clear();
+}
+
+bool MapOverlayExtension::mousePressEvent(QMouseEvent *event)
+{
+    if (_selectedPoint != -1)
+    {
+        if (_selectedPoint < _points.size())
+        {
+            QPoint pos;
+            MapWidgetPrivate *p = getMapPrivate();
+
+            pos.setX(p->getCenterPos().x() * 256 + p->getCenterOffset().x() - p->getScrollOffset().x() - 256 + event->pos().x() - _map->width() / 2);
+            pos.setY(p->getCenterPos().y() * 256 + p->getCenterOffset().y() - p->getScrollOffset().y() - 256 + event->pos().y() - _map->height() / 2);
+
+            QPointF newCoords = p->coordsFromPixels(pos);
+
+            movePoint(_selectedPoint, newCoords);
+            emit pointMoved(_selectedPoint, newCoords);
+        }
+
+        _selectedPoint = -1;
+        return true;
+    }
+
+    int point = pointAt(event->pos());
+
+    if (point != -1)
+    {
+        _selectedPoint = point;
+        _map->repaint();
+        return true;
+    }
+
+    _selectedPoint = -1;
+    return false;
+}
+
+bool MapOverlayExtension::mouseReleaseEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event);
+
+    if (_selectedPoint != -1)
+        return true;
+
+    return false;
+}
+
+bool MapOverlayExtension::mouseMoveEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event);
+
+    if (_selectedPoint != -1)
+        return true;
+
+    return false;
 }
