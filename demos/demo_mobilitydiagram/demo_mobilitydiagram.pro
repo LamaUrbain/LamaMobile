@@ -1,5 +1,8 @@
 SRC_PATH = ../../src
 
+OBJECTS_DIR = demo_mobilitydiagram_obj
+MOC_DIR = demo_mobilitydiagram_moc
+
 TEMPLATE = app
 QT += qml quick
 CONFIG += c++11

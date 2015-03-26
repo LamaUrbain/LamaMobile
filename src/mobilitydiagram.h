@@ -27,6 +27,11 @@ public:
     void                                setColors(QMap<MobilityMean, QColor> const &newColors);
     QMap<MobilityMean, double>          getPercents() const;
 
+public slots:
+    void                                rearrangeDiagram();
+    void                                resetDiagram();
+    void                                setMeanUsage(MobilityMean mean, bool isUsed);
+
 protected:
     virtual void    paint(QPainter *painter);
 
@@ -35,21 +40,16 @@ protected:
     virtual void    mouseReleaseEvent(QMouseEvent *event);
     virtual void    geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry);
 
-private slots:
-    void            resetDiagram();
-    void            on_pushButton_released();
-
 private:
-    void            _onBoxClicked(MobilityMean mean, bool checked);
-    bool            _isPointInDiagram(const QPoint &point);
-    bool            _isMeanUsed(MobilityMean mean);
+    bool                            _isPointInDiagram(const QPoint &point);
+    bool                            _isMeanUsed(MobilityMean mean);
+    unsigned int                    _getCurrentMeanCount() const;
 
     bool                            _isDraging;
     MobilityMean                    _dragedMean;
     QPoint                          _previousPoint;
     QPoint                          _currentPoint;
 
-    unsigned int                    _meanCount;
     QRect                           _dimension;
     QMap<MobilityMean, QColor>      _meanColors;
     QMap<MobilityMean, double>      _proportions;

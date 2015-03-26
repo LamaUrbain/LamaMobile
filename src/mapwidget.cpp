@@ -1,4 +1,5 @@
 #include <cmath>
+#include <qt>
 #include <QPainter>
 #include "mapwidget.h"
 #include "mapwidgetprivate.h"
@@ -42,6 +43,7 @@ MapWidgetPrivate::MapWidgetPrivate(MapWidget *ptr)
     q->setRenderTarget(QQuickPaintedItem::FramebufferObject);
     q->setOpaquePainting(true);
     q->setFillColor(Qt::white);
+
 
     _tilesNumber = pow(2.0, _scale);
     updateCenterValues();

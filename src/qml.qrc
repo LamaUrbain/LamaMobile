@@ -13,6 +13,7 @@
         <file>ViewsData.js</file>
         <file>Favorite.qml</file>
         <file>Mobility.qml</file>
+        <file>ProfileSettings.qml</file>
     </qresource>
     <qresource prefix="/Components">
         <file>CommandBar.qml</file>
@@ -28,6 +29,7 @@
         <file>MapButton.qml</file>
         <file>SettingsButton.qml</file>
         <file>MapWidget.qml</file>
+        <file>IconedCheckBox.qml</file>
     </qresource>
     <qresource prefix="/Assets">
         <file>Images/menuIcon.png</file>
@@ -47,5 +49,11 @@
         <file>Images/reportIcon.png</file>
         <file>Images/favoriteIcon.png</file>
         <file>Images/settingsIcon.png</file>
+        <file>Images/defaultAvatar.png</file>
+        <file>Images/bikeMean.png</file>
+        <file>Images/busMean.png</file>
+        <file>Images/onfootMean.png</file>
+        <file>Images/trainMean.png</file>
+        <file>Images/tramwayMean.png</file>
     </qresource>
 </RCC>

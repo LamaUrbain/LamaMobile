@@ -11,4 +11,4 @@ var knownAddresses = recentAddressList.concat(favoriteAddressList)
 
 var profilePicture = "http://cdn.meme.am/images/300x/366130.jpg"
 var profileName = "BogossDu93"
-var profileTitle = "xX_Fedora-Wearing-Scrub_Xx"
+var profileTitle = "xX_Fedora-Wearing-ScrubLord_Xx"

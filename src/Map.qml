@@ -2,30 +2,44 @@ import QtQuick 2.0
 import MapControls 1.0
 import "qrc:/Components" as Components
 import "qrc:/Controls" as Controls
+import "ViewsData.js" as ViewsData
 
 Rectangle {
-    anchors.fill:  parent;
+    anchors.fill:  parent
 
     color: "#0F0"
 
-    MapWidget
+    PinchArea
     {
-        id: mapWidget
         anchors.fill: parent
-
-        MapGetter
+        MapWidget
         {
-            id: mapGetter
-            Component.onCompleted:
+            id: mapWidget
+            anchors.fill: parent
+
+            MapGetter
             {
-                mapGetter.setWidget(mapWidget);
+                id: mapGetter
+                Component.onCompleted:
+                {
+                    mapGetter.setWidget(mapWidget);
+                }
+            }
+        }
+
+        pinch.maximumScale: 2
+        pinch.minimumScale: -2
+        onPinchFinished:
+        {
+            var currentScale = Math.round(pinch.scale)
+            if (currentScale != 0)
+            {
+                var zoomLevel = mapWidget.getMapScale()
+                zoomLevel += 1 - (currentScale < 0) * 2
+                mapWidget.setMapScale(zoomLevel)
             }
         }
     }
-
-    /*
-        Include map Here once Git has been correctly re-arranged
-    */
 
     Components.CommandBar
     {

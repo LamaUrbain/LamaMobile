@@ -30,6 +30,7 @@ Rectangle {
                 id: inputText
                 text: ViewsLogic.originTextControl.text
                 font.pixelSize: Constants.fontSize
+                textColor: "#000"
                 anchors.fill: parent
                 anchors.margins: parent.height * 0.3
                 onTextChanged: ViewsLogic.fillSuggestions(suggestionsModel, inputText.text)

@@ -61,6 +61,7 @@ Rectangle {
                         id: departureInput
                         text: "Position actuelle"
                         font.pixelSize: Constants.fontSize
+                        color: "#000"
                     }
                 }
             }
@@ -108,6 +109,7 @@ Rectangle {
                         id: arrivalInput
                         text: "Recherche"
                         font.pixelSize: Constants.fontSize
+                        color: "#000"
                     }
                 }
             }
@@ -162,6 +164,7 @@ Rectangle {
                     {
                         id: recentLocationInput
                         font.pixelSize: Constants.fontSize
+                        textColor: "#000"
                         anchors.left: parent.left
                         anchors.top: parent.top
                         anchors.bottom: parent.bottom

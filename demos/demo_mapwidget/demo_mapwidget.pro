@@ -1,5 +1,8 @@
 SRC_PATH = ../../src
 
+OBJECTS_DIR = demo_mapwidget_obj
+MOC_DIR = demo_mapwidget_moc
+
 TEMPLATE = app
 QT += qml quick
 

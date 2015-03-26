@@ -45,10 +45,118 @@ Rectangle
                 anchors.left: parent.left
                 anchors.right: parent.right
                 height: parent.height * 0.3
+
+                Grid
+                {
+                    id: mobilityMeanSelection
+                    anchors.left: parent.left
+                    anchors.leftMargin: parent.width * 0.05
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    width: parent.width * 0.7
+                    columns: 2
+                    rows: 3
+
+                    Controls.IconedCheckBox
+                    {
+                        id: cbpied
+                        text: "A pied"
+                        Component.onCompleted: setMeanIcon("onfoot")
+                        onChecked:
+                        {
+                            mobilityDiagram.setMeanUsage(MobilityDiagram.ONFOOT, isChecked)
+                        }
+                    }
+                    Controls.IconedCheckBox
+                    {
+                        id: cbroues
+                        text: "Deux roues"
+                        Component.onCompleted: setMeanIcon("bike")
+                        onChecked:
+                        {
+                            mobilityDiagram.setMeanUsage(MobilityDiagram.BIKE, isChecked)
+                        }
+                    }
+                    Controls.IconedCheckBox
+                    {
+                        id: cbVoiture
+                        text: "Voiture"
+                        Component.onCompleted: setMeanIcon("vehicle")
+                        onChecked:
+                        {
+                            mobilityDiagram.setMeanUsage(MobilityDiagram.VEHICLE, isChecked)
+                        }
+                    }
+                    Controls.IconedCheckBox
+                    {
+                        id: cbBus
+                        text: "Bus"
+                        Component.onCompleted: setMeanIcon("bus")
+                        onChecked:
+                        {
+                            mobilityDiagram.setMeanUsage(MobilityDiagram.BUS, isChecked)
+                        }
+                    }
+                    Controls.IconedCheckBox
+                    {
+                        id: cbTramway
+                        text: "Tramway"
+                        Component.onCompleted: setMeanIcon("tramway")
+                        onChecked:
+                        {
+                            mobilityDiagram.setMeanUsage(MobilityDiagram.TRAMWAY, isChecked)
+                        }
+                    }
+                    Controls.IconedCheckBox
+                    {
+                        id: cbTrain
+                        text: "Train"
+                        Component.onCompleted: setMeanIcon("train")
+                        onChecked:
+                        {
+                            mobilityDiagram.setMeanUsage(MobilityDiagram.TRAIN, isChecked)
+                        }
+                    }
+                }
+
+                Rectangle
+                {
+                    anchors.right: parent.right
+                    anchors.left: mobilityMeanSelection.right
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+
+                    Column
+                    {
+                        spacing: 10
+                        anchors.centerIn: parent
+                        Button
+                        {
+                            text: "Ré-initializer"
+                            onClicked:
+                            {
+                                mobilityDiagram.resetDiagram()
+                                cbpied.isChecked = true
+                                cbroues.isChecked = true
+                                cbVoiture.isChecked = true
+                                cbBus.isChecked = true
+                                cbTramway.isChecked = true
+                                cbTrain.isChecked = true
+                            }
+                        }
+
+                        Button
+                        {
+                            text: "Ré-équilibrer"
+                            onClicked: mobilityDiagram.rearrangeDiagram()
+                        }
+                    }
+                }
             }
 
             MobilityDiagram
             {
+                id: mobilityDiagram
                 anchors.margins: parent.width * 0.06
                 anchors.top: mobilitySettings.bottom
                 anchors.left: parent.left

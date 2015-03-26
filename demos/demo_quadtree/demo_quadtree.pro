@@ -1,5 +1,8 @@
 SRC_PATH = ../../src
 
+OBJECTS_DIR = demo_quadtree_obj
+MOC_DIR = demo_quadtree_moc
+
 TEMPLATE = app
 QT += qml quick
 

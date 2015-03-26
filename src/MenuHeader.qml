@@ -7,6 +7,7 @@ Rectangle
     property alias profilePicture: thumbnail.source
     property alias profileName: login.text
     property alias profileTitle: title.text
+    property alias showSettingsButton: settingsButton.visible
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: parent.right
@@ -25,6 +26,13 @@ Rectangle
             id: thumbnail
             anchors.fill: parent
             anchors.margins: parent.radius / 2
+            onSourceChanged:
+            {
+                if (source === null || status == Image.Error)
+                {
+                    source = "qrc:/Assets/Images/defaultAvatar.png"
+                }
+            }
         }
     }
 
@@ -58,6 +66,7 @@ Rectangle
 
         Controls.SettingsButton
         {
+            id: settingsButton
             height: parent.height * 0.4
             width: height
 

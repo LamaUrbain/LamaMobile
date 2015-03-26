@@ -4,13 +4,13 @@
 #include "mobilitydiagram.h"
 
 #define CURSOR_LEN          (10)
-#define DRAGBAND_LEN        (5)
+#define DRAGBAND_LEN        (10)
 #define ATOQ(D_ANG)         ((D_ANG) * 16.)                 // For some reason QT angles are 1/16 degree
 #define ATOP(PERCENT)       (((PERCENT) * 100.) / 360.)
 #define PI                  (3.14159265359)
 #define PI2                 (PI / 2)
 
-#define MOVE_MODE_SMASHALL
+//#define MOVE_MODE_SMASHALL
 
 MobilityDiagram::MobilityDiagram(QQuickPaintedItem *parent) :
     QQuickPaintedItem(parent)
@@ -27,12 +27,7 @@ MobilityDiagram::MobilityDiagram(QQuickPaintedItem *parent) :
         {TRAIN, QColor(100, 100, 100)}
     };
 
-    _meanCount = _meanColors.size();
-    for (auto it = _meanColors.begin(); it != _meanColors.end(); ++it)
-    {
-        _proportions.insert(it.key(), 360. / static_cast<double>(_meanCount));
-        _selectedMeans.insert(it.key(), true);
-    }
+    resetDiagram();
 }
 
 MobilityDiagram::~MobilityDiagram()
@@ -41,7 +36,7 @@ MobilityDiagram::~MobilityDiagram()
 
 void MobilityDiagram::setColors(QMap<MobilityMean, QColor> const &newColors)
 {
-    if (newColors.size() != static_cast<int>(_meanCount))
+    if (newColors.size() != static_cast<int>(_meanColors.count()))
         return;
     _meanColors = newColors;
 }
@@ -55,10 +50,11 @@ void MobilityDiagram::setSizes(int widthNheight)
 void MobilityDiagram::setProportion(MobilityDiagram::MobilityMean mean, double degrees)
 {
 #ifdef MOVE_MODE_SMASHALL
+    // obselete
     double diff = _proportions.value(mean);
     degrees = qBound<double>(0., degrees, 360.);
     _proportions.insert(mean, degrees);
-    diff = (diff - degrees) / (_meanCount - 1);
+    diff = (diff - degrees) / (_selectedMeans.count() - 1);
     double val;
     for (auto it = _proportions.begin(); it != _proportions.end(); ++it)
         if (it.key() != mean && _isMeanUsed(it.key()))
@@ -67,17 +63,29 @@ void MobilityDiagram::setProportion(MobilityDiagram::MobilityMean mean, double d
             _proportions.insert(it.key(), qBound<double>(0., val, 360.));
         }
 #else
-    double diff = _proportions.value(mean);
+    auto itb = _proportions.find(mean);
+    auto it = itb;
+    while (!_isMeanUsed(it.key()) || it == itb)
+    {
+        if (it == _proportions.begin())
+            it = _proportions.end();
+        it--;
+        if (it == itb)
+            return;
+    }
+
     degrees = qBound<double>(0., degrees, 360.);
-    diff = (diff - degrees);
-    double val;
-    auto it = _proportions.find(mean);
-    if (it == _proportions.end())
-        it = _proportions.begin();
-    it++;
-    val = *it + diff;
-    _proportions.insert(mean, qBound<double>(0., degrees, 360.));
-    _proportions.insert(it.key(), qBound<double>(0., val, 360.));
+    double diff = _proportions.value(mean) - degrees;
+    double val = *it + diff * 2;
+    diff = degrees - diff;
+
+    const int limit = 360 - (_getCurrentMeanCount() * DRAGBAND_LEN);
+    if (val < DRAGBAND_LEN || val > limit
+        || diff < DRAGBAND_LEN || val > limit)
+        return;
+
+    _proportions.insert(mean, diff);
+    _proportions.insert(it.key(), val);
 #endif
 }
 
@@ -205,20 +213,24 @@ bool MobilityDiagram::_isPointInDiagram(const QPoint &point)
     const int size = _dimension.width() / 2;
     const int x = point.x() - size, y = size - point.y();
 
-    if (pow(x, 2) + pow(y, 2) < pow(size + CURSOR_LEN * _meanCount, 2))
+    if (pow(x, 2) + pow(y, 2) < pow(size + CURSOR_LEN * _selectedMeans.count(), 2))
         return (true);
     return (false);
 }
 
-void MobilityDiagram::_onBoxClicked(MobilityDiagram::MobilityMean mean, bool checked)
+void MobilityDiagram::setMeanUsage(MobilityDiagram::MobilityMean mean, bool checked)
 {
     const int alterationSign = -1 + 2 * checked;
     _selectedMeans.insert(mean, checked);
-    _meanCount += alterationSign;
-    auto alteredSpace = (_proportions.value(mean) / _meanCount) * -alterationSign;
+
+    double arrangedSpace = ((alterationSign == -1) ? _proportions.value(mean) : 360);
+    arrangedSpace /= _getCurrentMeanCount();
+
+    const double addCurr = static_cast<double>(alterationSign == -1);
     for (auto it = _proportions.begin(); it != _proportions.end(); ++it)
         if (_isMeanUsed(it.key()))
-            _proportions.insert(it.key(), *it + alteredSpace);
+            _proportions.insert(it.key(), *it * addCurr + arrangedSpace);
+
     update();
 }
 
@@ -227,12 +239,23 @@ bool MobilityDiagram::_isMeanUsed(MobilityDiagram::MobilityMean mean)
     return (_selectedMeans.value(mean));
 }
 
+unsigned int MobilityDiagram::_getCurrentMeanCount() const
+{
+    unsigned int count = 0;
+    for (auto it = _selectedMeans.begin(); it != _selectedMeans.end(); ++it)
+    {
+        count += static_cast<unsigned int>(*it);
+    }
+    return (count);
+}
+
 
 void MobilityDiagram::resetDiagram()
 {
+    const double basePart = 360 / static_cast<double>(_meanColors.count());
     for (auto it = _meanColors.begin(); it != _meanColors.end(); ++it)
     {
-        _proportions.insert(it.key(), 360. / static_cast<double>(_meanCount));
+        _proportions.insert(it.key(), basePart);
         _selectedMeans.insert(it.key(), true);
     }
     update();
@@ -247,7 +270,11 @@ QMap<MobilityDiagram::MobilityMean, double> MobilityDiagram::getPercents() const
     return (ret);
 }
 
-void MobilityDiagram::on_pushButton_released()
+void MobilityDiagram::rearrangeDiagram()
 {
-    resetDiagram();
+    const double basePart = 360 / static_cast<double>(_getCurrentMeanCount());
+    for (auto it = _meanColors.begin(); it != _meanColors.end(); ++it)
+        if (_isMeanUsed(it.key()))
+            _proportions.insert(it.key(), basePart);
+    update();
 }
