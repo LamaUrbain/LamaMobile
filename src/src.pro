@@ -8,7 +8,8 @@ SOURCES += main.cpp \
     mobilitydiagram.cpp \
     mapgetter.cpp \
     mapwidget.cpp \
-    mapextension.cpp
+    mapextension.cpp \
+    servicesbase.cpp
 RESOURCES += qml.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
@@ -21,4 +22,5 @@ HEADERS += \
     mobilitydiagram.h \
     mapgetter.h \
     mapwidget.h \
-    mapextension.h
+    mapextension.h \
+    servicesbase.h
