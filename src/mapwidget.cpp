@@ -1,5 +1,4 @@
 #include <cmath>
-#include <qt>
 #include <QPainter>
 #include "mapwidget.h"
 #include "mapwidgetprivate.h"
