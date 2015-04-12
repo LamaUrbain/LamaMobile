@@ -54,7 +54,12 @@ void ServicesBase::onRequestFinished()
         QJSValue callback = _pending.value(reply);
 
         if (callback.isCallable())
-            callback.call(QJSValueList() << QJSValue(QString(reply->readAll())));
+        {
+            QJSValueList args;
+            args << QJSValue(static_cast<int>(reply->error()))
+                 << QJSValue(QString(reply->readAll()));
+            callback.call(args);
+        }
 
         _pending.remove(reply);
         reply->deleteLater();
