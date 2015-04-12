@@ -44,6 +44,7 @@ Rectangle {
         anchors.top: title.bottom
         anchors.topMargin: menuSection.parent.height * 0.03
         anchors.bottom: parent.bottom
+        anchors.leftMargin: menuSection.parent.width * 0.05
         spacing: anchors.topMargin
         delegate:
         Column

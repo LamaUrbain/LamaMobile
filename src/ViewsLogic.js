@@ -4,7 +4,7 @@
 function fillRecentLocations(listModel, needle)
 {
     listModel.clear();
-    if (needle.length > 0)
+    if (listModel.count === 0 || needle.length > 0)
         for (var idx = 0; idx < ViewsData.recentAddressList.length; ++idx)
             if (ViewsData.recentAddressList[idx].toLowerCase().indexOf(needle.toLowerCase()) > -1)
                 listModel.append(

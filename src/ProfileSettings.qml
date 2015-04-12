@@ -38,6 +38,46 @@ Rectangle
             radius: 10
             anchors.margins: 10
 
+            Column
+            {
+                anchors.margins: 20
+                anchors.fill: parent
+                spacing: 15
+                Text
+                {
+                    font.pixelSize: Constants.fontSize
+                    font.bold: true
+                    text: "Identifiant de compte:"
+                }
+                TextField
+                {
+                    id: loginField
+                    font.pixelSize: Constants.fontSize
+                    textColor: "#000"
+                    width: menuContent.width * 0.9
+                }
+                Text
+                {
+                    font.pixelSize: Constants.fontSize
+                    font.bold: true
+                    text: "Mot de passe:"
+                }
+                TextField
+                {
+                    id: passwordField
+                    font.pixelSize: Constants.fontSize
+                    textColor: "#000"
+                    width: menuContent.width * 0.9
+                }
+                Button
+                {
+                    text: "Authentification"
+                    onClicked:
+                    {
+                        ViewsData.profileName = loginField.text
+                    }
+                }
+            }
         }
     }
 

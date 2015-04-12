@@ -59,7 +59,7 @@ Rectangle {
                     TextInput
                     {
                         id: departureInput
-                        text: "Position actuelle"
+                        text: "[Position actuelle]"
                         font.pixelSize: Constants.fontSize
                         color: "#000"
                     }
@@ -107,7 +107,6 @@ Rectangle {
                     TextInput
                     {
                         id: arrivalInput
-                        text: "Recherche"
                         font.pixelSize: Constants.fontSize
                         color: "#000"
                     }
@@ -223,7 +222,13 @@ Rectangle {
                             }
                         }
                     }
+
                     highlight: Rectangle { color: "#80CFBF"; radius: 5 }
+
+                    Component.onCompleted:
+                    {
+                        ViewsLogic.fillRecentLocations(recentLocationModel, recentLocationInput.text)
+                    }
                 }
             }
         }
