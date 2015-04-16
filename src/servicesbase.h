@@ -6,11 +6,15 @@
 #include <QJSValue>
 #include <QNetworkAccessManager>
 
+#include <functional>
+
 class ServicesBase : public QObject
 {
     Q_OBJECT
 
 public:
+    typedef std::function<void(int, QString)> CallbackType;
+
     ServicesBase(QObject *parent = 0);
     virtual ~ServicesBase();
 
@@ -18,19 +22,21 @@ public slots:
     void abortPendingRequests();
 
 protected:
-    void getRequest(const QUrl &url, QJSValue callback);
-    void postRequest(const QUrl &url, const QByteArray &data, QJSValue callback);
-    void deleteRequest(const QUrl &url, QJSValue callback);
+    CallbackType fromJSCallback(QJSValue callback);
+
+    void getRequest(const QUrl &url, CallbackType callback);
+    void postRequest(const QUrl &url, const QByteArray &data, CallbackType callback);
+    void deleteRequest(const QUrl &url, CallbackType callback);
 
 private slots:
     void onRequestFinished();
 
 private:
-    void sendRequest(QNetworkAccessManager::Operation type, const QUrl &url, const QByteArray &data, QJSValue callback);
+    void sendRequest(QNetworkAccessManager::Operation type, const QUrl &url, const QByteArray &data, CallbackType callback);
 
 private:
     QObject *_callbackObj;
-    QMap<QNetworkReply *, QJSValue> _pending;
+    QMap<QNetworkReply *, CallbackType> _pending;
     QNetworkAccessManager _manager;
 };
 

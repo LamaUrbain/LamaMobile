@@ -13,7 +13,7 @@ ServicesBase::~ServicesBase()
 
 void ServicesBase::abortPendingRequests()
 {
-    for (QMap<QNetworkReply *, QJSValue>::iterator it = _pending.begin(); it != _pending.end(); )
+    for (QMap<QNetworkReply *, CallbackType>::iterator it = _pending.begin(); it != _pending.end(); )
     {
         QNetworkReply *reply = it.key();
 
@@ -30,17 +30,31 @@ void ServicesBase::abortPendingRequests()
     }
 }
 
-void ServicesBase::getRequest(const QUrl &url, QJSValue callback)
+ServicesBase::CallbackType ServicesBase::fromJSCallback(QJSValue callback)
+{
+    CallbackType cb = [callback] (int errorType, QString jsonStr) mutable
+    {
+        if (callback.isCallable())
+        {
+            QJSValueList args;
+            args << QJSValue(errorType) << QJSValue(jsonStr);
+            callback.call(args);
+        }
+    };
+    return cb;
+}
+
+void ServicesBase::getRequest(const QUrl &url, CallbackType callback)
 {
     sendRequest(QNetworkAccessManager::GetOperation, url, QByteArray(), callback);
 }
 
-void ServicesBase::postRequest(const QUrl &url, const QByteArray &data, QJSValue callback)
+void ServicesBase::postRequest(const QUrl &url, const QByteArray &data, CallbackType callback)
 {
     sendRequest(QNetworkAccessManager::PostOperation, url, data, callback);
 }
 
-void ServicesBase::deleteRequest(const QUrl &url, QJSValue callback)
+void ServicesBase::deleteRequest(const QUrl &url, CallbackType callback)
 {
     sendRequest(QNetworkAccessManager::DeleteOperation, url, QByteArray(), callback);
 }
@@ -51,22 +65,14 @@ void ServicesBase::onRequestFinished()
 
     if (reply && _pending.contains(reply))
     {
-        QJSValue callback = _pending.value(reply);
-
-        if (callback.isCallable())
-        {
-            QJSValueList args;
-            args << QJSValue(static_cast<int>(reply->error()))
-                 << QJSValue(QString(reply->readAll()));
-            callback.call(args);
-        }
-
+        CallbackType callback = _pending.value(reply);
+        callback(static_cast<int>(reply->error()), QString(reply->readAll()));
         _pending.remove(reply);
         reply->deleteLater();
     }
 }
 
-void ServicesBase::sendRequest(QNetworkAccessManager::Operation type, const QUrl &url, const QByteArray &data, QJSValue callback)
+void ServicesBase::sendRequest(QNetworkAccessManager::Operation type, const QUrl &url, const QByteArray &data, CallbackType callback)
 {
     QNetworkRequest request(url);
     QNetworkReply *reply = NULL;

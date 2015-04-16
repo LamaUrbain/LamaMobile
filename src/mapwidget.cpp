@@ -45,7 +45,6 @@ MapWidgetPrivate::MapWidgetPrivate(MapWidget *ptr)
     q->setOpaquePainting(true);
     q->setFillColor(Qt::white);
 
-
     _tilesNumber = pow(2.0, _scale);
     updateCenterValues();
 }

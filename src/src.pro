@@ -11,7 +11,8 @@ SOURCES += main.cpp \
     mapextension.cpp \
     servicesbase.cpp \
     itineraryservices.cpp \
-    userservices.cpp
+    userservices.cpp \
+    mapoverlayextension.cpp
 RESOURCES += qml.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
@@ -27,4 +28,7 @@ HEADERS += \
     mapextension.h \
     servicesbase.h \
     itineraryservices.h \
-    userservices.h
+    userservices.h \
+    mapoverlayextension.h \
+    mapwidgetprivate.h \
+    quadtree.h
