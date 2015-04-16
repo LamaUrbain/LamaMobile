@@ -5,7 +5,6 @@
 #include "mapgetter.h"
 #include "mapextension.h"
 #include "mapoverlayextension.h"
-#include "servicesbase.h"
 
 struct WhirlLessThan
 {
@@ -509,6 +508,7 @@ void MapWidgetPrivate::displayItinerary(int id)
     _extensions.clear();
 
     MapOverlayExtension *ext = new MapOverlayExtension(q);
+    ext->setItinerary(id);
     q->addExtension(ext);
 }
 
@@ -526,6 +526,11 @@ void MapWidgetPrivate::addExtension(MapExtension *ext)
 void MapWidgetPrivate::removeExtension(MapExtension *ext)
 {
     _extensions.removeAll(ext);
+}
+
+MapGetter *MapWidgetPrivate::getMapGetter() const
+{
+    return _mapGetter;
 }
 
 MapTile::MapTile()

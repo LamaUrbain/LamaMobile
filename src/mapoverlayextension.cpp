@@ -1,6 +1,12 @@
 #include <cmath>
 #include <QPixmap>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonParseError>
+#include <QJsonObject>
 #include "mapoverlayextension.h"
+#include "itineraryservices.h"
+#include "mapgetter.h"
 
 static const int indicatorHalfWidth = 24;
 static const int indicatorHeight = 48;
@@ -9,12 +15,18 @@ MapOverlayExtension::MapOverlayExtension(MapWidget *map)
     : MapExtension(map),
       _indicator(":/images/map_indicator.png"),
       _selectedIndicator(":/images/map_indicator_selected.png"),
-      _selectedPoint(-1)
+      _selectedPoint(-1),
+      _itineraryId(-1)
 {
+    for (int i = 0; i < 20; ++i)
+        _itineraryTiles[i] = NULL;
+
+    getMapPrivate()->getMapGetter()->addExtension(this);
 }
 
 MapOverlayExtension::~MapOverlayExtension()
 {
+    getMapPrivate()->getMapGetter()->removeExtension(this);
 }
 
 void MapOverlayExtension::addTile(const MapTile &tile)
@@ -104,10 +116,74 @@ int MapOverlayExtension::pointAt(const QPoint &pos) const
     return -1;
 }
 
+int MapOverlayExtension::getItinerary() const
+{
+    return _itineraryId;
+}
+
+void MapOverlayExtension::setItinerary(int id)
+{
+    _itineraryId = id;
+    connect(_map, SIGNAL(mapScaleChanged()), this, SLOT(updateTiles()));
+    updateTiles();
+}
+
+void MapOverlayExtension::updateTiles()
+{
+    int currentScale = _map->getMapScale();
+
+    if (_itineraryTiles[currentScale] == NULL)
+    {
+        ItineraryServices *services = ItineraryServices::getInstance();
+        services->getItinerary(_itineraryId, currentScale, [this, currentScale] (int errorType, QString jsonStr) mutable
+        {
+            if (errorType == 0)
+            {
+                _itineraryTiles[currentScale] = new QList<QPoint>();
+
+                QJsonParseError error;
+                QJsonDocument document = QJsonDocument::fromJson(jsonStr.toLatin1(), &error);
+
+                if (error.error != QJsonParseError::NoError)
+                    qDebug() << jsonStr << ":" << error.errorString() << "at pos" << error.offset;
+                else if (!document.isArray())
+                    qDebug() << jsonStr << ": not an array";
+                else
+                {
+                    QJsonArray array = document.array();
+                    for (QJsonArray::const_iterator it = array.constBegin(); it != array.constEnd(); ++it)
+                    {
+                        QJsonObject obj = (*it).toObject();
+
+                        if (obj.contains("x") && obj.contains("y"))
+                        {
+                            int x = obj.value("x").toString().toInt();
+                            int y = obj.value("y").toString().toInt();
+
+                            qDebug() << "Receive:" << x << y;
+
+                            _itineraryTiles[currentScale]->append(QPoint(x, y));
+                        }
+                    }
+                }
+            }
+        });
+    }
+}
+
+const QList<QPoint> &MapOverlayExtension::getMissingTiles(int scale) const
+{
+    return _missing[scale];
+}
+
 void MapOverlayExtension::begin(QPainter *painter)
 {
     Q_UNUSED(painter);
+
     _pending.clear();
+
+    for (int i = 0; i < 20; ++i)
+        _missing[i].clear();
 }
 
 void MapOverlayExtension::drawTile(QPainter *painter, const QPoint &pos, const QPoint &tilePos)
@@ -125,6 +201,8 @@ void MapOverlayExtension::drawTile(QPainter *painter, const QPoint &pos, const Q
         const MapTile &tile = it.value();
         painter->drawPixmap(tilePos, tile.pixmap);
     }
+    else if (_itineraryTiles[scale] && _itineraryTiles[scale]->contains(pos))
+        _missing[scale].push_back(pos);
 
     while (pit != _tilePoints[scale].constEnd() && pit.key() == pos)
     {
@@ -146,6 +224,11 @@ void MapOverlayExtension::end(QPainter *painter)
         const QPoint &pos = (*it).first;
         painter->drawPixmap(pos, (*it).second == _selectedPoint ? _selectedIndicator : _indicator);
     }
+
+    quint8 scale = _map->getMapScale();
+
+    if (!_missing[scale].isEmpty())
+        emit tilesRequired();
 }
 
 bool MapOverlayExtension::mousePressEvent(QMouseEvent *event)

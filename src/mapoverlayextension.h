@@ -23,6 +23,9 @@ public:
     void movePoint(int pos, const QPointF &coords);
     void removePoint(int pos);
 
+    int getItinerary() const;
+    void setItinerary(int id);
+
     virtual void begin(QPainter *painter);
     virtual void drawTile(QPainter *painter, const QPoint &pos, const QPoint &tilePos);
     virtual void end(QPainter *painter);
@@ -31,8 +34,14 @@ public:
     virtual bool mouseReleaseEvent(QMouseEvent *event);
     virtual bool mouseMoveEvent(QMouseEvent *event);
 
+    const QList<QPoint> &getMissingTiles(int scale) const;
+
 signals:
+    void tilesRequired();
     void pointMoved(int point, QPointF newCoords);
+
+private slots:
+    void updateTiles();
 
 private:
     void onTilesChanged();
@@ -50,6 +59,10 @@ private:
     QPixmap _indicator;
     QPixmap _selectedIndicator;
     int _selectedPoint;
+
+    QList<QPoint> *_itineraryTiles[20];
+    QList<QPoint> _missing[20];
+    int _itineraryId;
 };
 
 #endif // MAPOVERLAYEXTENSION_H

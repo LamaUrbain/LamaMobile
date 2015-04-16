@@ -6,6 +6,7 @@
 #include <QPoint>
 
 class MapWidget;
+class MapOverlayExtension;
 
 class MapGetter : public QObject
 {
@@ -15,7 +16,7 @@ private:
     struct Tile
     {
         Tile();
-        Tile(const QPoint &p, quint8 s);
+        Tile(const QPoint &p, quint8 s, MapOverlayExtension *ext = 0);
         Tile(const Tile &other);
         Tile &operator=(const Tile &other);
         bool operator==(const Tile &other);
@@ -23,6 +24,7 @@ private:
         QPoint pos;
         quint8 scale;
         QNetworkReply *reply;
+        MapOverlayExtension *extension;
     };
 
     struct Getter
@@ -34,6 +36,10 @@ private:
 public:
     MapGetter(QObject *parent = 0);
     virtual ~MapGetter();
+
+    const QList<MapOverlayExtension *> &getExtensions() const;
+    void addExtension(MapOverlayExtension *ext);
+    void removeExtension(MapOverlayExtension *ext);
 
 public slots:
     void setWidget(MapWidget *widget);
@@ -53,6 +59,7 @@ private:
     QList<Tile> _pending;
     QList<Tile> _errors;
     QList<QNetworkReply *> _replies;
+    QList<MapOverlayExtension *> _extensions;
 };
 
 #endif // MAPGETTER_H

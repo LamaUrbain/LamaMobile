@@ -57,6 +57,8 @@ public:
     void addExtension(MapExtension *ext);
     void removeExtension(MapExtension *ext);
 
+    MapGetter *getMapGetter() const;
+
 private:
     void updateCenterValues();
     void updateCenter();
