@@ -54,6 +54,8 @@ signals:
     void mapTileRequired();
 
 public slots:
+    void displayItinerary(int id);
+
     quint8 getMapScale() const;
     void setMapScale(quint8 scale);
 

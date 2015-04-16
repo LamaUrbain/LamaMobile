@@ -587,6 +587,11 @@ void MapWidget::repaint()
     d->displayChanged();
 }
 
+void MapWidget::displayItinerary(int id)
+{
+    Q_UNUSED(id);
+}
+
 quint8 MapWidget::getMapScale() const
 {
     Q_D(const MapWidget);
