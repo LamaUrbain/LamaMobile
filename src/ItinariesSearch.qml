@@ -62,6 +62,8 @@ Rectangle {
                         text: "[Position actuelle]"
                         font.pixelSize: Constants.fontSize
                         color: "#000"
+                        clip: true
+                        anchors.right: searchInputs.right;
                     }
                 }
             }
@@ -109,6 +111,8 @@ Rectangle {
                         id: arrivalInput
                         font.pixelSize: Constants.fontSize
                         color: "#000"
+                        clip: true
+                        anchors.right: searchInputs.right;
                     }
                 }
             }

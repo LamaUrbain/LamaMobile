@@ -35,11 +35,19 @@ function onItineraryCreateResponse(statusCode, jsonStr)
         onIniteraryRequestFailure(statusCode, "Malheureusement le llama n'a pas trouvé de chemain")
 }
 
-function setWaypoints(mapView, departure, arrival)
+function setWaypoints(mapView, departure, arrival, points)
 {
     var points = new Array
-    points.push(departure)
-    points.push(arrival)
+
+    //points.push(departure)
+    points.push("{ type: \”coor​d\”, content: {\"latitude\": 48.815756, \"longitude\": 2.362841} }")
+    //points.push("{ type: \”coor​d\”, content: {\"latitude\": 48.814775, \"longitude\": 2.362305} }")
+    if (points && points.constructor === Array)
+        for (id = 0; index < points.length; ++id)
+            points.push(points)
+    //points.push(arrival)
+    points.push("{ type: \”coor​d\”, content: {\"latitude\": 48.812018, \"longitude\": 2.361859} }")
+
     itineraryServices.abortPendingRequests()
     itineraryServices.createItinerary(points, onItineraryCreateResponse)
 }
