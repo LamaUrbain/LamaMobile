@@ -12,14 +12,6 @@ Window {
         anchors.fill: parent
         mapScale: 15
 
-        MapGetter {
-            id: mapGetter
-
-            Component.onCompleted: {
-                mapGetter.setWidget(mapWidget);
-            }
-        }
-
         ItineraryStub {
             id: itineraryStub
 

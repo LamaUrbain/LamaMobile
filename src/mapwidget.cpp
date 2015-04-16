@@ -2,7 +2,10 @@
 #include <QPainter>
 #include "mapwidget.h"
 #include "mapwidgetprivate.h"
+#include "mapgetter.h"
 #include "mapextension.h"
+#include "mapoverlayextension.h"
+#include "servicesbase.h"
 
 struct WhirlLessThan
 {
@@ -36,7 +39,8 @@ MapWidgetPrivate::MapWidgetPrivate(MapWidget *ptr)
       _scrollValueSet(false),
       _wheeling(false),
       _changed(true),
-      _currentWheel(0)
+      _currentWheel(0),
+      _mapGetter(new MapGetter)
 {
     Q_Q(MapWidget);
 
@@ -53,6 +57,12 @@ MapWidgetPrivate::~MapWidgetPrivate()
 {
     qDeleteAll(_extensions);
     _extensions.clear();
+}
+
+void MapWidgetPrivate::initialize()
+{
+    Q_Q(MapWidget);
+    _mapGetter->setWidget(q);
 }
 
 void MapWidgetPrivate::displayChanged()
@@ -491,6 +501,17 @@ QSizeF MapWidgetPrivate::tileSize(const QPoint &pos) const
     return size;
 }
 
+void MapWidgetPrivate::displayItinerary(int id)
+{
+    Q_Q(MapWidget);
+
+    qDeleteAll(_extensions);
+    _extensions.clear();
+
+    MapOverlayExtension *ext = new MapOverlayExtension(q);
+    q->addExtension(ext);
+}
+
 const QList<MapExtension *> &MapWidgetPrivate::getExtension() const
 {
     return _extensions;
@@ -537,6 +558,8 @@ MapWidget::MapWidget(QQuickItem *parent)
     : QQuickPaintedItem(parent),
       d_ptr(new MapWidgetPrivate(this))
 {
+    Q_D(MapWidget);
+    d->initialize();
 }
 
 MapWidget::~MapWidget()
@@ -588,7 +611,8 @@ void MapWidget::repaint()
 
 void MapWidget::displayItinerary(int id)
 {
-    Q_UNUSED(id);
+    Q_D(MapWidget);
+    d->displayItinerary(id);
 }
 
 quint8 MapWidget::getMapScale() const

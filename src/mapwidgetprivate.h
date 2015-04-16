@@ -5,6 +5,8 @@
 #include "mapwidget.h"
 #include "quadtree.h"
 
+class MapGetter;
+
 class MapWidgetPrivate
 {
     Q_DECLARE_PUBLIC(MapWidget)
@@ -15,6 +17,7 @@ public:
     MapWidgetPrivate(MapWidget *ptr);
     virtual ~MapWidgetPrivate();
 
+    void initialize();
     void displayChanged();
 
     void addTile(const MapTile &tile);
@@ -47,6 +50,8 @@ public:
     QPoint pixelsFromCoords(const QPointF &coords) const;
     QPointF coordsFromPixels(const QPoint &pos) const;
     QSizeF tileSize(const QPoint &pos) const;
+
+    void displayItinerary(int id);
 
     const QList<MapExtension *> &getExtension() const;
     void addExtension(MapExtension *ext);
@@ -88,6 +93,7 @@ private:
     int _currentWheel;
     QPixmap _cache;
     QList<QPoint> _missing;
+    MapGetter *_mapGetter;
 };
 
 inline uint qHash(const QPoint &key)

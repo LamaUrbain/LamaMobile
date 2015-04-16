@@ -10,14 +10,6 @@ Window {
     MapWidget {
         id: mapWidget
         anchors.fill: parent
-
-        MapGetter {
-            id: mapGetter
-
-            Component.onCompleted: {
-                mapGetter.setWidget(mapWidget);
-            }
-        }
     }
 
     Rectangle {

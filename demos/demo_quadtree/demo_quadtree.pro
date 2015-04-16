@@ -5,6 +5,7 @@ MOC_DIR = demo_quadtree_moc
 
 TEMPLATE = app
 QT += qml quick
+CONFIG += c++11
 
 INCLUDEPATH += $$SRC_PATH
 
