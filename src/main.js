@@ -35,7 +35,7 @@ function onItineraryCreateResponse(statusCode, jsonStr)
         onIniteraryRequestFailure(statusCode, "Malheureusement le llama n'a pas trouvé de chemain")
 }
 
-function setWaypoints(mapView, departure, arrival, points)
+function setWaypoints(mapView, departure, arrival, waypoints)
 {
     var points = new Array
 
@@ -43,8 +43,8 @@ function setWaypoints(mapView, departure, arrival, points)
     points.push("{ type: \”coor​d\”, content: {\"latitude\": 48.815756, \"longitude\": 2.362841} }")
     //points.push("{ type: \”coor​d\”, content: {\"latitude\": 48.814775, \"longitude\": 2.362305} }")
     if (points && points.constructor === Array)
-        for (id = 0; index < points.length; ++id)
-            points.push(points)
+        for (var id = 0; index < points.length; ++id)
+            points.push(waypoints[i])
     //points.push(arrival)
     points.push("{ type: \”coor​d\”, content: {\"latitude\": 48.812018, \"longitude\": 2.361859} }")
 

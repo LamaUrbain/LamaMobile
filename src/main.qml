@@ -51,7 +51,7 @@ Window {
     {
         JSModule.navigateTo("Map");
         if (departure !== null && arrival !== null)
-            JSModule.setWaypoints(mapView, departure, arrival);
+            JSModule.setWaypoints(mapView, departure, arrival, null);
     }
 
     function navigateBack()

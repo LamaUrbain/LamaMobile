@@ -50,8 +50,3 @@ function leaveDisplay(selection)
         originTextControl.text = selection
     suggestionsOverLayView.destroy();
 }
-
-function wrapInJsonPoint(latitude, longitude)
-{
-    return ("{ type: \”coor​d\”, content: {\"latitude\": " + latitude + ", \"longitude\": " + longitude + "} }")
-}
