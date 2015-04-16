@@ -37,16 +37,27 @@ function onItineraryCreateResponse(statusCode, jsonStr)
 
 function setWaypoints(mapView, departure, arrival, waypoints)
 {
-    var points = new Array
+    var points = new Array;
+
+    var dep = new Object;
+    dep["type"] = "coord";
+    dep["content"] = new Object;
+    dep["content"]["latitude"] = 49.8964;
+    dep["content"]["longitude"] = 2.2957;
+    points.push(dep);
+
+    var arr = new Object;
+    dep["type"] = "coord";
+    dep["content"] = new Object;
+    dep["content"]["latitude"] = 49.4337;
+    dep["content"]["longitude"] = 2.0888;
+    points.push(arr);
 
     //points.push(departure)
-    points.push("{ type: \”coor​d\”, content: {\"latitude\": 48.815756, \"longitude\": 2.362841} }")
-    //points.push("{ type: \”coor​d\”, content: {\"latitude\": 48.814775, \"longitude\": 2.362305} }")
-    if (points && points.constructor === Array)
-        for (var id = 0; index < points.length; ++id)
-            points.push(waypoints[i])
+    //if (points && points.constructor === Array)
+        //for (var id = 0; index < points.length; ++id)
+            //points.push(waypoints[i])
     //points.push(arrival)
-    points.push("{ type: \”coor​d\”, content: {\"latitude\": 48.812018, \"longitude\": 2.361859} }")
 
     itineraryServices.abortPendingRequests()
     itineraryServices.createItinerary(points, onItineraryCreateResponse)
