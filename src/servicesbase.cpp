@@ -83,6 +83,10 @@ void ServicesBase::sendRequest(QNetworkAccessManager::Operation type, const QUrl
             reply = _manager.get(request);
             break;
         case QNetworkAccessManager::PostOperation:
+            request.setRawHeader("User-Agent", "Lama Urbain");
+            request.setRawHeader("X-Custom-User-Agent", "Lama Urbain");
+            request.setRawHeader("Content-Type", "application/json");
+            request.setRawHeader("Content-Length", QByteArray::number(QString(data).size()));
             reply = _manager.post(request, data);
             break;
         case QNetworkAccessManager::DeleteOperation:
