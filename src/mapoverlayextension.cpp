@@ -165,6 +165,8 @@ void MapOverlayExtension::updateTiles()
                             _itineraryTiles[currentScale]->append(QPoint(x, y));
                         }
                     }
+
+                    _map->repaint();
                 }
             }
         });
