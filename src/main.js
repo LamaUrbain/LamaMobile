@@ -29,7 +29,7 @@ function onItineraryCreateResponse(statusCode, jsonStr)
     if (statusCode === 0)
     {
         var jsonObj = JSON.parse(jsonStr)
-        itineraryServices.displayItinerary(jsonObj["id"])
+        mapView.mapComponent.displayItinerary(jsonObj["id"])
     }
     else
         onIniteraryRequestFailure(statusCode, "Malheureusement le llama n'a pas trouvé de chemain")
