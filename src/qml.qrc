@@ -20,6 +20,7 @@
         <file>CommandBar.qml</file>
         <file>MenuHeader.qml</file>
         <file>MenuSection.qml</file>
+        <file>ErrorPopup.qml</file>
     </qresource>
     <qresource prefix="/Controls">
         <file>MenuButton.qml</file>

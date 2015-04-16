@@ -5,6 +5,7 @@ import "qrc:/Controls" as Controls
 import "ViewsData.js" as ViewsData
 
 Rectangle {
+    property alias mapComponent: mapWidget
     anchors.fill:  parent
 
     color: "#0F0"

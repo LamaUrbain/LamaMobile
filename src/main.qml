@@ -2,6 +2,7 @@ import QtQuick 2.2
 import QtQuick.Window 2.1
 import "main.js" as JSModule
 import "qrc:/Views" as Views
+import "qrc:/Components" as Components
 
 Window {
     id: mainView
@@ -19,6 +20,12 @@ Window {
         id: viewLoader
         anchors.fill: parent
     }
+
+    Components.ErrorPopup
+    {
+        id: errorPopup
+    }
+
 
     function navigateFromMenu(name)
     {
