@@ -157,8 +157,8 @@ void MapOverlayExtension::updateTiles()
 
                         if (obj.contains("x") && obj.contains("y"))
                         {
-                            int x = obj.value("x").toString().toInt();
-                            int y = obj.value("y").toString().toInt();
+                            int x = obj.value("x").toInt();
+                            int y = obj.value("y").toInt();
 
                             qDebug() << "Receive:" << x << y;
 
