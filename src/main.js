@@ -47,10 +47,10 @@ function setWaypoints(mapView, departure, arrival, waypoints)
     points.push(dep);
 
     var arr = new Object;
-    dep["type"] = "coord";
-    dep["content"] = new Object;
-    dep["content"]["latitude"] = 49.4337;
-    dep["content"]["longitude"] = 2.0888;
+    arr["type"] = "coord";
+    arr["content"] = new Object;
+    arr["content"]["latitude"] = 49.4337;
+    arr["content"]["longitude"] = 2.0888;
     points.push(arr);
 
     //points.push(departure)
