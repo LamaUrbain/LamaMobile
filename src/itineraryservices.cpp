@@ -108,21 +108,21 @@ void ItineraryServices::addDestination(int id, QString destination, int position
     addDestination(id, destination, position, fromJSCallback(callback));
 }
 
-void ItineraryServices::editDestination(int id, int position, QString destination, ServicesBase::CallbackType callback)
+void ItineraryServices::editDestination(int id, int oldPosition, int newPosition, QString destination, ServicesBase::CallbackType callback)
 {
-    QUrl url(QString("%1/itineraries/%2/destinations/%3/").arg(serverAddress).arg(id).arg(position));
+    QUrl url(QString("%1/itineraries/%2/destinations/%3/").arg(serverAddress).arg(id).arg(oldPosition));
 
     QUrlQuery query;
     query.addQueryItem("destination", destination);
-    query.addQueryItem("position", QString::number(position));
+    query.addQueryItem("position", QString::number(newPosition));
     url.setQuery(query.query());
 
     putRequest(url, QByteArray(), callback);
 }
 
-void ItineraryServices::editDestination(int id, int position, QString destination, QJSValue callback)
+void ItineraryServices::editDestination(int id, int oldPosition, int newPosition, QString destination, QJSValue callback)
 {
-    editDestination(id, position, destination, fromJSCallback(callback));
+    editDestination(id, oldPosition, newPosition, destination, fromJSCallback(callback));
 }
 
 void ItineraryServices::deleteDestination(int id, int position, ServicesBase::CallbackType callback)
