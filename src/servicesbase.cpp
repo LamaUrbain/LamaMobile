@@ -54,6 +54,11 @@ void ServicesBase::postRequest(const QUrl &url, const QByteArray &data, Callback
     sendRequest(QNetworkAccessManager::PostOperation, url, data, callback);
 }
 
+void ServicesBase::putRequest(const QUrl &url, const QByteArray &data, CallbackType callback)
+{
+    sendRequest(QNetworkAccessManager::PutOperation, url, data, callback);
+}
+
 void ServicesBase::deleteRequest(const QUrl &url, CallbackType callback)
 {
     sendRequest(QNetworkAccessManager::DeleteOperation, url, QByteArray(), callback);
@@ -88,6 +93,13 @@ void ServicesBase::sendRequest(QNetworkAccessManager::Operation type, const QUrl
             request.setRawHeader("Content-Type", "application/json");
             request.setRawHeader("Content-Length", QByteArray::number(QString(data).size()));
             reply = _manager.post(request, data);
+            break;
+        case QNetworkAccessManager::PutOperation:
+            request.setRawHeader("User-Agent", "Lama Urbain");
+            request.setRawHeader("X-Custom-User-Agent", "Lama Urbain");
+            request.setRawHeader("Content-Type", "application/json");
+            request.setRawHeader("Content-Length", QByteArray::number(QString(data).size()));
+            reply = _manager.put(request, data);
             break;
         case QNetworkAccessManager::DeleteOperation:
             reply = _manager.deleteResource(request);

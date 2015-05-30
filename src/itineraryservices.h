@@ -13,14 +13,26 @@ public:
     virtual ~ItineraryServices();
     static ItineraryServices *getInstance();
 
-    void createItinerary(QVariantList points, ServicesBase::CallbackType callback); // TODO: settings
+    void getItineraries(QString search, QString username, bool favorite, QString ordering, ServicesBase::CallbackType callback);
+    void getItinerary(int id, ServicesBase::CallbackType callback);
+    void createItinerary(QString name, QString departure, QString destination, bool favorite, ServicesBase::CallbackType callback);
+    void editItinerary(int id, QString name, QString departure, bool favorite, ServicesBase::CallbackType callback);
+    void addDestination(int id, QString destination, int position, ServicesBase::CallbackType callback);
+    void editDestination(int id, int position, QString destination, ServicesBase::CallbackType callback);
+    void deleteDestination(int id, int position, ServicesBase::CallbackType callback);
     void deleteItinerary(int id, ServicesBase::CallbackType callback);
-    void getItinerary(int id, int zoomLevel, ServicesBase::CallbackType callback);
+    void getItineraryTiles(int id, int zoomLevel, ServicesBase::CallbackType callback);
 
 public slots:
-    void createItinerary(QVariantList points, QJSValue callback); // TODO: settings
+    void getItineraries(QString search, QString username, bool favorite, QString ordering, QJSValue callback);
+    void getItinerary(int id, QJSValue callback);
+    void createItinerary(QString name, QString departure, QString destination, bool favorite, QJSValue callback);
+    void editItinerary(int id, QString name, QString departure, bool favorite, QJSValue callback);
+    void addDestination(int id, QString destination, int position, QJSValue callback);
+    void editDestination(int id, int position, QString destination, QJSValue callback);
+    void deleteDestination(int id, int position, QJSValue callback);
     void deleteItinerary(int id, QJSValue callback);
-    void getItinerary(int id, int zoomLevel, QJSValue callback);
+    void getItineraryTiles(int id, int zoomLevel, QJSValue callback);
 
 private:
     static ItineraryServices *_instance;

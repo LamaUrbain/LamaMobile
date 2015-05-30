@@ -26,6 +26,7 @@ protected:
 
     void getRequest(const QUrl &url, CallbackType callback);
     void postRequest(const QUrl &url, const QByteArray &data, CallbackType callback);
+    void putRequest(const QUrl &url, const QByteArray &data, CallbackType callback);
     void deleteRequest(const QUrl &url, CallbackType callback);
 
 private slots:

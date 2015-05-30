@@ -135,7 +135,7 @@ void MapOverlayExtension::updateTiles()
     if (_itineraryTiles[currentScale] == NULL)
     {
         ItineraryServices *services = ItineraryServices::getInstance();
-        services->getItinerary(_itineraryId, currentScale, [this, currentScale] (int errorType, QString jsonStr) mutable
+        services->getItineraryTiles(_itineraryId, currentScale, [this, currentScale] (int errorType, QString jsonStr) mutable
         {
             if (errorType == 0)
             {
