@@ -1,0 +1,25 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+    </qresource>
+    <qresource prefix="/Assets"/>
+    <qresource prefix="/Components">
+        <file>Marker.qml</file>
+        <file>Header.qml</file>
+        <file>BottomAction.qml</file>
+        <file>FavoriteItinerariesItem.qml</file>
+    </qresource>
+    <qresource prefix="/Controls"/>
+    <qresource prefix="/Views">
+        <file>AlertInformation.qml</file>
+        <file>FavoriteItineraries.qml</file>
+        <file>MainSearch.qml</file>
+        <file>Map.qml</file>
+        <file>Menu.qml</file>
+        <file>Suggestions.qml</file>
+        <file>TransportPreferences.qml</file>
+        <file>UserAccount.qml</file>
+        <file>UserAuth.qml</file>
+        <file>UserFeedback.qml</file>
+    </qresource>
+</RCC>
