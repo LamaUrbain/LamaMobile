@@ -55,6 +55,7 @@ signals:
 
 public slots:
     void displayItinerary(int id);
+    void itineraryChanged();
 
     quint8 getMapScale() const;
     void setMapScale(quint8 scale);

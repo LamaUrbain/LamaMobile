@@ -52,6 +52,7 @@ public:
     QSizeF tileSize(const QPoint &pos) const;
 
     void displayItinerary(int id);
+    void itineraryChanged();
 
     const QList<MapExtension *> &getExtension() const;
     void addExtension(MapExtension *ext);

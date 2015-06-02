@@ -79,6 +79,12 @@ void MapOverlayExtension::removePoint(int pos)
     onTilesChanged();
 }
 
+void MapOverlayExtension::clearPoints()
+{
+    _points.clear();
+    onTilesChanged();
+}
+
 void MapOverlayExtension::onTilesChanged()
 {
     for (quint8 i = 0; i < 20; ++i)
@@ -128,6 +134,65 @@ void MapOverlayExtension::setItinerary(int id)
     updateTiles();
 }
 
+void MapOverlayExtension::refreshItinerary()
+{
+    clearPoints();
+
+    for (int i = 0; i < 20; ++i)
+    {
+        delete _itineraryTiles[i];
+        _itineraryTiles[i] = NULL;
+        _tiles[i].clear();
+    }
+
+    ItineraryServices *services = ItineraryServices::getInstance();
+
+    services->getItinerary(_itineraryId, [this] (int errorType, QString jsonStr) mutable
+    {
+        if (errorType == 0)
+        {
+            QJsonParseError error;
+            QJsonDocument document = QJsonDocument::fromJson(jsonStr.toLatin1(), &error);
+
+            if (error.error != QJsonParseError::NoError)
+                qDebug() << jsonStr << ":" << error.errorString() << "at pos" << error.offset;
+            else if (!document.isObject())
+                qDebug() << jsonStr << ": not an object";
+            else
+            {
+                QJsonObject obj = document.object();
+                QJsonObject departure = obj.value("departure").toObject();
+                QJsonArray destinations = obj.value("destinations").toArray();
+
+                if (!departure.isEmpty())
+                {
+                    QJsonValue latitude = departure.value("latitude");
+                    QJsonValue longitude = departure.value("longitude");
+
+                    if (latitude.isDouble() && longitude.isDouble())
+                        appendPoint(QPointF(latitude.toDouble(), longitude.toDouble()));
+                    else
+                        qDebug() << "Invalid departure" << latitude << longitude;
+                }
+
+                for (QJsonArray::const_iterator it = destinations.constBegin(); it != destinations.constEnd(); ++it)
+                {
+                    QJsonObject destination = (*it).toObject();
+                    QJsonValue latitude = destination.value("latitude");
+                    QJsonValue longitude = destination.value("longitude");
+
+                    if (latitude.isDouble() && longitude.isDouble())
+                        appendPoint(QPointF(latitude.toDouble(), longitude.toDouble()));
+                    else
+                        qDebug() << "Invalid destination" << latitude << longitude;
+                }
+            }
+        }
+    });
+
+    updateTiles();
+}
+
 void MapOverlayExtension::updateTiles()
 {
     int currentScale = _map->getMapScale();
@@ -135,6 +200,7 @@ void MapOverlayExtension::updateTiles()
     if (_itineraryTiles[currentScale] == NULL)
     {
         ItineraryServices *services = ItineraryServices::getInstance();
+
         services->getItineraryTiles(_itineraryId, currentScale, [this, currentScale] (int errorType, QString jsonStr) mutable
         {
             if (errorType == 0)

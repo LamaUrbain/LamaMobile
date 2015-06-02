@@ -22,9 +22,11 @@ public:
     void insertPoint(int pos, const QPointF &coords);
     void movePoint(int pos, const QPointF &coords);
     void removePoint(int pos);
+    void clearPoints();
 
     int getItinerary() const;
     void setItinerary(int id);
+    void refreshItinerary();
 
     virtual void begin(QPainter *painter);
     virtual void drawTile(QPainter *painter, const QPoint &pos, const QPoint &tilePos);
