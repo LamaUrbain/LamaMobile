@@ -37,6 +37,9 @@ Rectangle {
                 anchors.rightMargin: parent.height * 0.005
                 anchors.topMargin: parent.height * 0.005
                 anchors.bottomMargin: parent.height * 0.005
+                onClicked: {
+                    mainView.changeViewTo("FavoriteItineraries")
+                }
             }
 
             Components.Marker {
@@ -50,6 +53,9 @@ Rectangle {
                 anchors.rightMargin: parent.height * 0.005
                 anchors.topMargin: parent.height * 0.005
                 anchors.bottomMargin: parent.height * 0.005
+                onClicked: {
+                    mainView.changeViewTo("TransportPreferences")
+                }
             }
 
             Components.Marker {
@@ -63,6 +69,9 @@ Rectangle {
                 anchors.rightMargin: parent.height * 0.005
                 anchors.topMargin: parent.height * 0.005
                 anchors.bottomMargin: parent.height * 0.005
+                onClicked: {
+                    mainView.changeViewTo("UserFeedback")
+                }
             }
 
             Components.Marker {
@@ -76,6 +85,9 @@ Rectangle {
                 anchors.rightMargin: parent.height * 0.005
                 anchors.topMargin: parent.height * 0.005
                 anchors.bottomMargin: parent.height * 0.005
+                onClicked: {
+                    mainView.changeViewTo("UserAccount")
+                }
             }
         }
     }

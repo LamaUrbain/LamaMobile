@@ -3,7 +3,6 @@ import QtQuick.Window 2.1
 import "qrc:/Components/" as Components
 
 Rectangle {
-
     Components.Marker {
         id: background
         anchors.fill: parent
@@ -44,6 +43,9 @@ Rectangle {
                 anchors.rightMargin: parent.height * 0.005
                 anchors.bottomMargin: parent.height * 0.005
                 anchors.topMargin: parent.height * 0.005
+                onClicked: {
+                    mainView.changeViewTo("MainSearch")
+                }
             }
 
             Components.Marker {
@@ -57,6 +59,9 @@ Rectangle {
                 anchors.rightMargin: parent.height * 0.005
                 anchors.bottomMargin: parent.height * 0.005
                 anchors.topMargin: parent.height * 0.005
+                onClicked: {
+                    mainView.changeViewTo("Menu")
+                }
             }
         }
     }

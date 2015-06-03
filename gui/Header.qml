@@ -18,6 +18,9 @@ Marker {
         anchors.top: parent.top
         width: parent.width * 0.2
         anchors.bottom: parent.bottom
+        onClicked: {
+            mainView.changeViewTo("Map")
+        }
     }
 
     Marker {
