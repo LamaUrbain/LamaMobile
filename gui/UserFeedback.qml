@@ -33,6 +33,9 @@ Rectangle {
                 anchors.top: parent.top
                 width: parent.width * 0.5
                 height: parent.height
+                onClicked: {
+                    reportLoader.sourceComponent = mapReport
+                }
             }
 
             Components.Marker {
@@ -42,6 +45,9 @@ Rectangle {
                 anchors.right: parent.right
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
+                onClicked: {
+                    reportLoader.sourceComponent = bugReport
+                }
             }
         }
 
@@ -56,22 +62,26 @@ Rectangle {
             anchors.topMargin: parent.height * 0.005
             anchors.bottomMargin: parent.height * 0.005
 
-            /*Components.Marker {
-                id: mapReport
-                centerText: "Alert On Map"
+            Loader {
+                id: reportLoader
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: parent.top
                 height: parent.height
-            }*/
+            }
 
-            Components.Marker {
+            Component {
+                id: mapReport
+                Components.Marker {
+                    centerText: "Alert On Map"
+                }
+            }
+
+            Component {
                 id: bugReport
-                centerText: "Bug report text"
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: parent.top
-                height: parent.height
+                Components.Marker {
+                    centerText: "Bug report text"
+                }
             }
         }
 
@@ -81,5 +91,3 @@ Rectangle {
         }
     }
 }
-
-

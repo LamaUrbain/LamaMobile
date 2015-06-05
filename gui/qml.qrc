@@ -21,5 +21,7 @@
         <file>UserAccount.qml</file>
         <file>UserAuth.qml</file>
         <file>UserFeedback.qml</file>
+        <file>UserRegistration.qml</file>
+        <file>UserForgottenPassword.qml</file>
     </qresource>
 </RCC>

@@ -12,7 +12,7 @@ Rectangle {
 
         Components.Header {
             id: header
-            title: "User Auth"
+            title: "Registration"
         }
 
         Components.Marker {
@@ -83,44 +83,37 @@ Rectangle {
             }
 
             Components.Marker {
-                id: authExtra
+                id: passwordConfirmForm
                 anchors.left: parent.left
                 anchors.right: parent.right
-                anchors.bottom: parent.bottom
-                height: parent.height * 0.10
+                anchors.top: passwordForm.bottom
+                height: parent.height * 0.3
                 anchors.leftMargin: parent.height * 0.005
                 anchors.rightMargin: parent.height * 0.005
-                anchors.bottomMargin: parent.height * 0.005
+                anchors.topMargin: parent.height * 0.005
 
                 Components.Marker {
-                    id: forgottenPasswordButton
-                    centerText: "Forgot your password ?"
+                    id: passwordConfirmLabel
+                    centerText: "Confirm password:"
                     anchors.left: parent.left
                     anchors.top: parent.top
-                    anchors.bottom: parent.bottom
-                    width: parent.width * 0.5
-                    height: parent.height
-                    onClicked: {
-                        mainView.changeViewTo("UserForgottenPassword")
-                    }
+                    width: parent.width * 0.3
+                    height: parent.height * 0.5
                 }
                 Components.Marker {
-                    id: subscribeButton
-                    centerText: "Subscribe now !"
+                    id: passwordConfirmField
+                    centerText: "Confirm your password here."
                     anchors.right: parent.right
-                    anchors.top: parent.top
-                    width: parent.width * 0.5
-                    anchors.bottom: parent.bottom
-                    onClicked: {
-                       mainView.changeViewTo("UserRegistration")
-                    }
+                    anchors.left: parent.left
+                    anchors.top: passwordConfirmLabel.bottom
+                    height: parent.height * 0.5
                 }
             }
         }
 
         Components.BottomAction {
             id: connectButton
-            centerText: "Connect"
+            centerText: "Register"
             onClicked: {
                 mainView.changeViewTo("Map")
             }

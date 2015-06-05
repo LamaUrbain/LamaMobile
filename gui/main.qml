@@ -13,7 +13,7 @@ Window {
     Loader {
         id: mainViewLoader
         anchors.fill: parent
-        source: "qrc:/Views/Map.qml"
+        source: "qrc:/Views/FavoriteItineraries.qml"
     }
 
     function changeViewTo(name) {
