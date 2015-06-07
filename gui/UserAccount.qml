@@ -1,5 +1,8 @@
 import QtQuick 2.0
+import QtQuick.Controls 1.3
+import QtQuick.Layouts 1.1
 import "qrc:/Components/" as Components
+import "qrc:/Controls/" as Controls
 
 Rectangle {
 
@@ -69,50 +72,44 @@ Rectangle {
                 anchors.bottomMargin: parent.height * 0.005
             }
 
-            Components.Marker {
-                id: ancientPwdLabel
-                centerText: "Current Password"
-                anchors.left: parent.left
+            Column {
                 anchors.top: changePassword.bottom
-                anchors.right: parent.right
-                height: parent.height * 0.1
-                anchors.leftMargin: parent.height * 0.005
-                anchors.rightMargin: parent.height * 0.005
-                anchors.topMargin: parent.height * 0.005
-                anchors.bottomMargin: parent.height * 0.005
-            }
-
-            Components.Marker {
-                id: newPwdLabel
-                centerText: "New Password"
+                height: parent.height * 0.9
                 anchors.left: parent.left
-                anchors.top: ancientPwdLabel.bottom
                 anchors.right: parent.right
-                height: parent.height * 0.1
                 anchors.leftMargin: parent.height * 0.005
                 anchors.rightMargin: parent.height * 0.005
                 anchors.topMargin: parent.height * 0.005
                 anchors.bottomMargin: parent.height * 0.005
-            }
 
-            Components.Marker {
-                id: confirmPwdLabel
-                centerText: "Confirm New Password"
-                anchors.left: parent.left
-                anchors.top: newPwdLabel.bottom
-                anchors.right: parent.right
-                height: parent.height * 0.1
-                anchors.leftMargin: parent.height * 0.005
-                anchors.rightMargin: parent.height * 0.005
-                anchors.topMargin: parent.height * 0.005
-                anchors.bottomMargin: parent.height * 0.005
-            }
+                Components.TextField {
+                    height: parent.height * 0.1
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    placeholderText: "Current Password"
+                }
 
+                Components.TextField {
+                    height: parent.height * 0.1
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    placeholderText: "New Password"
+                }
+
+                Components.TextField {
+                    height: parent.height * 0.1
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    placeholderText: "Confirm New Password"
+                }
+            }
         }
 
         Components.BottomAction {
-            id: saveButton
-            centerText: "Save settings"
+            Controls.Button  {
+                anchors.fill: parent
+                centerText: "Save settings"
+            }
         }
     }
 }

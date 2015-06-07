@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import "qrc:/Components/" as Components
+import "qrc:/Controls/" as Controls
 
 Rectangle {
 
@@ -26,84 +27,46 @@ Rectangle {
             anchors.topMargin: parent.height * 0.005
             anchors.bottomMargin: parent.height * 0.005
 
-            // Left side
-            Components.Marker {
-                id: bus
-                centerText: "Bus Selection"
-                anchors.left: parent.left
-                anchors.top: parent.top
-                width: parent.width * 0.5
-                height: parent.height * 0.33
-                anchors.leftMargin: parent.height * 0.005
-                anchors.rightMargin: parent.height * 0.005
-                anchors.topMargin: parent.height * 0.005
-                anchors.bottomMargin: parent.height * 0.005
-            }
+            Grid {
+                anchors.fill: parent
+                columns: 2
+                rows: 3
 
-            Components.Marker {
-                id: metro
-                centerText: "Metro Selection"
-                anchors.left: parent.left
-                anchors.top: bus.bottom
-                width: parent.width * 0.5
-                height: parent.height * 0.33
-                anchors.leftMargin: parent.height * 0.005
-                anchors.rightMargin: parent.height * 0.005
-                anchors.topMargin: parent.height * 0.005
-                anchors.bottomMargin: parent.height * 0.005
-            }
+                Controls.TransportCheckedBox {
+                    iconName: "bus"
+                    width: parent.width * 0.5
+                    height: parent.height * 0.33
+                }
 
-            Components.Marker {
-                id: pedestrian
-                centerText: "Pedestrian Selection"
-                anchors.left: parent.left
-                anchors.top: metro.bottom
-                width: parent.width * 0.5
-                height: parent.height * 0.33
-                anchors.leftMargin: parent.height * 0.005
-                anchors.rightMargin: parent.height * 0.005
-                anchors.topMargin: parent.height * 0.005
-                anchors.bottomMargin: parent.height * 0.005
-            }
+                Controls.TransportCheckedBox {
+                    iconName: "tramway"
+                    width: parent.width * 0.5
+                    height: parent.height * 0.33
+                }
 
-            // Right side
-            Components.Marker {
-                id: bicycle
-                centerText: "Bicycle Selection"
-                anchors.right: parent.right
-                anchors.top: parent.top
-                width: parent.width * 0.5
-                height: parent.height * 0.33
-                anchors.leftMargin: parent.height * 0.005
-                anchors.rightMargin: parent.height * 0.005
-                anchors.topMargin: parent.height * 0.005
-                anchors.bottomMargin: parent.height * 0.005
-            }
+                Controls.TransportCheckedBox {
+                    iconName: "onfoot"
+                    width: parent.width * 0.5
+                    height: parent.height * 0.33
+                }
 
-            Components.Marker {
-                id: car
-                centerText: "Car Selection"
-                anchors.right: parent.right
-                anchors.top: bicycle.bottom
-                width: parent.width * 0.5
-                height: parent.height * 0.33
-                anchors.leftMargin: parent.height * 0.005
-                anchors.rightMargin: parent.height * 0.005
-                anchors.topMargin: parent.height * 0.005
-                anchors.bottomMargin: parent.height * 0.005
-            }
+                Controls.TransportCheckedBox {
+                    iconName: "bike"
+                    width: parent.width * 0.5
+                    height: parent.height * 0.33
+                }
 
-            Components.Marker {
-                id: train
-                centerText: "Train Selection"
-                anchors.right: parent.right
-                anchors.top: car.bottom
-                width: parent.width * 0.5
-                height: parent.height * 0.33
-                anchors.leftMargin: parent.height * 0.005
-                anchors.rightMargin: parent.height * 0.005
-                anchors.topMargin: parent.height * 0.005
-                anchors.bottomMargin: parent.height * 0.005
+                Controls.TransportCheckedBox {
+                    iconName: "vehicle"
+                    width: parent.width * 0.5
+                    height: parent.height * 0.33
+                }
+
+                Controls.TransportCheckedBox {
+                    iconName: "train"
+                    width: parent.width * 0.5
+                    height: parent.height * 0.33
+                }
             }
         }
 
@@ -129,8 +92,11 @@ Rectangle {
         }
 
         Components.BottomAction {
-            id: saveButton
-            centerText: "Save parameters"
+            Controls.NavigationButton {
+                anchors.fill: parent
+                centerText: "Save parameters"
+                navigationTarget: "Map"
+            }
         }
     }
 }

@@ -2,14 +2,49 @@
     <qresource prefix="/">
         <file>main.qml</file>
     </qresource>
-    <qresource prefix="/Assets"/>
+    <qresource prefix="/Assets">
+        <file>Images/alertIcon.png</file>
+        <file>Images/bikeMean.png</file>
+        <file>Images/busMean.png</file>
+        <file>Images/contributeIcon.png</file>
+        <file>Images/defaultAvatar.png</file>
+        <file>Images/favoriteIcon.png</file>
+        <file>Images/feedbackIcon.png</file>
+        <file>Images/helpIcon.png</file>
+        <file>Images/loupeIcon.png</file>
+        <file>Images/mapIcon.png</file>
+        <file>Images/menuIcon.png</file>
+        <file>Images/mobilityIcon.png</file>
+        <file>Images/newsIcon.png</file>
+        <file>Images/onfootMean.png</file>
+        <file>Images/pattern.png</file>
+        <file>Images/planetIcon.png</file>
+        <file>Images/reportIcon.png</file>
+        <file>Images/returnIcon.png</file>
+        <file>Images/searchIcon.png</file>
+        <file>Images/settingsIcon.png</file>
+        <file>Images/swapIcon.png</file>
+        <file>Images/trainMean.png</file>
+        <file>Images/tramwayMean.png</file>
+        <file>Images/validateIcon.png</file>
+        <file>Images/vehicleMean.png</file>
+        <file>Images/cross.svg</file>
+    </qresource>
     <qresource prefix="/Components">
         <file>Marker.qml</file>
         <file>Header.qml</file>
         <file>BottomAction.qml</file>
         <file>FavoriteItinerariesItem.qml</file>
+        <file>TextField.qml</file>
+        <file>Waypoint.qml</file>
+        <file>FormEntry.qml</file>
     </qresource>
-    <qresource prefix="/Controls"/>
+    <qresource prefix="/Controls">
+        <file>BackButton.qml</file>
+        <file>TransportCheckedBox.qml</file>
+        <file>Button.qml</file>
+        <file>NavigationButton.qml</file>
+    </qresource>
     <qresource prefix="/Views">
         <file>AlertInformation.qml</file>
         <file>FavoriteItineraries.qml</file>

@@ -8,11 +8,16 @@ Item {
     implicitHeight: 200
 
     signal clicked();
+    signal entered();
+    signal exited();
 
     property string text: objectName
-    property string centerText
+    property alias centerText: centerLabel.text
+    property alias centerFont: centerLabel.font
     property bool checkable: false
     property bool checked: false
+    property bool hoverable: false
+    property bool hovered: false
     property color color: "#165B8C"
     property string icon
     property alias iconSource: image.source
@@ -22,7 +27,7 @@ Item {
         anchors.fill: parent
         anchors.margins: 1
         color: root.color
-        opacity: root.checked ? 0.4 : 0.2
+        opacity: root.hovered ? 0.5 : root.checked ? 0.4 : 0.2
     }
 
     Rectangle {
@@ -80,6 +85,18 @@ Item {
                 root.checked = !root.checked;
             else
                 root.clicked();
+        }
+        onEntered: {
+            if (root.hoverable)
+                root.hovered = true
+            else
+                root.entered();
+        }
+        onExited: {
+            if (root.hoverable)
+                root.hovered = false
+            else
+                root.entered();
         }
     }
 }

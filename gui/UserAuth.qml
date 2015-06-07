@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import "qrc:/Components/" as Components
+import "qrc:/Controls/" as Controls
 
 Rectangle {
 
@@ -26,60 +27,22 @@ Rectangle {
             anchors.topMargin: parent.height * 0.005
             anchors.bottomMargin: parent.height * 0.005
 
-            Components.Marker {
+            Components.FormEntry {
                 id: emailForm
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: parent.top
-                height: parent.height * 0.3
-                anchors.leftMargin: parent.height * 0.005
-                anchors.rightMargin: parent.height * 0.005
-                anchors.topMargin: parent.height * 0.005
-
-                Components.Marker {
-                    id: emailLabel
-                    centerText: "Email:"
-                    anchors.left: parent.left
-                    anchors.top: parent.top
-                    width: parent.width * 0.3
-                    height: parent.height * 0.5
-                }
-                Components.Marker {
-                    id: emailField
-                    centerText: "Enter your adress here."
-                    anchors.right: parent.right
-                    anchors.left: parent.left
-                    anchors.top: emailLabel.bottom
-                    height: parent.height * 0.5
-                }
+                fieldName: "Email"
             }
 
-            Components.Marker {
+            Components.FormEntry {
                 id: passwordForm
                 anchors.left: parent.left
                 anchors.right: parent.right
                 anchors.top: emailForm.bottom
-                height: parent.height * 0.3
-                anchors.leftMargin: parent.height * 0.005
-                anchors.rightMargin: parent.height * 0.005
-                anchors.topMargin: parent.height * 0.005
+                isPassword: true
+                fieldName: "Password"
 
-                Components.Marker {
-                    id: passwordLabel
-                    centerText: "Password:"
-                    anchors.left: parent.left
-                    anchors.top: parent.top
-                    width: parent.width * 0.3
-                    height: parent.height * 0.5
-                }
-                Components.Marker {
-                    id: passwordField
-                    centerText: "Enter your password here."
-                    anchors.right: parent.right
-                    anchors.left: parent.left
-                    anchors.top: passwordLabel.bottom
-                    height: parent.height * 0.5
-                }
             }
 
             Components.Marker {
@@ -101,7 +64,7 @@ Rectangle {
                     width: parent.width * 0.5
                     height: parent.height
                     onClicked: {
-                        mainView.changeViewTo("UserForgottenPassword")
+                        mainView.mainViewTo("UserForgottenPassword")
                     }
                 }
                 Components.Marker {
@@ -112,17 +75,18 @@ Rectangle {
                     width: parent.width * 0.5
                     anchors.bottom: parent.bottom
                     onClicked: {
-                       mainView.changeViewTo("UserRegistration")
+                       mainView.mainViewTo("UserRegistration")
                     }
                 }
             }
         }
 
+
         Components.BottomAction {
-            id: connectButton
-            centerText: "Connect"
-            onClicked: {
-                mainView.changeViewTo("Map")
+            Controls.NavigationButton {
+                anchors.fill: parent
+                centerText: "Connect"
+                navigationTarget: "Map"
             }
         }
     }

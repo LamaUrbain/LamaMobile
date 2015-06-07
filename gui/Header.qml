@@ -1,6 +1,8 @@
 import QtQuick 2.0
+import "qrc:/Controls/" as Controls
 
 Marker {
+    id: header
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: parent.top
@@ -11,24 +13,22 @@ Marker {
 
     property string title
 
-    Marker {
-        id: backToMapButton
-        centerText: "Back"
-        anchors.left: parent.left
-        anchors.top: parent.top
-        width: parent.width * 0.2
-        anchors.bottom: parent.bottom
-        onClicked: {
-            mainView.changeViewTo("Map")
+    Row {
+        anchors.fill: parent
+
+        Controls.BackButton {
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            width: parent.width * 0.2
+        }
+
+        Marker {
+            id: labelTitle
+            centerText: header.title
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            width: parent.width * 0.8
         }
     }
 
-    Marker {
-        id: labelTitle
-        centerText: parent.title
-        anchors.left: backToMapButton.right
-        anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-    }
 }

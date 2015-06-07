@@ -3,6 +3,7 @@ import QtQuick.Window 2.1
 import QtQuick.Controls 1.3
 import "qrc:/Views" as Views
 import "qrc:/Components" as Components
+import "qrc:/Controls" as Controls
 
 Window {
     id: mainView
@@ -10,14 +11,34 @@ Window {
     width: 640
     height: 960
 
+    property var navigationStack: ["Map"]
+
     Loader {
         id: mainViewLoader
         anchors.fill: parent
-        source: "qrc:/Views/FavoriteItineraries.qml"
+        source: "qrc:/Views/Map.qml"
     }
 
-    function changeViewTo(name) {
+    function mainViewTo(name) {
+        if (name === undefined)
+        {
+            mainViewTo("Map")
+            return
+        }
+
+        if (name === "Map") // if we go directly to the map, reset the navstack
+        {
+            navigationStack = ["Map"]
+        }
+        else
+        {
+            navigationStack.push(name)
+        }
         mainViewLoader.source = "qrc:/Views/" + name + ".qml"
+    }
+    function mainViewBack() {
+        var currentPage = navigationStack.pop();
+        mainViewTo(navigationStack.pop())
     }
 }
 

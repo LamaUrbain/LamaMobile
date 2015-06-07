@@ -1,77 +1,71 @@
 import QtQuick 2.0
+import QtQuick.Layouts 1.1
 import "qrc:/Components/" as Components
+import "qrc:/Controls/" as Controls
 
 Rectangle {
 
     Components.Marker {
         id: background
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
+        anchors.fill: parent
 
         Components.Header {
             id: header
             title: "Favorites"
         }
 
-        Components.Marker {
+        Column {
             id: itineraries
+            anchors.top: header.bottom
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.top: header.bottom
             height: parent.height * 0.8
             anchors.leftMargin: parent.height * 0.005
             anchors.rightMargin: parent.height * 0.005
             anchors.topMargin: parent.height * 0.005
             anchors.bottomMargin: parent.height * 0.005
 
-            Components.FavoriteItinerariesItem {
-                id: favorite0
-                anchors.top: parent.top
-                centerText: "Favorite 0"
-            }
-
-            Components.FavoriteItinerariesItem {
-                id: favorite1
-                anchors.top: favorite0.bottom
-                centerText: "Favorite 1"
+            Repeater {
+                model: 2
+                Components.FavoriteItinerariesItem {
+                    centerText: "Favorite " + index
+                }
             }
         }
 
         Components.BottomAction {
             id: footer
 
-            Components.Marker {
-                id: shareButton
-                centerText: "Share"
-                anchors.left: parent.left
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                width: parent.width * 0.33
-                height: parent.height
-            }
+            RowLayout {
+                anchors.fill: parent
+                spacing: 2
 
-            Components.Marker {
-                id: modifyButton
-                centerText: "Edit"
-                anchors.left: shareButton.right
-                anchors.right: deleteButton.left
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                width: parent.width * 0.33
-                height: parent.height
-            }
+                Controls.Button {
+                    id: shareButton
+                    Layout.fillWidth: true
+                    centerText: "Share"
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    height: parent.height
+                }
 
-            Components.Marker {
-                id: deleteButton
-                centerText: "Delete"
-                anchors.right: parent.right
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                width: parent.width * 0.33
+                Controls.Button {
+                    id: modifyButton
+                    Layout.fillWidth: true
+                    centerText: "Edit"
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    height: parent.height
+                }
+
+                Controls.Button {
+                    id: deleteButton
+                    Layout.fillWidth: true
+                    centerText: "Delete"
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                }
             }
         }
-
     }
 }

@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import "qrc:/Components/" as Components
+import "qrc:/Controls/" as Controls
 
 Rectangle {
 
@@ -26,28 +27,16 @@ Rectangle {
             anchors.rightMargin: parent.height * 0.005
             anchors.topMargin: parent.height * 0.005
 
-            Components.Marker {
+            Components.Waypoint {
                 id: start
-                centerText: "Depart:"
+                placeholderText: "Depart:"
                 anchors.left: parent.left
+                anchors.right: parent.right
                 anchors.top: parent.top
-                width: parent.width * 0.79
                 height: parent.height * 0.14
                 anchors.topMargin: parent.height * 0.005
                 anchors.leftMargin: parent.height * 0.005
                 anchors.rightMargin: parent.height * 0.005
-                anchors.bottomMargin: parent.height * 0.005
-            }
-
-            Components.Marker {
-                id: startButton
-                centerText: "Modify"
-                anchors.left: start.right
-                anchors.top: parent.top
-                width: parent.width * 0.19
-                height: parent.height * 0.14
-                anchors.topMargin: parent.height * 0.005
-                anchors.leftMargin: parent.height * 0.005
                 anchors.bottomMargin: parent.height * 0.005
             }
 
@@ -62,29 +51,33 @@ Rectangle {
                 anchors.rightMargin: parent.height * 0.005
                 anchors.bottomMargin: parent.height * 0.005
 
-                Components.Marker {
-                    id: waypoint1
-                    centerText: "waypoint 1"
-                    anchors.left: parent.left
-                    anchors.right: parent.right
+                Column {
+                    id: waypoints
                     anchors.top: parent.top
-                    height: parent.height * 0.2
-                }
-
-                Components.Marker {
-                    id: waypoint2
-                    centerText: "waypoint 2"
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    anchors.top: waypoint1.bottom
-                    height: parent.height * 0.2
+                    height: parent.height * 0.85
+
+                    Components.Waypoint {
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        deletable: true
+                        height: parent.height * 0.2
+                    }
+
+                    Components.Waypoint {
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        deletable: true
+                        height: parent.height * 0.2
+                    }
                 }
 
                 Components.Marker {
                     id: addWaypointButton
                     centerText: "+"
                     anchors.right: parent.right
-                    anchors.top: waypoint2.bottom
+                    anchors.top: waypoints.bottom
                     width: parent.height * 0.15
                     height: parent.height * 0.15
                 }
@@ -99,28 +92,23 @@ Rectangle {
                 height: parent.height * 0.15
             }
 
-            Components.Marker {
+            Components.Waypoint {
                 id: arrival
-                centerText: "Arrival"
+                placeholderText: "Arrival"
                 anchors.left: parent.left
+                anchors.right: parent.right
                 anchors.bottom: search.bottom
                 width: parent.width * 0.8
-                height: parent.height * 0.15
-            }
-
-            Components.Marker {
-                id: arrivalButton
-                centerText: "Modify"
-                anchors.left: arrival.right
-                anchors.bottom: search.bottom
-                width: parent.width * 0.2
                 height: parent.height * 0.15
             }
         }
 
         Components.BottomAction {
             id: launch
-            centerText: "Launch"
+            Controls.Button {
+                anchors.fill: parent
+                centerText: "Launch"
+            }
         }
 
     }
