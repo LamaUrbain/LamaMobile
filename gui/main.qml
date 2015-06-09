@@ -19,7 +19,7 @@ Window {
         source: "qrc:/Views/Map.qml"
     }
 
-    function mainViewTo(name) {
+    function mainViewTo(name, prop) {
         if (name === undefined)
         {
             mainViewTo("Map")
@@ -34,7 +34,11 @@ Window {
         {
             navigationStack.push(name)
         }
-        mainViewLoader.source = "qrc:/Views/" + name + ".qml"
+
+        if (prop !== undefined)
+            mainViewLoader.setSource("qrc:///Views/" + name + ".qml", prop)
+        else
+            mainViewLoader.setSource("qrc:///Views/" + name + ".qml")
     }
     function mainViewBack() {
         var currentPage = navigationStack.pop();

@@ -1,7 +1,8 @@
 import QtQuick 2.0
 import "qrc:/Controls/" as Controls
+import "qrc:/Constants.js" as Constants
 
-Marker {
+Row {
     id: header
     anchors.left: parent.left
     anchors.right: parent.right
@@ -13,22 +14,19 @@ Marker {
 
     property string title
 
-    Row {
-        anchors.fill: parent
-
-        Controls.BackButton {
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            width: parent.width * 0.2
-        }
-
-        Marker {
-            id: labelTitle
-            centerText: header.title
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            width: parent.width * 0.8
-        }
+    Controls.BackButton {
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        width: parent.width * 0.2
+        color: Constants.LAMA_ORANGE
     }
 
+    Marker {
+        id: labelTitle
+        centerText: header.title
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        width: parent.width * 0.8
+        color: "#EA7B3D"
+    }
 }

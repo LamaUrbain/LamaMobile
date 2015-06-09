@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import "qrc:/Constants.js" as Constants
 
 Item {
     id: root
@@ -18,25 +19,28 @@ Item {
     property bool checked: false
     property bool hoverable: false
     property bool hovered: false
-    property color color: "#165B8C"
+    property color color: Constants.LAMA_YELLOW
     property string icon
     property alias iconSource: image.source
     property alias pressed: area.pressed
+    property real radius: 20
 
     Rectangle {
         anchors.fill: parent
         anchors.margins: 1
         color: root.color
-        opacity: root.hovered ? 0.5 : root.checked ? 0.4 : 0.2
+        opacity: root.hovered ? 0.5 : root.checked ? 0.9 : 1
+        radius: parent.radius
     }
 
     Rectangle {
         anchors.fill: parent
         anchors.margins: 1
         color: "transparent"
-        opacity: 0.4
-        border.width: 1
-        border.color: Qt.darker(root.color, root.checked ? 0.4 : 0.2)
+        opacity: 1.4
+        border.width: 2
+        border.color: Qt.darker(root.color, root.checked ? 1.4 : 1.2)
+        radius: parent.radius
     }
 
     Image {
@@ -55,6 +59,7 @@ Item {
         visible: label.text
         opacity: 0.05
         border.color: Qt.lighter(color, 1.2)
+        radius: parent.radius
     }
 
     Text {

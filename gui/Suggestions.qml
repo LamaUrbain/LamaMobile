@@ -1,7 +1,17 @@
 import QtQuick 2.0
+import QtQuick.Controls 1.3
 import "qrc:/Components/" as Components
+import "qrc:/Controls/" as Controls
 
 Rectangle {
+    id: waypointSuggestions
+    property ListModel waypointModel
+    property int waypointIndex
+
+    Component.onCompleted: {
+        var elem = waypointModel.get(waypointIndex)
+        searchTextField.text = elem.waypointData
+    }
 
     Components.Marker {
         id: background
@@ -17,7 +27,6 @@ Rectangle {
 
         Components.Marker {
             id: searchLabel
-            centerText: "Road of a..."
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: header.bottom
@@ -26,7 +35,18 @@ Rectangle {
             anchors.rightMargin: parent.height * 0.005
             anchors.topMargin: parent.height * 0.005
             anchors.bottomMargin: parent.height * 0.005
-
+            TextField {
+                id: searchTextField
+                anchors.fill: parent
+                opacity: 0.9
+                onAccepted: {
+                    console.log(waypointModel)
+                    console.log(waypointIndex)
+                    console.log(waypointSuggestions.waypointModel)
+                    console.log(waypointSuggestions.waypointIndex)
+                    waypointModel.setProperty(waypointIndex, {"waypointData": searchTextField.text})
+                }
+            }
         }
 
         Components.Marker {
@@ -68,17 +88,11 @@ Rectangle {
             }
         }
 
-        Components.Marker {
-            id: keyboard
-            centerText: "Keyboard"
-            anchors.right: parent.right
-            anchors.left: parent.left
-            anchors.top: choices.bottom
-            anchors.bottomMargin: parent.height * 0.005
-            anchors.rightMargin: parent.height * 0.005
-            anchors.leftMargin: parent.height * 0.005
-            anchors.topMargin: parent.height * 0.005
-            height: parent.height * 0.23
+        Components.BottomAction {
+            Controls.NavigationButton {
+                anchors.fill: parent
+                navigationTarget: "MainSearch"
+            }
         }
     }
 }

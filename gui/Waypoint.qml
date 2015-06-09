@@ -1,10 +1,12 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.1
 import QtQuick.Controls 1.3
+import "qrc:/Controls/"
 
 Marker {
     property bool deletable: false
-    property alias placeholderText: waypointText.placeholderText
+    property alias waypointDescription: waypointText.centerText
+    property alias waypointProperties: waypointText.navigationTargetProperties
 
     Component.onCompleted: {
         if (deletable === true)
@@ -15,22 +17,12 @@ Marker {
 
     RowLayout {
         anchors.fill: parent
-        Marker {
+        NavigationButton {
+            id: waypointText
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             Layout.fillWidth: true
-
-            TextField {
-                id: waypointText
-                anchors.fill: parent
-                anchors.leftMargin: parent.width * 0.02
-                anchors.rightMargin: parent.width * 0.02
-
-                anchors.topMargin: parent.height * 0.1
-                anchors.bottomMargin: parent.height * 0.1
-                placeholderText: "Enter Destination"
-                opacity: 0.9
-            }
+            navigationTarget: "Suggestions"
         }
         Marker {
             id: deleteLabel
