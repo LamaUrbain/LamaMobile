@@ -1,6 +1,6 @@
 import QtQuick 2.0
 
-Marker {
+Item {
     anchors.right: parent.right
     anchors.left: parent.left
     anchors.bottom: parent.bottom

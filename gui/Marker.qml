@@ -48,6 +48,12 @@ Item {
         anchors.fill: parent
         fillMode: Image.PreserveAspectFit
         source: root.icon
+        sourceSize.width: 1024
+        sourceSize.height: 1024
+        transform: Scale {
+           xScale: 0.79
+           yScale: 0.79
+        }
     }
 
     Rectangle {

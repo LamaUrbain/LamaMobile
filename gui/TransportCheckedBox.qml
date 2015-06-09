@@ -11,8 +11,29 @@ Components.Marker {
     anchors.bottomMargin: parent.height * 0.005
 
     onIconNameChanged: {
-        checkedIcon.source = "qrc:/Assets/Images/" + iconName + "Mean.png"
         checkedLabel.text = iconName + " Selection"
+        switch (iconName)
+        {
+        case "bus":
+            checkedIcon.source = "qrc:/Assets/Images/black/6.png"
+            break;
+        case "onfoot":
+            checkedIcon.source = "qrc:/Assets/Images/black/27.png"
+            break;
+        case "train":
+            checkedIcon.source = "qrc:/Assets/Images/black/22.png"
+            break;
+        case "bike":
+            checkedIcon.source = "qrc:/Assets/Images/black/18.png"
+            break;
+        case "tramway":
+            checkedIcon.source = "qrc:/Assets/Images/black/24.png"
+            break;
+        case "vehicle":
+            checkedIcon.source = "qrc:/Assets/Images/black/6.png"
+            break;
+        }
+
     }
 
     Image {

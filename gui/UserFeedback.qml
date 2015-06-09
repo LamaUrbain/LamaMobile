@@ -2,99 +2,81 @@ import QtQuick 2.0
 import "qrc:/Components/" as Components
 import "qrc:/Controls/" as Controls
 
-Rectangle {
+Components.Background {
 
-    Components.Marker {
-        id: background
+    Components.Header {
+        id: header
+        title: "User Feedback"
+    }
+
+    Row {
+        id: options
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
+        anchors.top: header.bottom
+        height: parent.height * 0.1
+        anchors.leftMargin: parent.height * 0.005
+        anchors.rightMargin: parent.height * 0.005
+        anchors.topMargin: parent.height * 0.005
+        anchors.bottomMargin: parent.height * 0.005
 
-        Components.Header {
-            id: header
-            title: "User Feedback"
-        }
-
-        Components.Marker {
-            id: options
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: header.bottom
-            height: parent.height * 0.1
-            anchors.leftMargin: parent.height * 0.005
-            anchors.rightMargin: parent.height * 0.005
-            anchors.topMargin: parent.height * 0.005
-            anchors.bottomMargin: parent.height * 0.005
-
-            Controls.Button {
-                id: alertButton
-                centerText: "Alert"
-                anchors.left: parent.left
-                anchors.top: parent.top
-                width: parent.width * 0.5
-                height: parent.height
-                onButtonClicked: {
-                    checked = true
-                    bugButton.checked = false
-                    reportLoader.sourceComponent = mapReport
-                }
-            }
-
-            Controls.Button {
-                id: bugButton
-                centerText: "Bug Report"
-                anchors.left: alertButton.right
-                anchors.right: parent.right
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                onButtonClicked: {
-                    checked = true
-                    alertButton.checked = false
-                    reportLoader.sourceComponent = bugReport
-                }
+        Controls.Button {
+            id: alertButton
+            centerText: "Alert"
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            width: parent.width * 0.5
+            onButtonClicked: {
+                checked = true
+                bugButton.checked = false
+                reportLoader.sourceComponent = mapReport
             }
         }
 
-        Components.Marker {
-            id: report
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: options.bottom
-            height: parent.height * 0.7
-            anchors.leftMargin: parent.height * 0.005
-            anchors.rightMargin: parent.height * 0.005
-            anchors.topMargin: parent.height * 0.005
-            anchors.bottomMargin: parent.height * 0.005
-
-            Loader {
-                id: reportLoader
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: parent.top
-                height: parent.height
+        Controls.Button {
+            id: bugButton
+            centerText: "Bug Report"
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            width: parent.width * 0.5
+            onButtonClicked: {
+                checked = true
+                alertButton.checked = false
+                reportLoader.sourceComponent = bugReport
             }
+        }
+    }
 
-            Component {
-                id: mapReport
-                Components.Marker {
-                    centerText: "Alert On Map"
-                }
-            }
+    Loader {
+        id: reportLoader
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: options.bottom
+        height: parent.height * 0.7
+        anchors.leftMargin: parent.height * 0.005
+        anchors.rightMargin: parent.height * 0.005
+        anchors.topMargin: parent.height * 0.005
+        anchors.bottomMargin: parent.height * 0.005
 
-            Component {
-                id: bugReport
-                Components.Marker {
-                    centerText: "Bug report text"
-                }
+        Component {
+            id: mapReport
+            Components.Marker {
+                centerText: "Alert On Map"
             }
         }
 
-        Components.BottomAction {
-            Controls.Button {
-                anchors.fill: parent
-                centerText: "Send Report"
+        Component {
+            id: bugReport
+            Components.Marker {
+                centerText: "Bug report text"
             }
+        }
+    }
+
+    Components.BottomAction {
+        Controls.Button {
+            anchors.fill: parent
+            centerText: "Send Report"
         }
     }
 }

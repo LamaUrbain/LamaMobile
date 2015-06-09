@@ -3,7 +3,7 @@ import "qrc:/Components/" as Components
 
 Button {
     id: backToMapButton
-    iconSource: "qrc:/Assets/Images/returnIcon.png"
+    iconSource: "qrc:/Assets/Images/white/9.png"
     onClicked: {
         mainView.mainViewBack()
     }
