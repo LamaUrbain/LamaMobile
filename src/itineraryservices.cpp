@@ -110,7 +110,7 @@ void ItineraryServices::addDestination(int id, QString destination, int position
 
 void ItineraryServices::editDestination(int id, int oldPosition, int newPosition, QString destination, ServicesBase::CallbackType callback)
 {
-    QUrl url(QString("%1/itineraries/%2/destinations/%3/").arg(serverAddress).arg(id).arg(oldPosition));
+    QUrl url(QString("%1/itineraries/destinations/%2/%3/").arg(serverAddress).arg(id).arg(oldPosition));
 
     QUrlQuery query;
     query.addQueryItem("destination", destination);
