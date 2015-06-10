@@ -4,30 +4,6 @@
         <file>Constants.js</file>
     </qresource>
     <qresource prefix="/Assets">
-        <file>Images/alertIcon.png</file>
-        <file>Images/bikeMean.png</file>
-        <file>Images/busMean.png</file>
-        <file>Images/contributeIcon.png</file>
-        <file>Images/defaultAvatar.png</file>
-        <file>Images/favoriteIcon.png</file>
-        <file>Images/feedbackIcon.png</file>
-        <file>Images/helpIcon.png</file>
-        <file>Images/loupeIcon.png</file>
-        <file>Images/mapIcon.png</file>
-        <file>Images/menuIcon.png</file>
-        <file>Images/mobilityIcon.png</file>
-        <file>Images/newsIcon.png</file>
-        <file>Images/onfootMean.png</file>
-        <file>Images/pattern.png</file>
-        <file>Images/planetIcon.png</file>
-        <file>Images/reportIcon.png</file>
-        <file>Images/returnIcon.png</file>
-        <file>Images/searchIcon.png</file>
-        <file>Images/settingsIcon.png</file>
-        <file>Images/swapIcon.png</file>
-        <file>Images/trainMean.png</file>
-        <file>Images/tramwayMean.png</file>
-        <file>Images/validateIcon.png</file>
         <file>Images/vehicleMean.png</file>
         <file>Images/yellow/0.png</file>
         <file>Images/yellow/1.png</file>
@@ -101,6 +77,8 @@
         <file>TransportCheckedBox.qml</file>
         <file>Button.qml</file>
         <file>NavigationButton.qml</file>
+        <file>DeleteButton.qml</file>
+        <file>IconButton.qml</file>
     </qresource>
     <qresource prefix="/Views">
         <file>AlertInformation.qml</file>

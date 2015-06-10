@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import "qrc:/Components/" as Components
 import "qrc:/Controls/" as Controls
+import "qrc:/Constants.js" as Constants
 
 Components.Background {
 
@@ -24,37 +25,43 @@ Components.Background {
         rows: 3
 
         Controls.TransportCheckedBox {
-            iconName: "bus"
+            iconName: "Bus"
+            iconAsset: Constants.LAMA_BUS_RESSOURCE
             width: parent.width * 0.5
             height: parent.height * 0.33
         }
 
         Controls.TransportCheckedBox {
-            iconName: "tramway"
+            iconName: "Tramway"
+            iconAsset: Constants.LAMA_TRAM_RESSOURCE
             width: parent.width * 0.5
             height: parent.height * 0.33
         }
 
         Controls.TransportCheckedBox {
-            iconName: "onfoot"
+            iconName: "On Foot"
+            iconAsset: Constants.LAMA_ONFOOT_RESSOURCE
             width: parent.width * 0.5
             height: parent.height * 0.33
         }
 
         Controls.TransportCheckedBox {
-            iconName: "bike"
+            iconName: "Bike"
+            iconAsset: Constants.LAMA_BIKE_RESSOURCE
             width: parent.width * 0.5
             height: parent.height * 0.33
         }
 
         Controls.TransportCheckedBox {
-            iconName: "vehicle"
+            iconName: "Car"
+            iconAsset: Constants.LAMA_CAR_RESSOURCE
             width: parent.width * 0.5
             height: parent.height * 0.33
         }
 
         Controls.TransportCheckedBox {
             iconName: "train"
+            iconAsset: Constants.LAMA_TRAIN_RESSOURCE
             width: parent.width * 0.5
             height: parent.height * 0.33
         }

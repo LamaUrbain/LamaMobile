@@ -14,7 +14,6 @@ Item {
 
     property string text: objectName
     property alias centerText: centerLabel.text
-    property alias centerFont: centerLabel.font
     property bool checkable: false
     property bool checked: false
     property bool hoverable: false
@@ -48,12 +47,6 @@ Item {
         anchors.fill: parent
         fillMode: Image.PreserveAspectFit
         source: root.icon
-        sourceSize.width: 1024
-        sourceSize.height: 1024
-        transform: Scale {
-           xScale: 0.79
-           yScale: 0.79
-        }
     }
 
     Rectangle {
@@ -73,7 +66,7 @@ Item {
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.margins: 2
-        font.pixelSize: 12
+        font.pointSize: 20.0
         renderType: Text.NativeRendering
         color: "white"
         text: root.text
@@ -82,7 +75,7 @@ Item {
     Text {
         id: centerLabel
         anchors.centerIn: parent
-        font.pixelSize: 12
+        font.pointSize: 20.0
         renderType: Text.NativeRendering
         color: "white"
         text: root.centerText

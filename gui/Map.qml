@@ -9,9 +9,7 @@ import QtLocation 5.3
 import QtPositioning 5.2
 
 Components.Marker {
-    id: background
-    anchors.fill: parent
-    color: "transparent"
+    id: mapView
 
     Components.Marker {
         id: header

@@ -6,17 +6,17 @@ import "qrc:/Components" as Components
 import "qrc:/Controls" as Controls
 
 Window {
-    id: mainView
+    id: rootView
     visible: true
     width: 640
     height: 960
 
     property var navigationStack: ["Map"]
 
-    Loader {
-        id: mainViewLoader
+    StackView {
+        id: mainView
         anchors.fill: parent
-        source: "qrc:/Views/Map.qml"
+        initialItem: "qrc:/Views/Map.qml"
     }
 
     function mainViewTo(name, prop) {
@@ -28,21 +28,17 @@ Window {
 
         if (name === "Map") // if we go directly to the map, reset the navstack
         {
-            navigationStack = ["Map"]
+            mainView.clear()
+            mainView.push("qrc:/Views/Map.qml")
         }
         else
         {
-            navigationStack.push(name)
+            mainView.push("qrc:/Views/" + name + ".qml", {"properties": prop})
         }
-
-        if (prop !== undefined)
-            mainViewLoader.setSource("qrc:///Views/" + name + ".qml", prop)
-        else
-            mainViewLoader.setSource("qrc:///Views/" + name + ".qml")
     }
+
     function mainViewBack() {
-        var currentPage = navigationStack.pop();
-        mainViewTo(navigationStack.pop())
+        mainView.pop()
     }
 }
 

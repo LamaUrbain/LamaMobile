@@ -3,15 +3,15 @@ import "qrc:/Components/" as Components
 import "qrc:/Constants.js" as Constants
 
 Button {
-    id: backToMapButton
+    id: deleteButton
+    signal deleted()
     Image {
         fillMode: Image.PreserveAspectFit
         anchors.fill: parent
-        smooth: true
-        source: Constants.LAMA_BACK_RESSOURSE
-        anchors.margins: parent.radius * 0.25
+        anchors.margins: parent.radius * 0.75
+        source: Constants.LAMA_CROSS_RESSOURSE
     }
     onClicked: {
-        rootView.mainViewBack()
+        deleted()
     }
 }

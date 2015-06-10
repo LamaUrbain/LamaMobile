@@ -7,6 +7,6 @@ Button {
     property var navigationTargetProperties
 
     onClicked: {
-        mainView.mainViewTo(navigationTarget, navigationTargetProperties)
+        rootView.mainViewTo(navigationTarget, navigationTargetProperties)
     }
 }
