@@ -93,7 +93,7 @@ void ItineraryServices::addDestination(int id, QString destination, int position
 {
     // TODO: authentication
 
-    QUrl url(QString("%1/itineraries/%2/destinations/").arg(serverAddress).arg(id));
+    QUrl url(QString("%1/itineraries/destinations/%2/").arg(serverAddress).arg(id));
 
     QUrlQuery query;
     query.addQueryItem("destination", destination);
