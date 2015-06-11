@@ -5,14 +5,12 @@ import "qrc:/Controls/" as Controls
 
 Components.Background {
     id: waypointSuggestions
-    property ListModel waypointModel
-    property int waypointIndex
+    property string waypointData
 
     Binding {
         target: searchTextField
-        when: waypointModel != null
-        property: "text"
-        value: waypointModel.get(waypointIndex)
+        property: "placeholderText"
+        value: waypointData
     }
 
     Components.Header {
@@ -78,10 +76,12 @@ Components.Background {
     }
 
     Components.BottomAction {
-        Controls.NavigationButton {
+        Controls.Button {
             centerText: "Validate"
             anchors.fill: parent
-            navigationTarget: "MainSearch"
+            onClicked: {
+                rootView.mainViewBack();
+            }
         }
     }
 }

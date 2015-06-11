@@ -56,7 +56,7 @@ Components.Background {
                 width: parent.width * 0.5
                 height: parent.height
                 onClicked: {
-                    mainView.mainViewTo("UserForgottenPassword")
+                    rootView.mainViewTo("UserForgottenPassword")
                 }
             }
             Components.Marker {
@@ -66,7 +66,7 @@ Components.Background {
                 anchors.bottom: parent.bottom
                 width: parent.width * 0.5
                 onClicked: {
-                    mainView.mainViewTo("UserRegistration")
+                    rootView.mainViewTo("UserRegistration")
                 }
             }
         }

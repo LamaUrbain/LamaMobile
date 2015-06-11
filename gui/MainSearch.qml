@@ -49,8 +49,7 @@ Components.Background {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 waypointProperties: {
-                    "waypointModel": waypointsModel,
-                    "waypointIndex": index,
+                    "waypointData": waypointData,
                 }
                 deletable: index == 0 ? false : true
                 onDeleted: {

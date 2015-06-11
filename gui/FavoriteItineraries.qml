@@ -24,42 +24,10 @@ Components.Background {
         Repeater {
             model: 2
             Components.FavoriteItinerariesItem {
-                centerText: "Favorite " + index
-            }
-        }
-    }
-
-    Components.BottomAction {
-        id: footer
-
-        RowLayout {
-            anchors.fill: parent
-            spacing: 2
-
-            Controls.Button {
-                id: shareButton
-                Layout.fillWidth: true
-                centerText: "Share"
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                height: parent.height
-            }
-
-            Controls.Button {
-                id: modifyButton
-                Layout.fillWidth: true
-                centerText: "Edit"
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                height: parent.height
-            }
-
-            Controls.Button {
-                id: deleteButton
-                Layout.fillWidth: true
-                centerText: "Delete"
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
+                anchors.left: parent.left
+                anchors.right: parent.right
+                favoriteDescription: "Favorite " + index
+                height: parent.height * 0.10
             }
         }
     }
