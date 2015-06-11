@@ -58,7 +58,7 @@ Components.Marker {
     Map {
         id: map
 
-        zoomLevel: (maximumZoomLevel - minimumZoomLevel)/2
+        zoomLevel: 12
 
         gesture.flickDeceleration: 3000
         gesture.enabled: true
@@ -72,6 +72,10 @@ Components.Marker {
         }
 
         anchors.fill: parent
+        center {
+            latitude: 48.85341
+            longitude: 2.3488
+        }
 
         anchors.leftMargin: parent.width * 0.005
         anchors.rightMargin: parent.width * 0.005
