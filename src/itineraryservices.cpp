@@ -58,12 +58,12 @@ void ItineraryServices::createItinerary(QString name, QString departure, QString
     QUrl url(QString("%1/itineraries/").arg(serverAddress));
 
     QUrlQuery query;
-    query.addQueryItem("name", name);
+    if (!name.isEmpty())
+        query.addQueryItem("name", name);
     query.addQueryItem("departure", departure);
-    query.addQueryItem("destination", destination);
+    if (!destination.isEmpty())
+        query.addQueryItem("destination", destination);
     query.addQueryItem("favorite", favorite ? "true" : "false");
-
-    qDebug() << url << query.query().toLocal8Bit();
 
     postRequest(url, query.query().toLocal8Bit(), callback);
 }

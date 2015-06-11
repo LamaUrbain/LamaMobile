@@ -32,8 +32,8 @@ struct WhirlLessThan
 
 MapWidgetPrivate::MapWidgetPrivate(MapWidget *ptr)
     : q_ptr(ptr),
-      _center(2.3488000, 48.8534100),
-      _scale(7),
+      _center(2.3358000, 48.8534100),
+      _scale(12),
       _scrollOffset(-256, -256),
       _scrollValueSet(false),
       _wheeling(false),
