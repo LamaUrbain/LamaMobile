@@ -13,8 +13,8 @@ static const int indicatorHeight = 48;
 
 MapOverlayExtension::MapOverlayExtension(MapWidget *map)
     : MapExtension(map),
-      _indicator(":/images/map_indicator.png"),
-      _selectedIndicator(":/images/map_indicator_selected.png"),
+      _indicator(":/Images/map_indicator.png"),
+      _selectedIndicator(":/Images/map_indicator_selected.png"),
       _selectedPoint(-1),
       _itineraryId(-1)
 {
@@ -131,7 +131,7 @@ void MapOverlayExtension::setItinerary(int id)
 {
     _itineraryId = id;
     connect(_map, SIGNAL(mapScaleChanged()), this, SLOT(updateTiles()));
-    updateTiles();
+    refreshItinerary();
 }
 
 void MapOverlayExtension::refreshItinerary()
@@ -170,7 +170,7 @@ void MapOverlayExtension::refreshItinerary()
                     QJsonValue longitude = departure.value("longitude");
 
                     if (latitude.isDouble() && longitude.isDouble())
-                        appendPoint(QPointF(latitude.toDouble(), longitude.toDouble()));
+                        appendPoint(QPointF(longitude.toDouble(), latitude.toDouble()));
                     else
                         qDebug() << "Invalid departure" << latitude << longitude;
                 }
@@ -182,11 +182,15 @@ void MapOverlayExtension::refreshItinerary()
                     QJsonValue longitude = destination.value("longitude");
 
                     if (latitude.isDouble() && longitude.isDouble())
-                        appendPoint(QPointF(latitude.toDouble(), longitude.toDouble()));
+                        appendPoint(QPointF(longitude.toDouble(), latitude.toDouble()));
                     else
                         qDebug() << "Invalid destination" << latitude << longitude;
                 }
             }
+        }
+        else
+        {
+            qDebug() << "getItinerary failed:" << errorType;
         }
     });
 
@@ -234,6 +238,10 @@ void MapOverlayExtension::updateTiles()
 
                     _map->repaint();
                 }
+            }
+            else
+            {
+                qDebug() << "getItineraryTiles failed:" << errorType;
             }
         });
     }

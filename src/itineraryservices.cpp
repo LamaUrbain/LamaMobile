@@ -4,7 +4,7 @@
 #include <QUrlQuery>
 #include "itineraryservices.h"
 
-static QString serverAddress = "http://lamaurbain.cha.moe/";
+static QString serverAddress = "http://api.lamaurbain.cha.moe";
 
 ItineraryServices *ItineraryServices::_instance = NULL;
 
@@ -29,7 +29,7 @@ void ItineraryServices::getItineraries(QString search, QString username, bool fa
     QUrlQuery query;
     query.addQueryItem("search", search);
     query.addQueryItem("owner", username);
-    query.addQueryItem("favorite", favorite ? "True" : "False");
+    query.addQueryItem("favorite", favorite ? "true" : "false");
     query.addQueryItem("ordering", ordering);
     url.setQuery(query.query());
 
@@ -43,7 +43,8 @@ void ItineraryServices::getItineraries(QString search, QString username, bool fa
 
 void ItineraryServices::getItinerary(int id, ServicesBase::CallbackType callback)
 {
-    QUrl url(QString("%1/itineraries/%2/").arg(serverAddress).arg(id));
+    QUrl url(QString("%1/itineraries/%2").arg(serverAddress).arg(id));
+    qDebug() << "getItinerary:" << url.toString();
     getRequest(url, callback);
 }
 
@@ -60,10 +61,11 @@ void ItineraryServices::createItinerary(QString name, QString departure, QString
     query.addQueryItem("name", name);
     query.addQueryItem("departure", departure);
     query.addQueryItem("destination", destination);
-    query.addQueryItem("favorite", favorite ? "True" : "False");
-    url.setQuery(query.query());
+    query.addQueryItem("favorite", favorite ? "true" : "false");
 
-    postRequest(url, QByteArray(), callback);
+    qDebug() << url << query.query().toLocal8Bit();
+
+    postRequest(url, query.query().toLocal8Bit(), callback);
 }
 
 void ItineraryServices::createItinerary(QString name, QString departure, QString destination, bool favorite, QJSValue callback)
@@ -78,7 +80,7 @@ void ItineraryServices::editItinerary(int id, QString name, QString departure, b
     QUrlQuery query;
     query.addQueryItem("name", name);
     query.addQueryItem("departure", departure);
-    query.addQueryItem("favorite", favorite ? "True" : "False");
+    query.addQueryItem("favorite", favorite ? "true" : "false");
     url.setQuery(query.query());
 
     putRequest(url, QByteArray(), callback);
@@ -149,7 +151,8 @@ void ItineraryServices::deleteItinerary(int id, QJSValue callback)
 
 void ItineraryServices::getItineraryTiles(int id, int zoomLevel, ServicesBase::CallbackType callback)
 {
-    QUrl url(QString("%1/itineraries/%2/coordinates/%3").arg(serverAddress).arg(id).arg(zoomLevel));
+    QUrl url(QString("%1/itineraries/coordinates/%2/%3").arg(serverAddress).arg(id).arg(zoomLevel));
+    qDebug() << "getItineraryTiles:" << url.toString();
     getRequest(url, callback);
 }
 

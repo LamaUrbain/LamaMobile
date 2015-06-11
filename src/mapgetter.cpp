@@ -136,7 +136,7 @@ void MapGetter::onTilesRequired()
         if (!getter)
             return;
 
-        QString address = "http://tile.openstreetmap.org/%1/%2/%3.png";
+        QString address = "https://otile3-s.mqcdn.com/tiles/1.0.0/osm/%1/%2/%3.jpg";
         QUrl url(address.arg(tile.scale).arg(tile.pos.x()).arg(tile.pos.y()));
 
         QNetworkRequest request(url);
@@ -170,7 +170,7 @@ void MapGetter::onTilesRequired()
             if (!getter)
                 return;
 
-            QString address = "TODO/itineraries/tiles/%1/%2/%3/%4";
+            QString address = "http://api.lamaurbain.cha.moe/itineraries/tiles/%1/%2/%3/%4";
             QUrl url(address.arg(ext->getItinerary()).arg(tile.scale).arg(tile.pos.x()).arg(tile.pos.y()));
 
             QNetworkRequest request(url);

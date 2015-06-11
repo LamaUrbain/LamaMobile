@@ -58,4 +58,9 @@ Window {
     {
         JSModule.navigateBack();
     }
+
+    Component.onCompleted:
+    {
+        //mapView.mapComponent.displayItinerary(0);
+    }
 }

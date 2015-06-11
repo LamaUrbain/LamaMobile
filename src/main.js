@@ -65,8 +65,8 @@ function setWaypoints(mapView, departure, arrival, waypoints)
     departure = departure[0] + ',' + departure[1];
     arrival = arrival.split(new RegExp("[,;] *"));
     arrival = arrival[0] + ',' + arrival[1];
-    var name = "tempItinerary" + (Date.now() / 1000);
+    var name = "tempItinerary" + (Date.now());
 
-    itineraryServices.abortPendingRequests()
+    //itineraryServices.abortPendingRequests()
     itineraryServices.createItinerary(name, departure, arrival, false, onItineraryCreateResponse)
 }
