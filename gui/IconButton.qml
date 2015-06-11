@@ -36,5 +36,7 @@ Components.Marker {
 
         anchors.centerIn: parent
         anchors.right: parent.right
+        anchors.left: buttonIcon.rightt
+        width: parent.width * 0.8
     }
 }

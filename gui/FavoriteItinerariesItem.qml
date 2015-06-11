@@ -19,7 +19,7 @@ RowLayout {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         Layout.fillWidth: true
-        navigationTarget: "Suggestions"
+        navigationTarget: "Map"
     }
 
     DeleteButton {

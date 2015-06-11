@@ -58,7 +58,8 @@ Components.Background {
             }
             footer: Controls.Button {
                 height: search.height * 0.09
-                centerText: "Add destination"
+                width: parent.width * 0.10
+                iconSource: Constants.LAMA_ADD_RESSOURCE
                 onClicked: {
                     waypointsModel.append({"waypointData": "New Waypoint"})
                 }
