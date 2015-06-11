@@ -4,7 +4,7 @@
 #include <QUrlQuery>
 #include "itineraryservices.h"
 
-static QString serverAddress = "TODO";
+static QString serverAddress = "http://lamaurbain.cha.moe/";
 
 ItineraryServices *ItineraryServices::_instance = NULL;
 

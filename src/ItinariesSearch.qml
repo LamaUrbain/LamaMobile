@@ -63,7 +63,6 @@ Rectangle {
                         font.pixelSize: Constants.fontSize
                         color: "#000"
                         clip: true
-                        anchors.right: searchInputs.right;
                     }
                 }
             }
@@ -112,7 +111,6 @@ Rectangle {
                         font.pixelSize: Constants.fontSize
                         color: "#000"
                         clip: true
-                        anchors.right: searchInputs.right;
                     }
                 }
             }
@@ -272,6 +270,7 @@ Rectangle {
                 anchors.topMargin: parent.height * 0.1
                 ListView
                 {
+                    property bool favoritesListToggle: false;
                     id: favoritesList
                     model: ListModel { id: favoritesListModel }
                     Component.onCompleted: { ViewsLogic.fillFavoriteLocations(favoritesListModel) }
@@ -288,8 +287,13 @@ Rectangle {
                                 anchors.fill: parent
                                 onClicked:
                                 {
-                                    recentLocationList.currentIndex = index;
-                                    arrivalInput.text = address
+                                    favoritesList.currentIndex = index;
+                                    if (favoritesList.favoritesListToggle === false)
+                                        departureInput.text = address;
+                                    else
+                                        arrivalInput.text = address;
+                                    favoritesList.favoritesListToggle = !favoritesList.favoritesListToggle;
+
                                 }
                             }
                         }

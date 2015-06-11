@@ -26,10 +26,12 @@ function onIniteraryRequestFailure(code, details)
 
 function onItineraryCreateResponse(statusCode, jsonStr)
 {
-    if (statusCode === 0)
+    console.log("CreateItinerary Response : " + statusCode + '(' + (statusCode == 0) + ')');
+    if (statusCode == 0)
     {
         var jsonObj = JSON.parse(jsonStr)
-        mapView.mapComponent.displayItinerary(jsonObj["id"])
+        console.log("CreateItinerary Response Id : " + jsonObj["id"]);
+        mapView.mapComponent.displayItinerary(jsonObj["id"]);
     }
     else
         onIniteraryRequestFailure(statusCode, "Malheureusement le llama n'a pas trouvé de chemain")
@@ -37,21 +39,21 @@ function onItineraryCreateResponse(statusCode, jsonStr)
 
 function setWaypoints(mapView, departure, arrival, waypoints)
 {
-    var points = new Array;
-
-    var dep = new Object;
-    dep["type"] = "coord";
-    dep["content"] = new Object;
-    dep["content"]["latitude"] = 49.8964;
-    dep["content"]["longitude"] = 2.2957;
-    points.push(dep);
-
-    var arr = new Object;
-    arr["type"] = "coord";
-    arr["content"] = new Object;
-    arr["content"]["latitude"] = 49.4337;
-    arr["content"]["longitude"] = 2.0888;
-    points.push(arr);
+    //var points = new Array;
+    //
+    //var dep = new Object;
+    //dep["type"] = "coord";
+    //dep["content"] = new Object;
+    //dep["content"]["latitude"] =  departure.split(", ")[0];//49.8964;
+    //dep["content"]["longitude"] = departure.split(", ")[1];//2.2957;
+    //points.push(dep);
+    //
+    //var arr = new Object;
+    //arr["type"] = "coord";
+    //arr["content"] = new Object;
+    //arr["content"]["latitude"] =  arrival.split(", ")[0];//49.4337;
+    //arr["content"]["longitude"] = arrival.split(", ")[1];//2.0888;
+    //points.push(arr);
 
     //points.push(departure)
     //if (points && points.constructor === Array)
@@ -59,6 +61,12 @@ function setWaypoints(mapView, departure, arrival, waypoints)
             //points.push(waypoints[i])
     //points.push(arrival)
 
+    departure = departure.split(new RegExp("[,;] *"));
+    departure = departure[0] + ',' + departure[1];
+    arrival = arrival.split(new RegExp("[,;] *"));
+    arrival = arrival[0] + ',' + arrival[1];
+    var name = "tempItinerary" + (Date.now() / 1000);
+
     itineraryServices.abortPendingRequests()
-    itineraryServices.createItinerary(points, onItineraryCreateResponse)
+    itineraryServices.createItinerary(name, departure, arrival, false, onItineraryCreateResponse)
 }
