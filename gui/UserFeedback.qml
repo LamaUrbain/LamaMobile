@@ -74,9 +74,10 @@ Components.Background {
     }
 
     Components.BottomAction {
-        Controls.Button {
+        Controls.NavigationButton {
             anchors.fill: parent
             centerText: "Send Report"
+            navigationTarget: "Map"
         }
     }
 }

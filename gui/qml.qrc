@@ -61,6 +61,7 @@
         <file>Images/white/25.png</file>
         <file>Images/white/26.png</file>
         <file>Images/white/27.png</file>
+        <file>Images/white/21b.png</file>
     </qresource>
     <qresource prefix="/Components">
         <file>Marker.qml</file>
@@ -79,6 +80,7 @@
         <file>NavigationButton.qml</file>
         <file>DeleteButton.qml</file>
         <file>IconButton.qml</file>
+        <file>ImageButton.qml</file>
     </qresource>
     <qresource prefix="/Views">
         <file>AlertInformation.qml</file>

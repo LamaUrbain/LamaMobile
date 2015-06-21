@@ -15,5 +15,6 @@ var LAMA_BACK_RESSOURSE = "qrc:/Assets/Images/white/9.png"
 var LAMA_CROSS_RESSOURSE = "qrc:/Assets/Images/white/2.png"
 var LAMA_SHARE_RESSOURCE = "qrc:/Assets/Images/white/20.png"
 var LAMA_SAVE_RESSOURCE = "qrc:/Assets/Images/white/21.png"
+var LAMA_SAVED_RESSOURCE = "qrc:/Assets/Images/white/21b.png"
 var LAMA_ADD_RESSOURCE = "qrc:/Assets/Images/white/8.png"
 var LAMA_POINTSIZE = 20.0

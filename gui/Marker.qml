@@ -27,7 +27,7 @@ Item {
     Rectangle {
         anchors.fill: parent
         anchors.margins: 1
-        color: root.color
+        color: Qt.darker(root.color, root.checked ? 1.1 : 1)
         opacity: root.hovered ? 0.5 : root.checked ? 0.9 : 1
         radius: parent.radius
     }

@@ -79,5 +79,12 @@ Components.Marker {
 
         anchors.leftMargin: parent.width * 0.005
         anchors.rightMargin: parent.width * 0.005
+        Controls.ImageButton {
+            anchors.left: parent.left
+            anchors.bottom: parent.bottom
+            width: parent.width * 0.10
+            height: parent.height * 0.10
+            iconSource: Constants.LAMA_ADD_RESSOURCE
+        }
     }
 }

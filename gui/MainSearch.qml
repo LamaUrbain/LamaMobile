@@ -56,10 +56,10 @@ Components.Background {
                     waypointsModel.remove(index)
                 }
             }
-            footer: Controls.Button {
-                height: search.height * 0.09
-                width: parent.width * 0.10
+            footer: Controls.ImageButton {
                 iconSource: Constants.LAMA_ADD_RESSOURCE
+                height: search.height * 0.09
+                width: search.width * 0.10
                 onClicked: {
                     waypointsModel.append({"waypointData": "New Waypoint"})
                 }
@@ -85,11 +85,16 @@ Components.Background {
             }
 
             Controls.IconButton {
-                checkable: true
+                property bool saved: false
+
+                onClicked: {
+                    saved = !saved
+                }
+
                 id: modifyButton
                 Layout.fillWidth: true
                 text: "Save"
-                iconSource: Constants.LAMA_SAVE_RESSOURCE
+                iconSource: saved ? Constants.LAMA_SAVED_RESSOURCE: Constants.LAMA_SAVE_RESSOURCE
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
                 height: parent.height

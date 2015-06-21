@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import QtQuick.Controls 1.3
 import QtQuick.Layouts 1.1
 import "qrc:/Components/" as Components
 import "qrc:/Controls/" as Controls
@@ -10,24 +11,36 @@ Components.Background {
         title: "Favorites"
     }
 
-    Column {
-        id: itineraries
+    ListModel {
+        id: favoriteModel
+
+        ListElement {
+            favName: "To School"
+        }
+        ListElement {
+            favName: "To Home"
+        }
+    }
+
+
+    ScrollView {
+        id: favorites
         anchors.top: header.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        height: parent.height * 0.8
-        anchors.leftMargin: parent.height * 0.005
-        anchors.rightMargin: parent.height * 0.005
-        anchors.topMargin: parent.height * 0.005
-        anchors.bottomMargin: parent.height * 0.005
 
-        Repeater {
-            model: 2
-            Components.FavoriteItinerariesItem {
+        height: parent.height * 0.8
+
+        ListView {
+            model: favoriteModel
+            delegate: Components.FavoriteItinerariesItem {
                 anchors.left: parent.left
                 anchors.right: parent.right
-                favoriteDescription: "Favorite " + index
-                height: parent.height * 0.10
+                height: favorites.height * 0.09
+                favoriteDescription: favName
+                onDeleted: {
+                    favoriteModel.remove(index)
+                }
             }
         }
     }
