@@ -1,5 +1,3 @@
-SRC_PATH = ../../src
-
 OBJECTS_DIR = demo_mobilitydiagram_obj
 MOC_DIR = demo_mobilitydiagram_moc
 
@@ -7,12 +5,12 @@ TEMPLATE = app
 QT += qml quick
 CONFIG += c++11
 
-INCLUDEPATH += $$SRC_PATH
+INCLUDEPATH += ../../src/ #Do not put $$SRCPATH or somthing, MSVC doesn't like it
 
 SOURCES += main.cpp \
-        $$SRC_PATH/mobilitydiagram.cpp
+        ../../src/mobilitydiagram.cpp
 
-HEADERS += $$SRC_PATH/mobilitydiagram.h
+HEADERS += ../../src/mobilitydiagram.h
 
 RESOURCES += qml.qrc
 

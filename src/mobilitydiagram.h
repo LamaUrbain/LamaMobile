@@ -2,6 +2,14 @@
 #define MOBILITYDIAGRAM_H
 
 #include <QQuickPaintedItem>
+#define CURSOR_LEN          (10)
+#define DRAGBAND_LEN        (10)
+#define ATOQ(D_ANG)         ((D_ANG) * 16.)                 // For some reason QT angles are 1/16 degree
+#define ATOP(PERCENT)       (((PERCENT) * 100.) / 360.)
+#define PI                  (3.14159265359)
+#define PI2                 (PI / 2)
+
+//#define MOVE_MODE_SMASHALL
 
 class MobilityDiagram : public QQuickPaintedItem
 {
