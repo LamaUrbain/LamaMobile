@@ -42,7 +42,7 @@ Components.Background {
             anchors.right: parent.right
             anchors.top: passwordForm.bottom
             labelText: "Password"
-            textFieldText: "Confirm your Password here."
+            textFieldText: "Confirm Password"
         }
     }
 

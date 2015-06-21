@@ -15,7 +15,7 @@ Row {
 
     onFieldNameChanged: {
         formEntryLabel.centerText = fieldName
-        formEntryText.placeholderText = "Enter your " + fieldName + " here."
+        formEntryText.placeholderText = "Enter " + fieldName
     }
 
     Components.Marker {
@@ -23,7 +23,7 @@ Row {
         centerText: "Label:"
         anchors.top: parent.top
         anchors.bottom: parent.bottom
-        width: parent.width * 0.2
+        width: parent.width * 0.3
         height: parent.height * 0.5
         color: Constants.LAMA_ORANGE
     }

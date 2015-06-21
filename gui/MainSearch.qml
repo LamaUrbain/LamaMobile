@@ -58,8 +58,8 @@ Components.Background {
             }
             footer: Controls.ImageButton {
                 iconSource: Constants.LAMA_ADD_RESSOURCE
-                height: search.height * 0.09
-                width: search.width * 0.10
+                height: search.height * (0.09 + 0.02)
+                width: search.width * (0.10 + 0.02)
                 onClicked: {
                     waypointsModel.append({"waypointData": "New Waypoint"})
                 }

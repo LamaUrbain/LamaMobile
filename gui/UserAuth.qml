@@ -50,7 +50,7 @@ Components.Background {
 
             Components.Marker {
                 id: forgottenPasswordButton
-                centerText: "Forgot your password ?"
+                centerText: "Reset Password"
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
                 width: parent.width * 0.5
@@ -61,7 +61,7 @@ Components.Background {
             }
             Components.Marker {
                 id: subscribeButton
-                centerText: "Subscribe now !"
+                centerText: "Subscribe Now"
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
                 width: parent.width * 0.5

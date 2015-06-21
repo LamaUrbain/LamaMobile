@@ -29,10 +29,16 @@ Components.Background {
         anchors.left: parent.left
         anchors.right: parent.right
 
+        anchors.leftMargin: parent.height * 0.005
+        anchors.rightMargin: parent.height * 0.005
+        anchors.topMargin: parent.height * 0.005
+        anchors.bottomMargin: parent.height * 0.005
+
         height: parent.height * 0.8
 
         ListView {
             model: favoriteModel
+            spacing: parent.height * 0.005
             delegate: Components.FavoriteItinerariesItem {
                 anchors.left: parent.left
                 anchors.right: parent.right

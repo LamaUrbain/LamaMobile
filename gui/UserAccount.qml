@@ -3,6 +3,7 @@ import QtQuick.Controls 1.3
 import QtQuick.Layouts 1.1
 import "qrc:/Components/" as Components
 import "qrc:/Controls/" as Controls
+import "qrc:/Constants.js" as Constants
 
 Components.Background {
 
@@ -39,7 +40,7 @@ Components.Background {
         }
     }
 
-    Components.Marker {
+    Column {
         id: options
         anchors.left: parent.left
         anchors.right: parent.right
@@ -52,6 +53,7 @@ Components.Background {
 
         Components.Marker {
             id: changePassword
+            color: Constants.LAMA_ORANGE
             centerText: "Change Password:"
             anchors.left: parent.left
             anchors.top: parent.top
