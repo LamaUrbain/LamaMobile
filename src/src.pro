@@ -5,7 +5,7 @@ QT += qml quick network
 CONFIG += c++11
 
 SOURCES += main.cpp \
-    mobilitydiagram.cpp \
+    #mobilitydiagram.cpp \
     mapgetter.cpp \
     mapwidget.cpp \
     mapextension.cpp \
@@ -23,7 +23,7 @@ QML_IMPORT_PATH =
 include(deployment.pri)
 
 HEADERS += \
-    mobilitydiagram.h \
+    #mobilitydiagram.h \
     mapgetter.h \
     mapwidget.h \
     mapextension.h \
