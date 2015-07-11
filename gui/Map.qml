@@ -4,6 +4,7 @@ import QtQuick.Window 2.1
 import "qrc:/Components/" as Components
 import "qrc:/Controls/" as Controls
 import "qrc:/Constants.js" as Constants
+import "qrc:/UserSession.js" as UserSession
 
 import QtLocation 5.3
 import QtPositioning 5.2
@@ -86,5 +87,46 @@ Components.Marker {
             height: parent.height * (0.10 + 0.02)
             iconSource: Constants.LAMA_ADD_RESSOURCE
         }
+    }
+
+    function resolveCurrentItinerary()
+    {
+        /*********temporary due to lack of addr resolving*********/
+        var startPoint = UserSession.LAMA_USER_CURRENT_ITINERARY["departure"]
+        var lastId = UserSession.LAMA_USER_CURRENT_ITINERARY["destinations"].length - 1
+        var arrivalPoint = UserSession.LAMA_USER_CURRENT_ITINERARY["destinations"][lastId]
+        var requestDeparture =
+                [
+                    startPoint["latitude"],
+                    startPoint["longitude"]
+                ]
+        var requestArrival =
+                [
+                    arrivalPoint["latitude"],
+                    arrivalPoint["longitude"]
+                ]
+        /********************************************************/
+
+        var name = "tempItinerary" + (Date.now());
+
+        //itineraryServices.abortPendingRequests()
+        itineraryServices.createItinerary(name, requestDeparture, requestArrival, false, onItineraryCreateResponse)
+        mainModal.title = "Resolving itinierary"
+        mainModal.setLoadingState(true)
+        mainModal.visible = true
+    }
+
+    function onItineraryCreateResponse(statusCode, jsonStr)
+    {
+        mainModal.visible = false
+        console.log("CreateItinerary Response : " + statusCode + '(' + (statusCode == 0) + ')');
+        if (statusCode === 0)
+        {
+            var jsonObj = JSON.parse(jsonStr)
+            console.log("CreateItinerary Response Id : " + jsonObj["id"]);
+            mapView.mapComponent.displayItinerary(jsonObj["id"]);
+        }
+        else
+            onIniteraryRequestFailure(statusCode, "Malheureusement le llama n'a pas trouvé de chemain")
     }
 }

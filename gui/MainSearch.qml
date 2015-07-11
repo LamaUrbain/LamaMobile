@@ -4,8 +4,18 @@ import QtQuick.Layouts 1.1
 import "qrc:/Components/" as Components
 import "qrc:/Controls/" as Controls
 import "qrc:/Constants.js" as Constants
+import "qrc:/UserSession.js" as UserSession
+import "qrc:/Views/ViewsLogic.js" as ViewsLogic
 
 Components.Background {
+
+    function refreshModel()
+    {
+        ViewsLogic.fillWaypoints(waypointsModel, UserSession.LAMA_USER_CURRENT_ITINERARY)
+    }
+
+    Component.onCompleted: rootView.onUserSessionChanged.connect(refreshModel)
+    Component.onDestruction: rootView.onUserSessionChanged.disconnect(refreshModel)
 
     Components.Header {
         id: header
@@ -15,21 +25,7 @@ Components.Background {
     ListModel {
         id: waypointsModel
 
-        ListElement {
-            waypointData: "Departure"
-        }
-        ListElement {
-            waypointData: "Here"
-        }
-        ListElement {
-            waypointData: "There"
-        }
-        ListElement {
-            waypointData: "Further"
-        }
-        ListElement {
-            waypointData: "Arrival"
-        }
+        Component.onCompleted : refreshModel()
     }
 
     ScrollView {
@@ -45,15 +41,13 @@ Components.Background {
             model: waypointsModel
             delegate: Components.Waypoint {
                 height: search.height * 0.09
-                waypointDescription: waypointData
-                anchors.left: parent.left
-                anchors.right: parent.right
-                waypointProperties: {
-                    "waypointData": waypointData,
-                }
+                waypointDescription: waypointData.address
+                linkedWaypointId: index
                 deletable: index == 0 ? false : true
-                onDeleted: {
+                onDeleted:
+                {
                     waypointsModel.remove(index)
+                    delete UserSession.LAMA_USER_CURRENT_ITINERARY["destinations"][index]
                 }
             }
             footer: Controls.ImageButton {
@@ -61,7 +55,9 @@ Components.Background {
                 height: search.height * (0.09 + 0.02)
                 width: search.width * (0.10 + 0.02)
                 onClicked: {
-                    waypointsModel.append({"waypointData": "New Waypoint"})
+                    var newDest = {address: "New Waypoint"}
+                    waypointsModel.append({waypointData: newDest})
+                    UserSession.LAMA_USER_CURRENT_ITINERARY["destinations"].push(newDest)
                 }
             }
         }
@@ -107,6 +103,10 @@ Components.Background {
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
                 navigationTarget: "Map"
+                onNavButtonPressed:
+                {
+                    rootView.resolveCurrentItinerary()
+                }
             }
         }
     }

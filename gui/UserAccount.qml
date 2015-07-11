@@ -56,7 +56,6 @@ Components.Background {
             color: Constants.LAMA_ORANGE
             centerText: "Change Password:"
             anchors.left: parent.left
-            anchors.top: parent.top
             width: parent.height * 0.75
             height: parent.height * 0.1
             anchors.leftMargin: parent.height * 0.005
@@ -66,7 +65,6 @@ Components.Background {
         }
 
         Column {
-            anchors.top: changePassword.bottom
             height: parent.height * 0.9
             anchors.left: parent.left
             anchors.right: parent.right

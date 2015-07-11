@@ -2,66 +2,40 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>Constants.js</file>
+        <file>UserSession.js</file>
     </qresource>
     <qresource prefix="/Assets">
         <file>Images/vehicleMean.png</file>
-        <file>Images/yellow/0.png</file>
-        <file>Images/yellow/1.png</file>
-        <file>Images/yellow/2.png</file>
-        <file>Images/yellow/3.png</file>
-        <file>Images/yellow/4.png</file>
-        <file>Images/yellow/5.png</file>
-        <file>Images/yellow/6.png</file>
-        <file>Images/yellow/7.png</file>
-        <file>Images/yellow/8.png</file>
-        <file>Images/yellow/9.png</file>
-        <file>Images/yellow/10.png</file>
-        <file>Images/yellow/11.png</file>
-        <file>Images/yellow/12.png</file>
-        <file>Images/yellow/13.png</file>
-        <file>Images/yellow/14.png</file>
-        <file>Images/yellow/15.png</file>
-        <file>Images/yellow/16.png</file>
-        <file>Images/yellow/17.png</file>
-        <file>Images/yellow/18.png</file>
-        <file>Images/yellow/19.png</file>
-        <file>Images/yellow/20.png</file>
-        <file>Images/yellow/21.png</file>
-        <file>Images/yellow/22.png</file>
-        <file>Images/yellow/23.png</file>
-        <file>Images/yellow/24.png</file>
-        <file>Images/yellow/25.png</file>
-        <file>Images/yellow/26.png</file>
-        <file>Images/yellow/27.png</file>
-        <file>Images/white/0.png</file>
-        <file>Images/white/1.png</file>
-        <file>Images/white/2.png</file>
-        <file>Images/white/3.png</file>
-        <file>Images/white/4.png</file>
-        <file>Images/white/5.png</file>
-        <file>Images/white/6.png</file>
-        <file>Images/white/7.png</file>
-        <file>Images/white/8.png</file>
-        <file>Images/white/9.png</file>
-        <file>Images/white/10.png</file>
-        <file>Images/white/11.png</file>
-        <file>Images/white/12.png</file>
-        <file>Images/white/13.png</file>
-        <file>Images/white/14.png</file>
-        <file>Images/white/15.png</file>
-        <file>Images/white/16.png</file>
-        <file>Images/white/17.png</file>
-        <file>Images/white/18.png</file>
-        <file>Images/white/19.png</file>
-        <file>Images/white/20.png</file>
-        <file>Images/white/21.png</file>
-        <file>Images/white/22.png</file>
-        <file>Images/white/23.png</file>
-        <file>Images/white/24.png</file>
-        <file>Images/white/25.png</file>
-        <file>Images/white/26.png</file>
-        <file>Images/white/27.png</file>
-        <file>Images/white/21b.png</file>
+        <file>Images/0.png</file>
+        <file>Images/1.png</file>
+        <file>Images/2.png</file>
+        <file>Images/3.png</file>
+        <file>Images/4.png</file>
+        <file>Images/5.png</file>
+        <file>Images/6.png</file>
+        <file>Images/7.png</file>
+        <file>Images/8.png</file>
+        <file>Images/9.png</file>
+        <file>Images/10.png</file>
+        <file>Images/11.png</file>
+        <file>Images/12.png</file>
+        <file>Images/13.png</file>
+        <file>Images/14.png</file>
+        <file>Images/15.png</file>
+        <file>Images/16.png</file>
+        <file>Images/17.png</file>
+        <file>Images/18.png</file>
+        <file>Images/19.png</file>
+        <file>Images/20.png</file>
+        <file>Images/21.png</file>
+        <file>Images/22.png</file>
+        <file>Images/23.png</file>
+        <file>Images/24.png</file>
+        <file>Images/25.png</file>
+        <file>Images/26.png</file>
+        <file>Images/27.png</file>
+        <file>Images/21b.png</file>
+        <file>Images/spinnerIcon.png</file>
     </qresource>
     <qresource prefix="/Components">
         <file>Marker.qml</file>
@@ -72,6 +46,7 @@
         <file>Waypoint.qml</file>
         <file>FormEntry.qml</file>
         <file>Background.qml</file>
+        <file>LoadingRing.qml</file>
     </qresource>
     <qresource prefix="/Controls">
         <file>BackButton.qml</file>
@@ -95,5 +70,8 @@
         <file>UserFeedback.qml</file>
         <file>UserRegistration.qml</file>
         <file>UserForgottenPassword.qml</file>
+        <file>Modal.qml</file>
+        <file>APILogic.js</file>
+        <file>ViewsLogic.js</file>
     </qresource>
 </RCC>
