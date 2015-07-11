@@ -1,62 +1,77 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>main.js</file>
         <file>Constants.js</file>
-    </qresource>
-    <qresource prefix="/Views">
-        <file>Map.qml</file>
-        <file>ItinariesSearch.qml</file>
-        <file>Suggestions.qml</file>
-        <file>Menu.qml</file>
-        <file>ViewsLogic.js</file>
-        <file>ViewsData.js</file>
-        <file>Favorite.qml</file>
-        <file>Mobility.qml</file>
-        <file>ProfileSettings.qml</file>
-        <file>Feedback.qml</file>
-    </qresource>
-    <qresource prefix="/Components">
-        <file>CommandBar.qml</file>
-        <file>MenuHeader.qml</file>
-        <file>MenuSection.qml</file>
-        <file>ErrorPopup.qml</file>
-    </qresource>
-    <qresource prefix="/Controls">
-        <file>MenuButton.qml</file>
-        <file>SearchButton.qml</file>
-        <file>ReturnButton.qml</file>
-        <file>SwapButton.qml</file>
-        <file>ValidateButton.qml</file>
-        <file>MapButton.qml</file>
-        <file>SettingsButton.qml</file>
-        <file>MapWidget.qml</file>
-        <file>IconedCheckBox.qml</file>
+        <file>UserSession.js</file>
     </qresource>
     <qresource prefix="/Assets">
-        <file>Images/menuIcon.png</file>
-        <file>Images/returnIcon.png</file>
-        <file>Images/searchIcon.png</file>
-        <file>Images/swapIcon.png</file>
-        <file>Images/loupeIcon.png</file>
-        <file>Images/validateIcon.png</file>
-        <file>Images/mapIcon.png</file>
-        <file>Images/alertIcon.png</file>
-        <file>Images/contributeIcon.png</file>
-        <file>Images/feedbackIcon.png</file>
-        <file>Images/helpIcon.png</file>
-        <file>Images/mobilityIcon.png</file>
-        <file>Images/newsIcon.png</file>
-        <file>Images/planetIcon.png</file>
-        <file>Images/reportIcon.png</file>
-        <file>Images/favoriteIcon.png</file>
-        <file>Images/settingsIcon.png</file>
-        <file>Images/defaultAvatar.png</file>
-        <file>Images/bikeMean.png</file>
-        <file>Images/busMean.png</file>
-        <file>Images/onfootMean.png</file>
-        <file>Images/trainMean.png</file>
-        <file>Images/tramwayMean.png</file>
         <file>Images/vehicleMean.png</file>
+        <file>Images/0.png</file>
+        <file>Images/1.png</file>
+        <file>Images/2.png</file>
+        <file>Images/3.png</file>
+        <file>Images/4.png</file>
+        <file>Images/5.png</file>
+        <file>Images/6.png</file>
+        <file>Images/7.png</file>
+        <file>Images/8.png</file>
+        <file>Images/9.png</file>
+        <file>Images/10.png</file>
+        <file>Images/11.png</file>
+        <file>Images/12.png</file>
+        <file>Images/13.png</file>
+        <file>Images/14.png</file>
+        <file>Images/15.png</file>
+        <file>Images/16.png</file>
+        <file>Images/17.png</file>
+        <file>Images/18.png</file>
+        <file>Images/19.png</file>
+        <file>Images/20.png</file>
+        <file>Images/21.png</file>
+        <file>Images/22.png</file>
+        <file>Images/23.png</file>
+        <file>Images/24.png</file>
+        <file>Images/25.png</file>
+        <file>Images/26.png</file>
+        <file>Images/27.png</file>
+        <file>Images/21b.png</file>
+        <file>Images/spinnerIcon.png</file>
+    </qresource>
+    <qresource prefix="/Components">
+        <file>Marker.qml</file>
+        <file>Header.qml</file>
+        <file>BottomAction.qml</file>
+        <file>FavoriteItinerariesItem.qml</file>
+        <file>TextField.qml</file>
+        <file>Waypoint.qml</file>
+        <file>FormEntry.qml</file>
+        <file>Background.qml</file>
+        <file>LoadingRing.qml</file>
+    </qresource>
+    <qresource prefix="/Controls">
+        <file>BackButton.qml</file>
+        <file>TransportCheckedBox.qml</file>
+        <file>Button.qml</file>
+        <file>NavigationButton.qml</file>
+        <file>DeleteButton.qml</file>
+        <file>IconButton.qml</file>
+        <file>ImageButton.qml</file>
+    </qresource>
+    <qresource prefix="/Views">
+        <file>AlertInformation.qml</file>
+        <file>FavoriteItineraries.qml</file>
+        <file>MainSearch.qml</file>
+        <file>Map.qml</file>
+        <file>Menu.qml</file>
+        <file>Suggestions.qml</file>
+        <file>TransportPreferences.qml</file>
+        <file>UserAccount.qml</file>
+        <file>UserAuth.qml</file>
+        <file>UserFeedback.qml</file>
+        <file>UserRegistration.qml</file>
+        <file>UserForgottenPassword.qml</file>
+        <file>Modal.qml</file>
+        <file>APILogic.js</file>
+        <file>ViewsLogic.js</file>
     </qresource>
 </RCC>

@@ -23,6 +23,9 @@ public:
     void deleteItinerary(int id, ServicesBase::CallbackType callback);
     void getItineraryTiles(int id, int zoomLevel, ServicesBase::CallbackType callback);
 
+signals:
+    void onItineraryRequestFinished();
+
 public slots:
     void getItineraries(QString search, QString username, bool favorite, QString ordering, QJSValue callback);
     void getItinerary(int id, QJSValue callback);
