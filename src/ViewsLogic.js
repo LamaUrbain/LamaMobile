@@ -66,13 +66,21 @@ function fillWaypoints(listModelId, itinerary)
     if ('departure' in itinerary)
         listModelId.append({waypointData: itinerary.departure})
     else
+    {
         listModelId.append({waypointData: {address: "Departure"}})
+        return;
+    }
 
-    if (destinations in itinerary)
+    if ('destinations' in itinerary)
     {
         var waypoints = itinerary["destinations"];
 
         for (var idx = 0; idx < waypoints.length; ++idx)
             listModelId.append({waypointData: waypoints[idx]})
     }
+}
+
+function checkAndFillFromSavedData()
+{
+
 }
