@@ -1,68 +1,133 @@
 import QtQuick 2.0
-import MapControls 1.0
-import "qrc:/Components" as Components
-import "qrc:/Controls" as Controls
-import "ViewsData.js" as ViewsData
+import QtQuick.Layouts 1.1
+import QtQuick.Window 2.1
+import "qrc:/Components/" as Components
+import "qrc:/Controls/" as Controls
+import "qrc:/Constants.js" as Constants
+import "qrc:/UserSession.js" as UserSession
 
-Rectangle {
-    property alias mapComponent: mapWidget
-    anchors.fill:  parent
+import QtLocation 5.3
+import QtPositioning 5.2
 
-    color: "#0F0"
+Components.Marker {
+    id: mapView
 
-    PinchArea
-    {
-        anchors.fill: parent
-        MapWidget
-        {
-            id: mapWidget
+    Components.Marker {
+        id: header
+        z: 1
+        color: "transparent"
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: parent.top
+        height: parent.height * 0.1
+        anchors.leftMargin: parent.width * 0.005
+        anchors.rightMargin: parent.width * 0.005
+        Layout.maximumHeight: parent.height * 0.075
+        Layout.minimumHeight: parent.height * 0.075
+        RowLayout {
             anchors.fill: parent
-        }
 
-        pinch.maximumScale: 2
-        pinch.minimumScale: -2
-        onPinchFinished:
-        {
-            var currentScale = Math.round(pinch.scale)
-            if (currentScale != 0)
-            {
-                var zoomLevel = mapWidget.getMapScale()
-                zoomLevel += 1 - (currentScale < 0) * 2
-                mapWidget.setMapScale(zoomLevel)
+            Controls.NavigationButton {
+                Layout.fillWidth: true
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                centerText: "Search"
+                navigationTarget: "MainSearch"
+                color: Constants.LAMA_ORANGE
+            }
+
+            Controls.NavigationButton {
+                Layout.fillWidth: true
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                centerText: "Menu"
+                navigationTarget: "Menu"
+                color: Constants.LAMA_ORANGE
+            }
+
+            Controls.NavigationButton {
+                Layout.fillWidth: true
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                centerText: "User Auth"
+                navigationTarget: "UserAuth"
+                color: Constants.LAMA_ORANGE
             }
         }
     }
 
-    Components.CommandBar
-    {
-        id: commandBar
-        Controls.MenuButton
-        {
-            onMenuButtonPressed:
-            {
-                mainView.navigateToMenu()
-            }
+    Map {
+        id: map
 
-            width: parent.width * 0.1;
-            anchors.leftMargin: width;
+        zoomLevel: 12
+
+        gesture.flickDeceleration: 3000
+        gesture.enabled: true
+
+        plugin: Plugin {
+            name: "osm"
+        }
+
+        property GeocodeModel geocodeModel: GeocodeModel {
+            plugin: map.plugin
+        }
+
+        anchors.fill: parent
+        center {
+            latitude: 48.85341
+            longitude: 2.3488
+        }
+
+        anchors.leftMargin: parent.width * 0.005
+        anchors.rightMargin: parent.width * 0.005
+        Controls.ImageButton {
             anchors.left: parent.left
-            anchors.top: parent.top
             anchors.bottom: parent.bottom
+            width: parent.width * (0.10 + 0.04)
+            height: parent.height * (0.10 + 0.02)
+            iconSource: Constants.LAMA_ADD_RESSOURCE
         }
+    }
 
-        Controls.SearchButton
+    function resolveCurrentItinerary()
+    {
+        /*********temporary due to lack of addr resolving*********/
+        var startPoint = UserSession.LAMA_USER_CURRENT_ITINERARY["departure"]
+        var lastId = UserSession.LAMA_USER_CURRENT_ITINERARY["destinations"].length - 1
+        var arrivalPoint = UserSession.LAMA_USER_CURRENT_ITINERARY["destinations"][lastId]
+        var requestDeparture =
+                [
+                    startPoint["latitude"],
+                    startPoint["longitude"]
+                ]
+        var requestArrival =
+                [
+                    arrivalPoint["latitude"],
+                    arrivalPoint["longitude"]
+                ]
+        /********************************************************/
+
+        var name = "tempItinerary" + (Date.now());
+
+        //itineraryServices.abortPendingRequests()
+        itineraryServices.createItinerary(name, JSON.stringify(requestDeparture), JSON.stringify(requestArrival), false, onItineraryCreateResponse)
+        mainModal.title = "Resolving itinierary"
+        mainModal.setLoadingState(true)
+        mainModal.enableButton = false
+        mainModal.visible = true
+    }
+
+    function onItineraryCreateResponse(statusCode, jsonStr)
+    {
+        mainModal.visible = false
+        console.log("CreateItinerary Response : " + statusCode + '(' + (statusCode == 0) + ')');
+        if (statusCode === 0)
         {
-            onSearchButtonPressed:
-            {
-                mainView.navigateToSearch()
-            }
-
-            width: parent.width * 0.1;
-            anchors.rightMargin: width;
-            anchors.right: parent.right
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
+            var jsonObj = JSON.parse(jsonStr)
+            console.log("CreateItinerary Response Id : " + jsonObj["id"]);
+            mapView.mapComponent.displayItinerary(jsonObj["id"]);
         }
+        else
+            onIniteraryRequestFailure(statusCode, "Malheureusement le llama n'a pas trouvé de chemain")
     }
 }
-

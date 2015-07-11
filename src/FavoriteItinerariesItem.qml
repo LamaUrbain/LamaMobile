@@ -3,9 +3,11 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls 1.3
 import "qrc:/Controls/"
 import "qrc:/Constants.js" as Constants
+import "qrc:/UserSession.js" as UserSession
 
 RowLayout {
     property alias favoriteDescription: favoriteText.centerText
+    property var linkedItinerary: ({})
 
     signal deleted()
 
@@ -19,7 +21,12 @@ RowLayout {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         Layout.fillWidth: true
-        navigationTarget: "Map"
+        navigationTarget: "MainSearch"
+        onNavButtonPressed:
+        {
+            UserSession.LAMA_USER_CURRENT_ITINERARY = linkedItinerary
+            rootView.raiseUserSessionChanged()
+        }
     }
 
     DeleteButton {

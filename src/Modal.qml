@@ -21,6 +21,13 @@ Rectangle
     color: "#AA000000"
     visible: false
 
+    MouseArea
+    {
+        anchors.fill:parent
+        propagateComposedEvents: false
+        preventStealing: true
+    }
+
     Rectangle
     {
         anchors.centerIn: parent
@@ -48,6 +55,7 @@ Rectangle
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 wrapMode: Text.WordWrap
+                color: Constants.LAMA_YELLOW
                 font.pixelSize: Constants.LAMA_POINTSIZE
                 font.weight: Font.Bold
                 text: "Information"
@@ -62,6 +70,7 @@ Rectangle
                 verticalAlignment: Text.AlignVCenter
                 anchors.topMargin: parent.height * 0.1
                 wrapMode: Text.WordWrap
+                color: Constants.LAMA_YELLOW
                 font.pixelSize: Constants.LAMA_POINTSIZE
                 text: "Everything's fine !"
             }

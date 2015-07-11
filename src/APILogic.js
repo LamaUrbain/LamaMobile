@@ -3,7 +3,7 @@ var xhr = null;
 var requestHandler = null;
 
 function requestAPI(method, route, jsonParams, callBack, token)
-{
+{// TODO call user services to dispatch network on native side
     if (xhr != null)
         return (false);
 

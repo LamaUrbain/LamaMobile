@@ -14,7 +14,7 @@ Button {
 
     onClicked:
     {
-        navButtonPressed()
+        navButtonPressed() // needed to raise a second signal, else you can't pretreat stuff
         navigate()
     }
 }

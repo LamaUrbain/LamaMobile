@@ -84,13 +84,13 @@ Components.Background {
                 property bool saved: false
 
                 onClicked: {
-                    saved = !saved
+                    savedUserSession.LAMA_USER_CURRENT_ITINERARY["favorite"] = !UserSession.LAMA_USER_CURRENT_ITINERARY["favorite"]
                 }
 
                 id: modifyButton
                 Layout.fillWidth: true
                 text: "Save"
-                iconSource: saved ? Constants.LAMA_SAVED_RESSOURCE: Constants.LAMA_SAVE_RESSOURCE
+                iconSource: UserSession.LAMA_USER_CURRENT_ITINERARY["favorite"] ? Constants.LAMA_SAVED_RESSOURCE: Constants.LAMA_SAVE_RESSOURCE
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
                 height: parent.height

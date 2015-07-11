@@ -3,6 +3,8 @@ import QtQuick.Controls 1.3
 import QtQuick.Layouts 1.1
 import "qrc:/Components/" as Components
 import "qrc:/Controls/" as Controls
+import "qrc:/UserSession.js" as UserSession
+import "qrc:/Views/ViewsLogic.js" as ViewsLogic
 
 Components.Background {
 
@@ -14,11 +16,9 @@ Components.Background {
     ListModel {
         id: favoriteModel
 
-        ListElement {
-            favName: "To School"
-        }
-        ListElement {
-            favName: "To Home"
+        Component.onCompleted:
+        {
+            ViewsLogic.fillFavorites(this, UserSession.LAMA_USER_KNOWN_ITINERARIES)
         }
     }
 
@@ -43,9 +43,11 @@ Components.Background {
                 anchors.left: parent.left
                 anchors.right: parent.right
                 height: favorites.height * 0.09
-                favoriteDescription: favName
+                favoriteDescription: itinerary.name
+                linkedItinerary: itinerary
                 onDeleted: {
                     favoriteModel.remove(index)
+                    UserSession.LAMA_USER_KNOWN_ITINERARIES[index]["favorite"] = false
                 }
             }
         }
