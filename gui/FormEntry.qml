@@ -11,7 +11,8 @@ Row {
     property string fieldName
     property alias isPassword: formEntryText.isPassword
     property alias labelText: formEntryLabel.centerText
-    property alias textFieldText: formEntryText.placeholderText
+    property alias textFieldPlaceHolder: formEntryText.placeholderText
+    property alias textFieldText: formEntryText.text
 
     onFieldNameChanged: {
         formEntryLabel.centerText = fieldName
@@ -32,7 +33,7 @@ Row {
         id: formEntryText
         anchors.top: parent.top
         anchors.bottom: parent.bottom
-        width: parent.width * 0.8
+        width: parent.width * 0.7
         opacity: 0.9
     }
 }

@@ -1,7 +1,6 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
-#include "mobilitydiagram.h"
 #include "mapgetter.h"
 #include "mapwidget.h"
 #include "itineraryservices.h"

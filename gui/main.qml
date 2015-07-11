@@ -11,12 +11,17 @@ Window {
     width: 640
     height: 960
 
-    property var navigationStack: ["Map"]
+    signal userSessionChanged()
 
     StackView {
         id: mainView
         anchors.fill: parent
         initialItem: "qrc:/Views/Map.qml"
+    }
+
+    Views.Modal
+    {
+        id: mainModal
     }
 
     function mainViewTo(name, prop) {
@@ -33,12 +38,21 @@ Window {
         }
         else
         {
-            mainView.push("qrc:/Views/" + name + ".qml", {"properties": prop})
+            mainView.push("qrc:/Views/" + name + ".qml", {properties: prop})
         }
     }
 
     function mainViewBack() {
         mainView.pop()
     }
-}
 
+    function raiseUserSessionChanged()
+    {
+        userSessionChanged()
+    }
+
+    function resolveCurrentItinerary()
+    {
+        mainView.get(0, false).resolveCurrentItinerary()
+    }
+}

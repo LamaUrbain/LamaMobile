@@ -3,11 +3,15 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls 1.3
 import "qrc:/Controls/"
 import "qrc:/Constants.js" as Constants
+import "qrc:/UserSession.js" as UserSession
 
 RowLayout {
-    property bool deletable: false
+    property int linkedWaypointId: -1
     property alias waypointDescription: waypointText.centerText
-    property alias waypointProperties: waypointText.navigationTargetProperties
+    property bool deletable: false
+
+    anchors.left: parent.left
+    anchors.right: parent.right
 
     Component.onCompleted: {
         if (deletable === true)
@@ -29,6 +33,10 @@ RowLayout {
         anchors.bottom: parent.bottom
         Layout.fillWidth: true
         navigationTarget: "Suggestions"
+        onNavButtonPressed:
+        {
+            UserSession.LAMA_USER_CURRENT_WAYPOINT_ID = linkedWaypointId
+        }
     }
 
     DeleteButton {

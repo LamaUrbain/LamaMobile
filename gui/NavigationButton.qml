@@ -2,11 +2,19 @@ import QtQuick 2.0
 import "qrc:/Components/" as Components
 
 Button {
-    id: navButton
     property string navigationTarget
     property var navigationTargetProperties
+    property bool acceptClick: true
+    signal navButtonPressed()
+    function navigate()
+    {
+        if (acceptClick === true)
+            rootView.mainViewTo(navigationTarget, navigationTargetProperties)
+    }
 
-    onClicked: {
-        rootView.mainViewTo(navigationTarget, navigationTargetProperties)
+    onClicked:
+    {
+        navButtonPressed()
+        navigate()
     }
 }
