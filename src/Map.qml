@@ -100,22 +100,22 @@ Components.Marker {
         var startPoint = UserSession.LAMA_USER_CURRENT_ITINERARY["departure"]
         var lastId = UserSession.LAMA_USER_CURRENT_ITINERARY["destinations"].length - 1
         var arrivalPoint = UserSession.LAMA_USER_CURRENT_ITINERARY["destinations"][lastId]
-        var requestDeparture =
-                [
-                    startPoint["latitude"],
-                    startPoint["longitude"]
-                ]
-        var requestArrival =
-                [
-                    arrivalPoint["latitude"],
-                    arrivalPoint["longitude"]
-                ]
+        var requestDeparture = startPoint["latitude"] + ',' + startPoint["longitude"]
+        var requestArrival = arrivalPoint["latitude"] + ',' + arrivalPoint["longitude"]
+
+        /*departure = departure.split(new RegExp("[,;] *"));
+        departure = departure[0] + ',' + departure[1];
+        if (arrival)
+        {
+            arrival = arrival.split(new RegExp("[,;] *"));
+            arrival = arrival[0] + ',' + arrival[1];
+        }*/
         /********************************************************/
 
         var name = "tempItinerary" + (Date.now());
 
         //itineraryServices.abortPendingRequests()
-        itineraryServices.createItinerary(name, JSON.stringify(requestDeparture), JSON.stringify(requestArrival), false, onItineraryCreateResponse)
+        itineraryServices.createItinerary(name, requestDeparture, requestArrival, false, onItineraryCreateResponse)
         // Todo : get an itinerary that already exists
         mainModal.title = "Resolving itinierary"
         mainModal.setLoadingState(true)
