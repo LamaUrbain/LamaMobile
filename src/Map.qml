@@ -86,6 +86,11 @@ Components.Marker {
             width: parent.width * (0.10 + 0.04)
             height: parent.height * (0.10 + 0.02)
             iconSource: Constants.LAMA_ADD_RESSOURCE
+            onClicked:
+            {
+                UserSession.LAMA_USER_CURRENT_ITINERARY = ({})
+                rootView.mainViewTo("MainSearch", null)
+            }
         }
     }
 
@@ -111,6 +116,7 @@ Components.Marker {
 
         //itineraryServices.abortPendingRequests()
         itineraryServices.createItinerary(name, JSON.stringify(requestDeparture), JSON.stringify(requestArrival), false, onItineraryCreateResponse)
+        // Todo : get an itinerary that already exists
         mainModal.title = "Resolving itinierary"
         mainModal.setLoadingState(true)
         mainModal.enableButton = false
