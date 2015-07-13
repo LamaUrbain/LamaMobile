@@ -35,7 +35,7 @@ Components.Background {
 
         Controls.NavigationButton {
             id: transportPref
-            centerText: "Transport Preferences"
+            centerText: "Sponsored paths"
             anchors.left: parent.left
             anchors.right: parent.right
             height: parent.height / 4
@@ -43,7 +43,7 @@ Components.Background {
             anchors.rightMargin: parent.height * 0.005
             anchors.topMargin: parent.height * 0.005
             anchors.bottomMargin: parent.height * 0.005
-            navigationTarget: "TransportPreferences"
+            navigationTarget: "SponsoredPaths"
         }
 
         Controls.NavigationButton {

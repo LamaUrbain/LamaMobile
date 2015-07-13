@@ -23,8 +23,10 @@ function requestAPI(method, route, jsonParams, callBack, token)
 
         xhr.body = JSON.stringify(jsonParams);
         xhr.setRequestHeader("Content-Length", xhr.body.length)
-        console.log(xhr.body.length)
+        console.log("------HTTP Request------")
+        console.log(LAMA_API_BASE_ADDR + route)
         console.log(xhr.body)
+        console.log("------------------------")
     }
 
     xhr.send();
@@ -53,9 +55,12 @@ function onStateChange()
         else
             console.log("[No object]");
         console.log("-------------------------");
-        requestHandler((object != null && isSuccess), object)
+        if (requestHandler != null)
+        {
+            requestHandler((object != null && isSuccess), object)
+            requestHandler = null;
+        }
         xhr = null;
-        requestHandler = null;
     }
 }
 

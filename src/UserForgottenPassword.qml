@@ -4,7 +4,7 @@ import "qrc:/Controls/" as Controls
 import "qrc:/Constants.js" as Constants
 import "qrc:/UserSession.js" as UserSession
 import "qrc:/Views/ViewsLogic.js" as ViewsLogic
-import "qrc:/Views/APILogic.js" as APILogic
+import "qrc:/APILogic.js" as APILogic
 
 Components.Background {
 

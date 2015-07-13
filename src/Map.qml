@@ -115,25 +115,31 @@ Components.Marker {
         var name = "tempItinerary" + (Date.now());
 
         //itineraryServices.abortPendingRequests()
-        itineraryServices.createItinerary(name, requestDeparture, requestArrival, false, onItineraryCreateResponse)
+        itineraryServices.createItinerary(name, requestDeparture, requestArrival, false, function(mainModal)
+        {
+            return (function(statusCode, jsonStr)
+            {
+                console.log("CreateItinerary Response Status : " + statusCode);
+                if (statusCode === 0)
+                {
+                    var jsonObj = JSON.parse(jsonStr)
+                    console.log("CreateItinerary Response Id : " + jsonObj["id"]);
+                    mapView.mapComponent.displayItinerary(jsonObj["id"]);
+                }
+                else
+                {
+                    mainModal.title = "Error"
+                    mainModal.message = "Unfortunatly the llama did not find his way"
+                    mainModal.enableButton = true
+                    mainModal.setLoadingState(false)
+                }
+            });
+        }(mainModal));
+
         // Todo : get an itinerary that already exists
         mainModal.title = "Resolving itinierary"
         mainModal.setLoadingState(true)
         mainModal.enableButton = false
         mainModal.visible = true
-    }
-
-    function onItineraryCreateResponse(statusCode, jsonStr)
-    {
-        mainModal.visible = false
-        console.log("CreateItinerary Response : " + statusCode + '(' + (statusCode == 0) + ')');
-        if (statusCode === 0)
-        {
-            var jsonObj = JSON.parse(jsonStr)
-            console.log("CreateItinerary Response Id : " + jsonObj["id"]);
-            mapView.mapComponent.displayItinerary(jsonObj["id"]);
-        }
-        else
-            onIniteraryRequestFailure(statusCode, "Malheureusement le llama n'a pas trouvé de chemain")
     }
 }
