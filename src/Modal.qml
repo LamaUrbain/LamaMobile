@@ -107,12 +107,13 @@ Rectangle
                 }
                 onClicked:
                 {
+                    modalButtonClicked()
                     modal.visible = false
+                    title = "Information"
                     message = "Everything's fine !"
                     buttonText = "Ok"
                     setLoadingState(false)
                     enableButton = true
-                    modalButtonClicked()
                 }
             }
         }

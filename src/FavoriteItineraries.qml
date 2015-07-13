@@ -48,6 +48,7 @@ Components.Background {
                 onDeleted: {
                     favoriteModel.remove(index)
                     UserSession.LAMA_USER_KNOWN_ITINERARIES[index]["favorite"] = false
+                    UserSession.saveCurrentSessionState()
                 }
             }
         }

@@ -3,6 +3,7 @@
         <file>main.qml</file>
         <file>Constants.js</file>
         <file>UserSession.js</file>
+        <file>APILogic.js</file>
     </qresource>
     <qresource prefix="/Assets">
         <file>Images/vehicleMean.png</file>
@@ -64,14 +65,12 @@
         <file>Map.qml</file>
         <file>Menu.qml</file>
         <file>Suggestions.qml</file>
-        <file>TransportPreferences.qml</file>
         <file>UserAccount.qml</file>
         <file>UserAuth.qml</file>
         <file>UserFeedback.qml</file>
         <file>UserRegistration.qml</file>
         <file>UserForgottenPassword.qml</file>
         <file>Modal.qml</file>
-        <file>APILogic.js</file>
         <file>ViewsLogic.js</file>
     </qresource>
 </RCC>

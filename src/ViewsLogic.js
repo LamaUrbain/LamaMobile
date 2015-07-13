@@ -79,8 +79,3 @@ function fillWaypoints(listModelId, itinerary)
             listModelId.append({waypointData: waypoints[idx]})
     }
 }
-
-function checkAndFillFromSavedData()
-{
-
-}
