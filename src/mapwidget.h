@@ -52,6 +52,7 @@ signals:
     void mapScaleChanged();
     void mapCenterChanged();
     void mapTileRequired();
+    void mapPointClicked(QPoint pos, QPointF coords);
 
 public slots:
     void displayItinerary(int id);

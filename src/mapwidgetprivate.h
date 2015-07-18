@@ -91,6 +91,9 @@ private:
     // Extensions
     QList<MapExtension *> _extensions;
 
+    // Interactions
+    QPoint _pressedPos;
+
     // Other
     bool _changed;
     int _currentWheel;

@@ -207,6 +207,7 @@ void MapWidgetPrivate::mousePressEvent(QMouseEvent *event)
             return;
         }
 
+    _pressedPos = event->pos();
     event->accept();
 }
 
@@ -220,6 +221,18 @@ void MapWidgetPrivate::mouseReleaseEvent(QMouseEvent *event)
         }
 
     _scrollValueSet = false;
+
+    if (event->pos() == _pressedPos)
+    {
+        Q_Q(MapWidget);
+        QPoint pos;
+
+        pos.setX(getCenterPos().x() * 256 + getCenterOffset().x() - getScrollOffset().x() - 256 + event->pos().x() - q->width() / 2);
+        pos.setY(getCenterPos().y() * 256 + getCenterOffset().y() - getScrollOffset().y() - 256 + event->pos().y() - q->height() / 2);
+
+        emit q->mapPointClicked(event->pos(), coordsFromPixels(pos));
+    }
+
     event->accept();
 }
 
@@ -232,6 +245,7 @@ void MapWidgetPrivate::mouseMoveEvent(QMouseEvent *event)
             return;
         }
 
+    _pressedPos = QPoint();
     mouseMove(event->pos());
     event->accept();
 }
