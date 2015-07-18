@@ -100,9 +100,8 @@ void ItineraryServices::addDestination(int id, QString destination, int position
     QUrlQuery query;
     query.addQueryItem("destination", destination);
     query.addQueryItem("position", QString::number(position));
-    url.setQuery(query.query());
 
-    postRequest(url, QByteArray(), callback);
+    postRequest(url, query.query().toLocal8Bit(), callback);
 }
 
 void ItineraryServices::addDestination(int id, QString destination, int position, QJSValue callback)
