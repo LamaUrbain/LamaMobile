@@ -322,7 +322,7 @@ bool MapOverlayExtension::mousePressEvent(QMouseEvent *event)
             QPointF newCoords = p->coordsFromPixels(pos);
 
             movePoint(_selectedPoint, newCoords);
-            emit pointMoved(_selectedPoint, newCoords);
+            emit pointMoved(_itineraryId, _selectedPoint, newCoords);
         }
 
         _selectedPoint = -1;

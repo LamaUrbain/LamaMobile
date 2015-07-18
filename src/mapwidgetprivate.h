@@ -53,6 +53,7 @@ public:
 
     void displayItinerary(int id);
     void itineraryChanged();
+    QList<QPointF> getItineraryPoints(int id) const;
 
     const QList<MapExtension *> &getExtension() const;
     void addExtension(MapExtension *ext);

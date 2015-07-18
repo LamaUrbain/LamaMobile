@@ -524,6 +524,8 @@ void MapWidgetPrivate::displayItinerary(int id)
     MapOverlayExtension *ext = new MapOverlayExtension(q);
     ext->setItinerary(id);
     q->addExtension(ext);
+
+    QObject::connect(ext, SIGNAL(pointMoved(int, int, QPointF)), q, SIGNAL(mapPointMoved(int, int, QPointF)));
 }
 
 void MapWidgetPrivate::itineraryChanged()
@@ -535,6 +537,19 @@ void MapWidgetPrivate::itineraryChanged()
         if (ext)
             ext->refreshItinerary();
     }
+}
+
+QList<QPointF> MapWidgetPrivate::getItineraryPoints(int id) const
+{
+    for (QList<MapExtension *>::const_iterator it = _extensions.constBegin();
+         it != _extensions.constEnd(); ++it)
+    {
+        MapOverlayExtension *ext = qobject_cast<MapOverlayExtension *>(*it);
+        if (ext && ext->getItinerary() == id)
+            return ext->getPoints();
+    }
+
+    return QList<QPointF>();
 }
 
 const QList<MapExtension *> &MapWidgetPrivate::getExtension() const
@@ -649,6 +664,12 @@ void MapWidget::itineraryChanged()
 {
     Q_D(MapWidget);
     d->itineraryChanged();
+}
+
+QList<QPointF> MapWidget::getItineraryPoints(int id) const
+{
+    Q_D(const MapWidget);
+    return d->getItineraryPoints(id);
 }
 
 quint8 MapWidget::getMapScale() const

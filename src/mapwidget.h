@@ -53,10 +53,12 @@ signals:
     void mapCenterChanged();
     void mapTileRequired();
     void mapPointClicked(QPoint pos, QPointF coords);
+    void mapPointMoved(int id, int point, QPointF newCoords);
 
 public slots:
     void displayItinerary(int id);
     void itineraryChanged();
+    QList<QPointF> getItineraryPoints(int id) const;
 
     quint8 getMapScale() const;
     void setMapScale(quint8 scale);

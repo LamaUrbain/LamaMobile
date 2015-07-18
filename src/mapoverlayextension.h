@@ -40,7 +40,7 @@ public:
 
 signals:
     void tilesRequired();
-    void pointMoved(int point, QPointF newCoords);
+    void pointMoved(int id, int point, QPointF newCoords);
 
 private slots:
     void updateTiles();
