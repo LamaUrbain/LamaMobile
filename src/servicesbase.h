@@ -39,6 +39,9 @@ private:
     QObject *_callbackObj;
     QMap<QNetworkReply *, CallbackType> _pending;
     QNetworkAccessManager _manager;
+
+public:
+    static const QString serverAddress;
 };
 
 #endif // SERVICESBASE_H

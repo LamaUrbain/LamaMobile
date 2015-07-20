@@ -3,8 +3,7 @@
 #include <QJsonDocument>
 #include <QUrlQuery>
 #include "itineraryservices.h"
-
-static QString serverAddress = "http://api.lamaurbain.cha.moe";
+#include "userservices.h"
 
 ItineraryServices *ItineraryServices::_instance = NULL;
 
@@ -22,21 +21,25 @@ ItineraryServices *ItineraryServices::getInstance()
     return _instance;
 }
 
-void ItineraryServices::getItineraries(QString search, QString username, bool favorite, QString ordering, ServicesBase::CallbackType callback)
+void ItineraryServices::getItineraries(QString search, QString username, QString favorite, QString ordering, ServicesBase::CallbackType callback)
 {
     QUrl url(QString("%1/itineraries/").arg(serverAddress));
 
     QUrlQuery query;
-    query.addQueryItem("search", search);
-    query.addQueryItem("owner", username);
-    query.addQueryItem("favorite", favorite ? "true" : "false");
-    query.addQueryItem("ordering", ordering);
+    if (!search.isEmpty())
+        query.addQueryItem("search", search);
+    if (!username.isEmpty())
+        query.addQueryItem("owner", username);
+    if (favorite == "true" || favorite == "false")
+        query.addQueryItem("favorite", favorite);
+    if (ordering == "name" || ordering == "creation")
+        query.addQueryItem("ordering", ordering);
     url.setQuery(query.query());
 
     getRequest(url, callback);
 }
 
-void ItineraryServices::getItineraries(QString search, QString username, bool favorite, QString ordering, QJSValue callback)
+void ItineraryServices::getItineraries(QString search, QString username, QString favorite, QString ordering, QJSValue callback)
 {
     getItineraries(search, username, favorite, ordering, fromJSCallback(callback));
 }
@@ -53,7 +56,7 @@ void ItineraryServices::getItinerary(int id, QJSValue callback)
     getItinerary(id, fromJSCallback(callback));
 }
 
-void ItineraryServices::createItinerary(QString name, QString departure, QString destination, bool favorite, ServicesBase::CallbackType callback)
+void ItineraryServices::createItinerary(QString name, QString departure, QString destination, QString favorite, ServicesBase::CallbackType callback)
 {
     QUrl url(QString("%1/itineraries/").arg(serverAddress));
 
@@ -63,43 +66,49 @@ void ItineraryServices::createItinerary(QString name, QString departure, QString
     query.addQueryItem("departure", departure);
     if (!destination.isEmpty())
         query.addQueryItem("destination", destination);
-    query.addQueryItem("favorite", favorite ? "true" : "false");
+    query.addQueryItem("favorite", favorite == "true" ? "true" : "false");
+    if (!UserServices::getToken().isEmpty())
+        query.addQueryItem("token", UserServices::getToken());
 
     postRequest(url, query.query().toLocal8Bit(), callback);
 }
 
-void ItineraryServices::createItinerary(QString name, QString departure, QString destination, bool favorite, QJSValue callback)
+void ItineraryServices::createItinerary(QString name, QString departure, QString destination, QString favorite, QJSValue callback)
 {
     createItinerary(name, departure, destination, favorite, fromJSCallback(callback));
 }
 
-void ItineraryServices::editItinerary(int id, QString name, QString departure, bool favorite, ServicesBase::CallbackType callback)
+void ItineraryServices::editItinerary(int id, QString name, QString departure, QString favorite, ServicesBase::CallbackType callback)
 {
     QUrl url(QString("%1/itineraries/%2/").arg(serverAddress).arg(id));
 
     QUrlQuery query;
-    query.addQueryItem("name", name);
-    query.addQueryItem("departure", departure);
-    query.addQueryItem("favorite", favorite ? "true" : "false");
+    if (!name.isEmpty())
+        query.addQueryItem("name", name);
+    if (!departure.isEmpty())
+        query.addQueryItem("departure", departure);
+    if (favorite == "true" || favorite == "false")
+        query.addQueryItem("favorite", favorite);
+    query.addQueryItem("token", UserServices::getToken());
     url.setQuery(query.query());
 
     putRequest(url, QByteArray(), callback);
 }
 
-void ItineraryServices::editItinerary(int id, QString name, QString departure, bool favorite, QJSValue callback)
+void ItineraryServices::editItinerary(int id, QString name, QString departure, QString favorite, QJSValue callback)
 {
     editItinerary(id, name, departure, favorite, fromJSCallback(callback));
 }
 
 void ItineraryServices::addDestination(int id, QString destination, int position, ServicesBase::CallbackType callback)
 {
-    // TODO: authentication
-
     QUrl url(QString("%1/itineraries/destinations/%2/").arg(serverAddress).arg(id));
 
     QUrlQuery query;
     query.addQueryItem("destination", destination);
-    query.addQueryItem("position", QString::number(position));
+    if (position >= 0)
+        query.addQueryItem("position", QString::number(position));
+    query.addQueryItem("token", UserServices::getToken());
 
     postRequest(url, query.query().toLocal8Bit(), callback);
 }
@@ -114,8 +123,11 @@ void ItineraryServices::editDestination(int id, int oldPosition, int newPosition
     QUrl url(QString("%1/itineraries/destinations/%2/%3/").arg(serverAddress).arg(id).arg(oldPosition));
 
     QUrlQuery query;
-    query.addQueryItem("destination", destination);
-    query.addQueryItem("position", QString::number(newPosition));
+    if (!destination.isEmpty())
+        query.addQueryItem("destination", destination);
+    if (newPosition >= 0)
+        query.addQueryItem("position", QString::number(newPosition));
+    query.addQueryItem("token", UserServices::getToken());
     url.setQuery(query.query());
 
     putRequest(url, QByteArray(), callback);
@@ -129,6 +141,11 @@ void ItineraryServices::editDestination(int id, int oldPosition, int newPosition
 void ItineraryServices::deleteDestination(int id, int position, ServicesBase::CallbackType callback)
 {
     QUrl url(QString("%1/itineraries/%2/destinations/%3/").arg(serverAddress).arg(id).arg(position));
+
+    QUrlQuery query;
+    query.addQueryItem("token", UserServices::getToken());
+    url.setQuery(query.query());
+
     deleteRequest(url, callback);
 }
 
@@ -140,6 +157,11 @@ void ItineraryServices::deleteDestination(int id, int position, QJSValue callbac
 void ItineraryServices::deleteItinerary(int id, ServicesBase::CallbackType callback)
 {
     QUrl url(QString("%1/itineraries/%2/").arg(serverAddress).arg(id));
+
+    QUrlQuery query;
+    query.addQueryItem("token", UserServices::getToken());
+    url.setQuery(query.query());
+
     deleteRequest(url, callback);
 }
 

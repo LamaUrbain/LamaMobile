@@ -2,6 +2,7 @@
 #include "mapgetter.h"
 #include "mapwidget.h"
 #include "mapoverlayextension.h"
+#include "servicesbase.h"
 
 // This number is the maximum number of parallel
 // requests defined in QNetworkAccessManager
@@ -170,7 +171,7 @@ void MapGetter::onTilesRequired()
             if (!getter)
                 return;
 
-            QString address = "http://api.lamaurbain.cha.moe/itineraries/tiles/%1/%2/%3/%4";
+            QString address = ServicesBase::serverAddress + "/itineraries/tiles/%1/%2/%3/%4";
             QUrl url(address.arg(ext->getItinerary()).arg(tile.scale).arg(tile.pos.x()).arg(tile.pos.y()));
 
             QNetworkRequest request(url);

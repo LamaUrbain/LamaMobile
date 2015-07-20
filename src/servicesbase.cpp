@@ -2,6 +2,8 @@
 #include <QNetworkRequest>
 #include "servicesbase.h"
 
+const QString ServicesBase::serverAddress = QStringLiteral("http://api.lamaurbain.cha.moe");
+
 ServicesBase::ServicesBase(QObject *parent)
     : QObject(parent)
 {
