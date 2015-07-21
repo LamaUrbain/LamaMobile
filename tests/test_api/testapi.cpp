@@ -60,12 +60,6 @@ void TestApi::testCreateUser()
     _userServices.deleteUser("testUser", [&waiter] (int errorType, QString jsonStr) mutable
     {
         QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
-
-        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
-
-        QVERIFY2(obj.value("username").toString() == "testUser", qPrintable(jsonStr));
-        QVERIFY2(obj.value("email").toString() == "test@test.fr", qPrintable(jsonStr));
-
         waiter.emitDone();
     });
 
