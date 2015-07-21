@@ -89,7 +89,8 @@ void ItineraryServices::editItinerary(int id, QString name, QString departure, Q
         query.addQueryItem("departure", departure);
     if (favorite == "true" || favorite == "false")
         query.addQueryItem("favorite", favorite);
-    query.addQueryItem("token", UserServices::getToken());
+    if (!UserServices::getToken().isEmpty())
+        query.addQueryItem("token", UserServices::getToken());
     url.setQuery(query.query());
 
     putRequest(url, QByteArray(), callback);
@@ -108,7 +109,8 @@ void ItineraryServices::addDestination(int id, QString destination, int position
     query.addQueryItem("destination", destination);
     if (position >= 0)
         query.addQueryItem("position", QString::number(position));
-    query.addQueryItem("token", UserServices::getToken());
+    if (!UserServices::getToken().isEmpty())
+        query.addQueryItem("token", UserServices::getToken());
 
     postRequest(url, query.query().toLocal8Bit(), callback);
 }
@@ -127,7 +129,8 @@ void ItineraryServices::editDestination(int id, int oldPosition, int newPosition
         query.addQueryItem("destination", destination);
     if (newPosition >= 0)
         query.addQueryItem("position", QString::number(newPosition));
-    query.addQueryItem("token", UserServices::getToken());
+    if (!UserServices::getToken().isEmpty())
+        query.addQueryItem("token", UserServices::getToken());
     url.setQuery(query.query());
 
     putRequest(url, QByteArray(), callback);
@@ -142,9 +145,12 @@ void ItineraryServices::deleteDestination(int id, int position, ServicesBase::Ca
 {
     QUrl url(QString("%1/itineraries/%2/destinations/%3/").arg(serverAddress).arg(id).arg(position));
 
-    QUrlQuery query;
-    query.addQueryItem("token", UserServices::getToken());
-    url.setQuery(query.query());
+    if (!UserServices::getToken().isEmpty())
+    {
+        QUrlQuery query;
+        query.addQueryItem("token", UserServices::getToken());
+        url.setQuery(query.query());
+    }
 
     deleteRequest(url, callback);
 }
@@ -158,9 +164,12 @@ void ItineraryServices::deleteItinerary(int id, ServicesBase::CallbackType callb
 {
     QUrl url(QString("%1/itineraries/%2/").arg(serverAddress).arg(id));
 
-    QUrlQuery query;
-    query.addQueryItem("token", UserServices::getToken());
-    url.setQuery(query.query());
+    if (!UserServices::getToken().isEmpty())
+    {
+        QUrlQuery query;
+        query.addQueryItem("token", UserServices::getToken());
+        url.setQuery(query.query());
+    }
 
     deleteRequest(url, callback);
 }

@@ -80,7 +80,8 @@ void UserServices::editUser(QString username, QString password, QString email, S
         query.addQueryItem("password", password);
     if (!email.isEmpty())
         query.addQueryItem("email", email);
-    query.addQueryItem("token", _token);
+    if (!_token.isEmpty())
+        query.addQueryItem("token", _token);
     url.setQuery(query.query());
 
     putRequest(url, QByteArray(), callback);
@@ -93,11 +94,14 @@ void UserServices::editUser(QString username, QString password, QString email, Q
 
 void UserServices::deleteUser(QString username, ServicesBase::CallbackType callback)
 {
-    QUrl url(QString("%1/users/%2/").arg(serverAddress).arg(username));
+    QUrl url(QString("%1/users/%2").arg(serverAddress).arg(username));
 
-    QUrlQuery query;
-    query.addQueryItem("token", _token);
-    url.setQuery(query.query());
+    if (!_token.isEmpty())
+    {
+        QUrlQuery query;
+        query.addQueryItem("token", _token);
+        url.setQuery(query.query());
+    }
 
     deleteRequest(url, callback);
 }
@@ -111,7 +115,7 @@ void UserServices::createToken(QString username, QString password, ServicesBase:
 {
     CallbackType cb = [callback, this] (int errorType, QString jsonStr) mutable
     {
-        if (errorType == 201)
+        if (errorType == 0)
         {
             QJsonParseError error;
             QJsonDocument document = QJsonDocument::fromJson(jsonStr.toLatin1(), &error);
@@ -146,13 +150,13 @@ void UserServices::deleteToken(ServicesBase::CallbackType callback)
 {
     CallbackType cb = [callback, this] (int errorType, QString jsonStr) mutable
     {
-        if (errorType == 201)
+        if (errorType == 0)
             _token.clear();
 
         callback(errorType, jsonStr);
     };
 
-    QUrl url(QString("%1/sessions/%2/").arg(serverAddress).arg(_token));
+    QUrl url(QString("%1/sessions/%2").arg(serverAddress).arg(_token));
     deleteRequest(url, cb);
 }
 

@@ -87,6 +87,7 @@ void ServicesBase::sendRequest(QNetworkAccessManager::Operation type, const QUrl
     switch (type)
     {
         case QNetworkAccessManager::GetOperation:
+            qDebug() << "GET:" << url.toString();
             reply = _manager.get(request);
             break;
         case QNetworkAccessManager::PostOperation:
@@ -94,6 +95,7 @@ void ServicesBase::sendRequest(QNetworkAccessManager::Operation type, const QUrl
             request.setRawHeader("X-Custom-User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0");
             request.setRawHeader("Content-Type", "application/x-www-form-urlencoded");
             request.setRawHeader("Content-Length", QByteArray::number(QString(data).size()));
+            qDebug() << "POST:" << url.toString() << "- Body:" << data;
             reply = _manager.post(request, data);
             break;
         case QNetworkAccessManager::PutOperation:
@@ -101,9 +103,11 @@ void ServicesBase::sendRequest(QNetworkAccessManager::Operation type, const QUrl
             request.setRawHeader("X-Custom-User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0");
             request.setRawHeader("Content-Type", "application/x-www-form-urlencoded");
             request.setRawHeader("Content-Length", QByteArray::number(QString(data).size()));
+            qDebug() << "PUT:" << url.toString() << "- Body:" << data;
             reply = _manager.put(request, data);
             break;
         case QNetworkAccessManager::DeleteOperation:
+            qDebug() << "DELETE:" << url.toString();
             reply = _manager.deleteResource(request);
             break;
         default:
