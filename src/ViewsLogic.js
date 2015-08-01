@@ -51,6 +51,14 @@ function onItineraryCreateResponse(statusCode, jsonStr)
         onIniteraryRequestFailure(statusCode, "Malheureusement le llama n'a pas trouvé de chemain")
 }
 
+function fillSponsors(listModel, knownSponsors)
+{
+    listModel.clear();
+
+    for (var idx = 0; idx < knownSponsors.length; ++idx)
+            listModel.append({sponsor: knownSponsors[idx]})
+}
+
 function fillFavorites(listModel, knownItineraries)
 {
     listModel.clear();

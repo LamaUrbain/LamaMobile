@@ -64,6 +64,15 @@ var LAMA_USER_KNOWN_ITINERARIES =
     }
 ]
 
+var LAMA_USER_KNOWN_SPONSORS = [
+            {
+                name: "McDo",
+            },
+            {
+                name: "KFC",
+            }
+]
+
 var mainModal;
 
 function createDB(db)
