@@ -48,6 +48,7 @@
         <file>FormEntry.qml</file>
         <file>Background.qml</file>
         <file>LoadingRing.qml</file>
+        <file>SponsorItem.qml</file>
     </qresource>
     <qresource prefix="/Controls">
         <file>BackButton.qml</file>
