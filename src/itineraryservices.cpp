@@ -162,7 +162,7 @@ void ItineraryServices::deleteDestination(int id, int position, QJSValue callbac
 
 void ItineraryServices::deleteItinerary(int id, ServicesBase::CallbackType callback)
 {
-    QUrl url(QString("%1/itineraries/%2/").arg(serverAddress).arg(id));
+    QUrl url(QString("%1/itineraries/%2").arg(serverAddress).arg(id));
 
     if (!UserServices::getToken().isEmpty())
     {
