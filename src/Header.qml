@@ -13,12 +13,15 @@ Row {
     anchors.topMargin: parent.height * 0.005
 
     property string title
+    signal backClicked();
 
     Controls.BackButton {
+        id: backBtn
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         width: parent.width * 0.2
         color: Constants.LAMA_ORANGE
+        onClicked: backClicked()
     }
 
     Marker {

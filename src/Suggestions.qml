@@ -152,6 +152,7 @@ Components.Background {
                     }
                     UserSession.LAMA_USER_CURRENT_ITINERARY[waypointKind]["address"] = addressInput.text
                 }
+
                 rootView.raiseUserSessionChanged()
                 var currentRoute = UserSession.LAMA_USER_CURRENT_ITINERARY
                 if ("favorite" in currentRoute && currentRoute["favorite"] === true)

@@ -20,6 +20,14 @@ Components.Background {
     Components.Header {
         id: header
         title: "Search"
+        onBackClicked:
+        {
+            if (UserSession.LAMA_USER_CURRENT_ITINERARY["name"] !== nameInput.text)
+            {
+                UserSession.LAMA_USER_CURRENT_ITINERARY["name"] = nameInput.text;
+                rootView.raiseUserSessionChanged()
+            }
+        }
     }
 
     ListModel {
@@ -28,11 +36,30 @@ Components.Background {
         Component.onCompleted : refreshModel()
     }
 
+
+    Components.TextField {
+        id: nameInput
+        anchors.top: header.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        height: parent.height * 0.05
+        anchors.leftMargin: parent.height * 0.005
+        anchors.rightMargin: parent.height * 0.005
+        anchors.topMargin: parent.height * 0.005
+
+        placeholderText: "Name"
+        Component.onCompleted:
+        {
+            if (ViewsLogic.isValueAtKeyValid(UserSession.LAMA_USER_CURRENT_ITINERARY, "name"))
+                text = UserSession.LAMA_USER_CURRENT_ITINERARY["name"]
+        }
+    }
+
     ScrollView {
         id: search
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.top: header.bottom
+        anchors.top: nameInput.bottom
         height: parent.height * 0.8
         anchors.leftMargin: parent.height * 0.005
         anchors.rightMargin: parent.height * 0.005
@@ -57,6 +84,8 @@ Components.Background {
                 onClicked: {
                     var newDest = {address: "New Waypoint"}
                     waypointsModel.append({waypointData: newDest})
+                    if (!ViewsLogic.isValueAtKeyValid(UserSession.LAMA_USER_CURRENT_ITINERARY, "destinations"))
+                        UserSession.LAMA_USER_CURRENT_ITINERARY["destinations"] = ([]);
                     UserSession.LAMA_USER_CURRENT_ITINERARY["destinations"].push(newDest)
                 }
             }
@@ -84,8 +113,23 @@ Components.Background {
                 property bool saved: false
 
                 onClicked: {
+                    UserSession.LAMA_USER_CURRENT_ITINERARY["name"] = nameInput.text;
+
                     UserSession.LAMA_USER_CURRENT_ITINERARY["favorite"] = !UserSession.LAMA_USER_CURRENT_ITINERARY["favorite"]
-                    iconSource = UserSession.LAMA_USER_CURRENT_ITINERARY["favorite"] ? Constants.LAMA_SAVED_RESSOURCE: Constants.LAMA_SAVE_RESSOURCE
+                    var isFavorited = UserSession.LAMA_USER_CURRENT_ITINERARY["favorite"]
+
+                    iconSource = isFavorited ? Constants.LAMA_SAVED_RESSOURCE: Constants.LAMA_SAVE_RESSOURCE
+
+                    var idxKnown = ViewsLogic.GetIndexItineraryKnown(UserSession.LAMA_USER_KNOWN_ITINERARIES, UserSession.LAMA_USER_CURRENT_ITINERARY);
+
+                    if (isFavorited && idxKnown < 0)
+                        UserSession.LAMA_USER_KNOWN_ITINERARIES.push(UserSession.LAMA_USER_CURRENT_ITINERARY)
+                    else if (!isFavorited && idxKnown >= 0)
+                        delete UserSession.LAMA_USER_KNOWN_ITINERARIES[idxKnown];
+
+                    rootView.raiseUserSessionChanged()
+                    // edit itineraryServices in raiseusersessionchanged
+                    //itineraryServices.editItinerary(int id, QString name, QString departure, QString favorite, ServicesBase::CallbackType callback);
                 }
 
                 id: modifyButton
@@ -98,7 +142,6 @@ Components.Background {
             }
 
             Controls.NavigationButton {
-                id: deleteButton
                 Layout.fillWidth: true
                 centerText: "Launch"
                 anchors.top: parent.top
@@ -106,6 +149,12 @@ Components.Background {
                 navigationTarget: "Map"
                 onNavButtonPressed:
                 {
+                    if (UserSession.LAMA_USER_CURRENT_ITINERARY["name"] !== nameInput.text)
+                    {
+                        UserSession.LAMA_USER_CURRENT_ITINERARY["name"] = nameInput.text;
+                        rootView.raiseUserSessionChanged()
+                    }
+
                     rootView.resolveCurrentItinerary()
                 }
             }

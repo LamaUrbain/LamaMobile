@@ -104,3 +104,15 @@ function fillWaypoints(listModelId, itinerary)
             listModelId.append({waypointData: waypoints[idx]})
     }
 }
+
+function GetIndexItineraryKnown(knownIts, newIt)
+{
+    if (!isValueAtKeyValid(newIt, "id"))
+        newIt['id'] = -(Math.round(Date.now() / 1000) % 100000000)
+
+    var exists = false;
+    for (var idx = 0; idx < knownIts.length; ++idx)
+        if (knownIts[idx]["id"] === newIt["id"])
+            return (idx)
+    return (-1);
+}

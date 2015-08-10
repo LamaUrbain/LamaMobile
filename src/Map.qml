@@ -5,6 +5,7 @@ import "qrc:/Components/" as Components
 import "qrc:/Controls/" as Controls
 import "qrc:/Constants.js" as Constants
 import "qrc:/UserSession.js" as UserSession
+import "qrc:/Views/ViewsLogic.js" as ViewsLogic
 
 import QtLocation 5.3
 import QtPositioning 5.2
@@ -94,28 +95,64 @@ Components.Marker {
         }
     }
 
-    function resolveCurrentItinerary()
+    property var _currentResolutionWayPointCount;
+    function proceedToAddWayPoints(itineraryId, wayPointsArray)
     {
-        /*********temporary due to lack of addr resolving*********/
-        var startPoint = UserSession.LAMA_USER_CURRENT_ITINERARY["departure"]
-        var lastId = UserSession.LAMA_USER_CURRENT_ITINERARY["destinations"].length - 1
-        var arrivalPoint = UserSession.LAMA_USER_CURRENT_ITINERARY["destinations"][lastId]
+        CurrentResolutionWayPointCount = 0;
+        var wayPointCount = wayPointsArray.length; // Fucking flies because of dereferencement
+
+        if (CurrentResolutionWayPointCount === wayPointCount)
+            mapView.mapComponent.displayItinerary(jsonObj["id"]);
+        else
+        {
+            for (var idx = 0; idx < wayPointCount; ++idx)
+                itineraryServices.addDestination(itineraryId, wayPointsArray[idx], idx, function ()
+                {
+                    return (function(statusCode, jsonStr)
+                    {
+                        if (statusCode !== 0)
+                        {
+                            mainModal.title = "Error"
+                            mainModal.text = "Sadly, an error occured (MAPVIEW_RESOLV_DEST_ADD_FAIL)"
+                            mainModal.enableButton = true
+                            mainModal.visible = true
+                        }
+
+                        if (++CurrentResolutionWayPointCount === wayPointCount)
+                            mapView.mapComponent.displayItinerary(jsonObj["id"]);
+                    });
+                }());
+        }
+    }
+
+    function updateItineraryAndDisplay()
+    {
+        console.log("TODO updateItinerary")
+
+        mapView.mapComponent.displayItinerary(jsonObj["id"]);
+    }
+
+    function createItineraryAndDisplay()
+    {
+        var startPoint = currentIt["departure"]
+        var lastId = currentIt["destinations"].length - 1
+        var arrivalPoint = currentIt["destinations"][lastId]
         var requestDeparture = startPoint["latitude"] + ',' + startPoint["longitude"]
         var requestArrival = arrivalPoint["latitude"] + ',' + arrivalPoint["longitude"]
 
-        /*departure = departure.split(new RegExp("[,;] *"));
-        departure = departure[0] + ',' + departure[1];
-        if (arrival)
-        {
-            arrival = arrival.split(new RegExp("[,;] *"));
-            arrival = arrival[0] + ',' + arrival[1];
-        }*/
-        /********************************************************/
+        var waypointArray = [];
+        if (lastId !== 0)
+            for (var idx = 0; idx < lastId; ++idx)
+            {
+                var currentPoint = currentIt["destinations"][idx]
+                waypointArray.push(currentPoint["latitude"] + ',' + currentPoint["longitude"])
+            }
 
-        var name = "tempItinerary" + (Date.now());
+        if (currentIt['name'] === null || currentIt['name'] === '')
+            currentIt['name'] = "tmp_itinerary_" + ViewsLogic.getRandomString(8);
 
         //itineraryServices.abortPendingRequests()
-        itineraryServices.createItinerary(name, requestDeparture, requestArrival, false, function(mainModal)
+        itineraryServices.createItinerary(currentIt['name'], requestDeparture, requestArrival, false, function(mainModal)
         {
             return (function(statusCode, jsonStr)
             {
@@ -123,8 +160,10 @@ Components.Marker {
                 if (statusCode === 0)
                 {
                     var jsonObj = JSON.parse(jsonStr)
-                    console.log("CreateItinerary Response Id : " + jsonObj["id"]);
-                    mapView.mapComponent.displayItinerary(jsonObj["id"]);
+                    var ItId = jsonObj["id"]
+                    console.log("CreateItinerary Response Id : " + ItId);
+                    UserSession.LAMA_USER_CURRENT_ITINERARY['id'] = ItId;
+                    proceedToAddWayPoints(ItId, waypointArray)
                 }
                 else
                 {
@@ -135,11 +174,42 @@ Components.Marker {
                 }
             });
         }(mainModal));
+    }
 
-        // Todo : get an itinerary that already exists
+    function resolveCurrentItinerary()
+    {
         mainModal.title = "Resolving itinierary"
         mainModal.setLoadingState(true)
         mainModal.enableButton = false
         mainModal.visible = true
+
+        var currentIt = UserSession.LAMA_USER_CURRENT_ITINERARY;
+
+        if (!ViewsLogic.isValueAtKeyValid(currentIt, "departure")
+            || !ViewsLogic.isValueAtKeyValid(currentIt, "destinations"))
+        {
+            mainModal.title = "Error"
+            mainModal.text = "Sadly, an error occured (MAPVIEW_RESOLV_INVALID_OBJ)"
+            mainModal.enableButton = true
+            mainModal.visible = true
+            return;
+        }
+        else if (ViewsLogic.isValueAtKeyValid(currentIt, "id") && currentIt['id'] > 0)
+            itineraryServices.getItinerary(currentIt['id'], function ()
+            {
+                return (function(statusCode, jsonStr)
+                {
+                    if (statusCode !== 0)
+                    {
+                        mainModal.title = "Error"
+                        mainModal.text = "Sadly, an error occured (MAPVIEW_RESOLV_EXIST_IT_FAIL)"
+                        mainModal.enableButton = true
+                        mainModal.visible = true
+                    }
+                    updateItineraryAndDisplay()
+                });
+            }());
+        else
+            createItineraryAndDisplay();
     }
 }
