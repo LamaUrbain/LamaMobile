@@ -41,7 +41,7 @@ Components.Background {
             model: waypointsModel
             delegate: Components.Waypoint {
                 height: search.height * 0.09
-                waypointDescription: waypointData.address
+                waypointDescription: waypointData.address === null ? 'Departure' : waypointData.address
                 linkedWaypointId: index
                 deletable: index == 0 ? false : true
                 onDeleted:
@@ -84,7 +84,8 @@ Components.Background {
                 property bool saved: false
 
                 onClicked: {
-                    savedUserSession.LAMA_USER_CURRENT_ITINERARY["favorite"] = !UserSession.LAMA_USER_CURRENT_ITINERARY["favorite"]
+                    UserSession.LAMA_USER_CURRENT_ITINERARY["favorite"] = !UserSession.LAMA_USER_CURRENT_ITINERARY["favorite"]
+                    iconSource = UserSession.LAMA_USER_CURRENT_ITINERARY["favorite"] ? Constants.LAMA_SAVED_RESSOURCE: Constants.LAMA_SAVE_RESSOURCE
                 }
 
                 id: modifyButton

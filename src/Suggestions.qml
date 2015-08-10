@@ -35,7 +35,7 @@ Components.Background {
             placeholderText: "Address"
             Component.onCompleted:
             {
-                if (currentWaypoint !== null && "address" in currentWaypoint)
+                if (ViewsLogic.isValueAtKeyValid(currentWaypoint, "address"))
                     text = currentWaypoint["address"]
             }
         }
@@ -57,7 +57,7 @@ Components.Background {
                 placeholderText: "Latitude"
                 Component.onCompleted:
                 {
-                    if (currentWaypoint !== null && currentWaypoint)
+                    if (ViewsLogic.isValueAtKeyValid(currentWaypoint, "latitude"))
                         text = currentWaypoint["latitude"]
                 }
                 validator: RegExpValidator { regExp: /^(\-?\d{1,2}(\.\d+)?)$/ }
@@ -72,7 +72,7 @@ Components.Background {
                 placeholderText: "Longitude"
                 Component.onCompleted:
                 {
-                    if (currentWaypoint !== null && "longitude" in currentWaypoint)
+                    if (ViewsLogic.isValueAtKeyValid(currentWaypoint, "longitude"))
                         text = currentWaypoint["longitude"]
                 }
                 validator: RegExpValidator { regExp: /^(\-?1?\d{1,2}(\.\d+)?)$/ }

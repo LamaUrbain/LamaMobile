@@ -7,7 +7,7 @@ import "qrc:/UserSession.js" as UserSession
 
 RowLayout {
     property alias favoriteDescription: favoriteText.centerText
-    property var linkedItinerary: ({})
+    property var linkedItinerary: Constants.LAMA_BASE_ITINERARY_OBJ
 
     signal deleted()
 

@@ -28,12 +28,29 @@ function getRandomString(length)
     return (text);
 }
 
+function _isItineraryValid(itinerary)
+{
+    return (itinerary !== null
+        && "departure" in itinerary
+        && "destinations" in itinerary);
+}
+
+function isValueAtKeyValid(obj, key)
+{
+    return (obj !== null
+            && key in obj
+            && obj[key] !== null)
+}
+
 function getPtFromIndex(idx, itinerary)
 {
-    if (idx === 0)
-        return (itinerary["departure"]);
-    else if (idx > 0)
-        return (itinerary["destinations"][idx - 1])
+    if (_isItineraryValid(itinerary))
+    {
+        if (idx === 0)
+            return (itinerary["departure"]);
+        else if (idx > 0 && itinerary["destinations"].length > idx)
+            return (itinerary["destinations"][idx - 1])
+    }
     return (null);
 }
 

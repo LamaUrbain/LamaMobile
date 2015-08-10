@@ -88,7 +88,7 @@ Components.Marker {
             iconSource: Constants.LAMA_ADD_RESSOURCE
             onClicked:
             {
-                UserSession.LAMA_USER_CURRENT_ITINERARY = ({})
+                UserSession.LAMA_USER_CURRENT_ITINERARY = Constants.LAMA_BASE_ITINERARY_OBJ
                 rootView.mainViewTo("MainSearch", null)
             }
         }

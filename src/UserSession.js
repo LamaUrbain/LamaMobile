@@ -11,7 +11,7 @@ var LAMA_USER_AVATAR = null
 
 var LAMA_LOCALDB_NAME = "LamaLocalDB"
 var LAMA_LOCALDB_TABLENAME = "USER"
-var LAMA_LOCALDB_VERSION = "1.0"
+var LAMA_LOCALDB_VERSION = "2.0"
 var LAMA_LOCALDB_DESC = "The llama urbain DB"
 var LAMA_LOCALDB_ESIZE = 1000000
 
@@ -77,6 +77,7 @@ var mainModal;
 
 function createDB(db)
 {
+    db.changeVersion("", LAMA_LOCALDB_VERSION);
     var columns =
             [
                 {
@@ -117,11 +118,12 @@ function createDB(db)
 
 function openDb()
 {
-    return (Sql.openDatabaseSync(LAMA_LOCALDB_NAME,
-                                               LAMA_LOCALDB_VERSION,
-                                               LAMA_LOCALDB_DESC,
-                                               LAMA_LOCALDB_ESIZE,
-                                               createDB));
+    var db = Sql.LocalStorage.openDatabaseSync(LAMA_LOCALDB_NAME,
+                                         "",//LAMA_LOCALDB_VERSION,
+                                         LAMA_LOCALDB_DESC,
+                                         LAMA_LOCALDB_ESIZE,
+                                         createDB);
+    return (db);
 }
 
 function checkAndFillFromSavedData()
@@ -131,7 +133,7 @@ function checkAndFillFromSavedData()
     db.transaction(
         function(tx)
         {
-            var data = tx.excuteSql('SELECT * FROM ' + LAMA_LOCALDB_TABLENAME + ' LIMIT 1');
+            var data = tx.executeSql('SELECT * FROM ' + LAMA_LOCALDB_TABLENAME + ' LIMIT 1');
             if (data.rows.length > 0)
             {
                 var row = data.rows.item(0);
@@ -178,28 +180,31 @@ function saveCurrentSessionState()
                 [
                     {
                         name: "user_name",
-                        type: LAMA_USER_USERNAME
+                        value: LAMA_USER_USERNAME
                     },
                     {
                         name: "user_password",
-                        type: LAMA_USER_PASSWORD
+                        value: LAMA_USER_PASSWORD
                     },
                     {
                         name: "user_email",
-                        type: LAMA_USER_EMAIL
+                        value: LAMA_USER_EMAIL
                     },
                     {
                         name: "user_avatar",
-                        type: LAMA_USER_AVATAR
+                        value: LAMA_USER_AVATAR
                     },
                     {
                         name: "user_knownroutes",
-                        type: JSON.stringify(LAMA_USER_KNOWN_ITINERARIES)
+                        value: JSON.stringify(LAMA_USER_KNOWN_ITINERARIES)
                     },
                 ]
         var sqlStr = "UPDATE " + LAMA_LOCALDB_TABLENAME + " SET "
         for (var idx = 0; idx < columns.length;)
-            sqlStr += columns[idx].name + ' = "' + columns[idx].value.replace('"', "'") + (((++idx) < columns.length) ? '", ' : '"')
+            if (columns[idx].value !== null)
+                sqlStr += columns[idx].name + ' = "' + columns[idx].value.replace('"', "'") + (((++idx) < columns.length) ? '", ' : '"')
+            else
+                ++idx;
         tx.executeSql();
     } )
 }

@@ -11,7 +11,8 @@ SOURCES += main.cpp \
     mapextension.cpp \
     servicesbase.cpp \
     itineraryservices.cpp \
-    mapoverlayextension.cpp
+    mapoverlayextension.cpp \
+    userservices.cpp
 RESOURCES += qml.qrc \
     images.qrc
 
@@ -30,4 +31,5 @@ HEADERS += \
     itineraryservices.h \
     mapoverlayextension.h \
     mapwidgetprivate.h \
-    quadtree.h
+    quadtree.h \
+    userservices.h
