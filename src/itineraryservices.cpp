@@ -66,7 +66,7 @@ void ItineraryServices::createItinerary(QString name, QString departure, QString
     query.addQueryItem("departure", departure);
     if (!destination.isEmpty())
         query.addQueryItem("destination", destination);
-    query.addQueryItem("favorite", favorite == "true" ? "true" : "false");
+    query.addQueryItem("favorite", !UserServices::getToken().isEmpty() && favorite == "true" ? "true" : "false");
     if (!UserServices::getToken().isEmpty())
         query.addQueryItem("token", UserServices::getToken());
 

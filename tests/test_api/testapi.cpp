@@ -156,6 +156,8 @@ void TestApi::testNoAuthCreateItinerary()
 
         QVERIFY2(itineraryId >= 0, qPrintable(jsonStr));
         QVERIFY2(obj.value("departure").isObject(), qPrintable(jsonStr));
+        QVERIFY2(obj.value("departure").toObject().value("latitude") == "48.815346", qPrintable(jsonStr));
+        QVERIFY2(obj.value("departure").toObject().value("longitude") == "2.363165", qPrintable(jsonStr));
 
         waiter.emitDone();
     });
@@ -189,6 +191,8 @@ void TestApi::testNoAuthGetItineraries()
 
         QVERIFY2(itineraryId >= 0, qPrintable(jsonStr));
         QVERIFY2(obj.value("departure").isObject(), qPrintable(jsonStr));
+        QVERIFY2(obj.value("departure").toObject().value("latitude") == "48.815346", qPrintable(jsonStr));
+        QVERIFY2(obj.value("departure").toObject().value("longitude") == "2.363165", qPrintable(jsonStr));
 
         waiter.emitDone();
     });
@@ -241,6 +245,8 @@ void TestApi::testNoAuthGetItinerary()
 
         QVERIFY2(itineraryId >= 0, qPrintable(jsonStr));
         QVERIFY2(obj.value("departure").isObject(), qPrintable(jsonStr));
+        QVERIFY2(obj.value("departure").toObject().value("latitude") == "48.815346", qPrintable(jsonStr));
+        QVERIFY2(obj.value("departure").toObject().value("longitude") == "2.363165", qPrintable(jsonStr));
 
         waiter.emitDone();
     });
@@ -275,6 +281,96 @@ void TestApi::testNoAuthGetItinerary()
 
 void TestApi::testNoAuthEditItinerary()
 {
+    int itineraryId = -1;
+    TestWaiter waiter;
+
+    // Epitech
+    _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
+    {
+        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+
+        itineraryId = obj.value("id").toInt(-1);
+
+        QVERIFY2(itineraryId >= 0, qPrintable(jsonStr));
+        QVERIFY2(obj.value("departure").isObject(), qPrintable(jsonStr));
+        QVERIFY2(obj.value("departure").toObject().value("latitude") == "48.815346", qPrintable(jsonStr));
+        QVERIFY2(obj.value("departure").toObject().value("longitude") == "2.363165", qPrintable(jsonStr));
+
+        waiter.emitDone();
+    });
+
+    waiter.waitForDone();
+
+    if (itineraryId < 0)
+        QFAIL("Could not create a valid itinerary.");
+
+    // Append "Porte de Versailles"
+    _itineraryServices.addDestination(itineraryId, "48.832672, 2.288375", -1, [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
+    {
+        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonArray destinations = obj.value("destinations").toArray();
+
+        QVERIFY2(destinations.size() == 1, qPrintable(jsonStr));
+
+        QJsonArray::const_iterator it = destinations.begin();
+
+        if (it != destinations.constEnd())
+        {
+            QJsonObject obj = (*it).toObject();
+            QVERIFY2(obj.value("latitude").toString() == "48.832672", qPrintable(jsonStr));
+            QVERIFY2(obj.value("longitude").toString() == "2.288375", qPrintable(jsonStr));
+        }
+        else
+            QVERIFY2(false, qPrintable(jsonStr));
+
+        waiter.emitDone();
+    });
+
+    // Add "Porte d'Orléans" between Epitech and "Porte de Versailles"
+    _itineraryServices.addDestination(itineraryId, "48.823040, 2.325578", 1, [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
+    {
+        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonArray destinations = obj.value("destinations").toArray();
+
+        QVERIFY2(destinations.size() == 2, qPrintable(jsonStr));
+
+        QJsonArray::const_iterator it = destinations.begin();
+
+        if (it != destinations.constEnd())
+        {
+            QJsonObject obj = (*it).toObject();
+            QVERIFY2(obj.value("latitude").toString() == "48.823040", qPrintable(jsonStr));
+            QVERIFY2(obj.value("longitude").toString() == "2.325578", qPrintable(jsonStr));
+
+            ++it;
+            if (it != destinations.constEnd())
+            {
+                QJsonObject obj2 = (*it).toObject();
+                QVERIFY2(obj2.value("latitude").toString() == "48.832672", qPrintable(jsonStr));
+                QVERIFY2(obj2.value("longitude").toString() == "2.288375", qPrintable(jsonStr));
+            }
+            else
+                QVERIFY2(false, qPrintable(jsonStr));
+        }
+        else
+            QVERIFY2(false, qPrintable(jsonStr));
+
+        waiter.emitDone();
+    });
+
+    _itineraryServices.deleteItinerary(itineraryId, [&waiter] (int errorType, QString jsonStr) mutable
+    {
+        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        waiter.emitDone();
+    });
+
+    waiter.waitForDone();
 }
 
 void TestApi::testNoAuthDestinations()
@@ -301,6 +397,8 @@ void TestApi::testAuthCreateItinerary()
 
         QVERIFY2(itineraryId >= 0, qPrintable(jsonStr));
         QVERIFY2(obj.value("departure").isObject(), qPrintable(jsonStr));
+        QVERIFY2(obj.value("departure").toObject().value("latitude") == "48.815346", qPrintable(jsonStr));
+        QVERIFY2(obj.value("departure").toObject().value("longitude") == "2.363165", qPrintable(jsonStr));
 
         waiter.emitDone();
     });
@@ -337,6 +435,8 @@ void TestApi::testAuthGetItineraries()
 
         QVERIFY2(itineraryId >= 0, qPrintable(jsonStr));
         QVERIFY2(obj.value("departure").isObject(), qPrintable(jsonStr));
+        QVERIFY2(obj.value("departure").toObject().value("latitude") == "48.815346", qPrintable(jsonStr));
+        QVERIFY2(obj.value("departure").toObject().value("longitude") == "2.363165", qPrintable(jsonStr));
 
         waiter.emitDone();
     });
@@ -393,6 +493,8 @@ void TestApi::testAuthGetItinerary()
 
         QVERIFY2(itineraryId >= 0, qPrintable(jsonStr));
         QVERIFY2(obj.value("departure").isObject(), qPrintable(jsonStr));
+        QVERIFY2(obj.value("departure").toObject().value("latitude") == "48.815346", qPrintable(jsonStr));
+        QVERIFY2(obj.value("departure").toObject().value("longitude") == "2.363165", qPrintable(jsonStr));
 
         waiter.emitDone();
     });
@@ -425,8 +527,68 @@ void TestApi::testAuthGetItinerary()
     waiter.waitForDone();
 }
 
+// TODO: try to edit another user's itinerary (should fail)
 void TestApi::testAuthEditItinerary()
 {
+    int itineraryId = -1;
+    TestWaiter waiter;
+
+    UserSession session(waiter, _userServices);
+    Q_UNUSED(session);
+
+    // Epitech
+    _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
+    {
+        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+
+        itineraryId = obj.value("id").toInt(-1);
+
+        QVERIFY2(itineraryId >= 0, qPrintable(jsonStr));
+        QVERIFY2(obj.value("departure").isObject(), qPrintable(jsonStr));
+        QVERIFY2(obj.value("departure").toObject().value("latitude") == "48.815346", qPrintable(jsonStr));
+        QVERIFY2(obj.value("departure").toObject().value("longitude") == "2.363165", qPrintable(jsonStr));
+
+        waiter.emitDone();
+    });
+
+    waiter.waitForDone();
+
+    if (itineraryId < 0)
+        QFAIL("Could not create a valid itinerary.");
+
+    // Append "Porte de Versailles"
+    _itineraryServices.addDestination(itineraryId, "48.832672, 2.288375", -1, [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
+    {
+        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonArray destinations = obj.value("destinations").toArray();
+
+        QVERIFY2(destinations.size() == 1, qPrintable(jsonStr));
+
+        QJsonArray::const_iterator it = destinations.begin();
+
+        if (it != destinations.constEnd())
+        {
+            QJsonObject obj = (*it).toObject();
+            QVERIFY2(obj.value("latitude").toString() == "48.832672", qPrintable(jsonStr));
+            QVERIFY2(obj.value("longitude").toString() == "2.288375", qPrintable(jsonStr));
+        }
+        else
+            QVERIFY2(false, qPrintable(jsonStr));
+
+        waiter.emitDone();
+    });
+
+    _itineraryServices.deleteItinerary(itineraryId, [&waiter] (int errorType, QString jsonStr) mutable
+    {
+        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        waiter.emitDone();
+    });
+
+    waiter.waitForDone();
 }
 
 void TestApi::testAuthDestinations()
