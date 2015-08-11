@@ -134,6 +134,7 @@ Components.Marker {
 
     function createItineraryAndDisplay()
     {
+        var currentIt = UserSession.LAMA_USER_CURRENT_ITINERARY
         var startPoint = currentIt["departure"]
         var lastId = currentIt["destinations"].length - 1
         var arrivalPoint = currentIt["destinations"][lastId]
