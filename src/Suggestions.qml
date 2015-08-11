@@ -90,7 +90,14 @@ Components.Background {
                 centerText: "Suggestions"
                 anchors.right: parent.right
                 anchors.left: parent.left
-                height: parent.height * 0.33
+                height: parent.height * 0.25
+            }
+            Components.Marker {
+                id: sponsors
+                centerText: "Sponsors"
+                anchors.left: parent.left
+                anchors.right: parent.right
+                height: parent.height * 0.25
             }
 
             Components.Marker {
@@ -98,7 +105,7 @@ Components.Background {
                 centerText: "Favorites"
                 anchors.left: parent.left
                 anchors.right: parent.right
-                height: parent.height * 0.33
+                height: parent.height * 0.25
             }
 
             Components.Marker {
@@ -106,7 +113,7 @@ Components.Background {
                 centerText: "History"
                 anchors.left: parent.left
                 anchors.right: parent.right
-                height: parent.height * 0.33
+                height: parent.height * 0.25
             }
         }
     }
