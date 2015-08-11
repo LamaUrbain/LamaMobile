@@ -49,6 +49,8 @@
         <file>Background.qml</file>
         <file>LoadingRing.qml</file>
         <file>SponsorItem.qml</file>
+        <file>DeleteButton.qml</file>
+        <file>PopOver.qml</file>
     </qresource>
     <qresource prefix="/Controls">
         <file>BackButton.qml</file>

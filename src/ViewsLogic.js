@@ -116,3 +116,25 @@ function getIndexItineraryKnown(knownIts, newIt)
             return (idx)
     return (-1);
 }
+
+function spawnPopOver(mapItem, x, y)
+{
+    var component = Qt.createComponent("qrc:/Components/PopOver.qml");
+    var coord = mapItem.toCoordinate(Qt.point(x, y));
+    if (coord.isValid === false)
+    {
+        console.log("Error converting points to coordinate");
+        return -1;
+    }
+
+    var pop = component.createObject(mapItem,
+                                     {
+                                         "message": "plop",
+                                         "coordinate": coord,
+                                     });
+
+    if (pop === null) {
+        console.log("Error creating object ;)");
+    }
+    return pop
+}

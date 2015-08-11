@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.5
 import QtQuick.Layouts 1.1
 import QtQuick.Window 2.1
 import "qrc:/Components/" as Components
@@ -57,7 +57,8 @@ Components.Marker {
         }
     }
 
-    Map {
+    Map
+    {
         id: map
 
         zoomLevel: 12
@@ -91,6 +92,17 @@ Components.Marker {
             {
                 UserSession.LAMA_USER_CURRENT_ITINERARY = Constants.LAMA_BASE_ITINERARY_OBJ
                 rootView.mainViewTo("MainSearch", null)
+            }
+        }
+
+        MouseArea {
+            id: mapArea
+            anchors.fill: parent
+
+            onClicked: {
+                var pop = ViewsLogic.spawnPopOver(parent, mapArea.mouseX, mapArea.mouseY)
+                mouse.accepted = false
+                map.addMapItem(pop)
             }
         }
     }
@@ -187,7 +199,7 @@ Components.Marker {
         var currentIt = UserSession.LAMA_USER_CURRENT_ITINERARY;
 
         if (!ViewsLogic.isValueAtKeyValid(currentIt, "departure")
-            || !ViewsLogic.isValueAtKeyValid(currentIt, "destinations"))
+                || !ViewsLogic.isValueAtKeyValid(currentIt, "destinations"))
         {
             mainModal.title = "Error"
             mainModal.text = "Sadly, an error occured (MAPVIEW_RESOLV_INVALID_OBJ)"
