@@ -21,7 +21,7 @@ var LAMA_USER_CURRENT_WAYPOINT = {}
 var LAMA_USER_KNOWN_ITINERARIES =
 [
     {
-        id: 1337,
+        id: -1,
         owner: 'sw3g b0y',
         name: 'From home to work',
         creation: '2015-03-31T08:00:00Z',
@@ -232,13 +232,7 @@ function tryLogin(clearPreviousData)
 
 function loginAndCreateToken(callback)
 {
-    var jsonParams =
-    {
-        username: LAMA_USER_USERNAME,
-        password: LAMA_USER_PASSWORD
-    }
-
-    APILogic.requestAPI("POST", "/tokens/", jsonParams, function (success, userInfos)
+    userServices.createToken(LAMA_USER_USERNAME, LAMA_USER_PASSWORD, function (success, userInfos)
     {
         if (success === false || userInfos === null)
         {
@@ -258,7 +252,7 @@ function loginAndCreateToken(callback)
             loadItineraries()
             getFurtherUserDetails()
         }
-    }, null)
+    })
 }
 
 function getFurtherUserDetails()
@@ -270,12 +264,7 @@ function getFurtherUserDetails()
 
 function loadItineraries()
 {
-    var jsonParams =
-    {
-        owner: LAMA_USER_USERNAME
-    }
-
-    APILogic.requestAPI("GET", "/itineraries/", jsonParams, function (success, userRoutes)
+    itineraryServices.getItineraries(null, LAMA_USER_USERNAME, true, null, function (success, userRoutes)
     {
         if (success === false || userRoutes === null)
         {

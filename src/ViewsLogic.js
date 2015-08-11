@@ -105,7 +105,7 @@ function fillWaypoints(listModelId, itinerary)
     }
 }
 
-function GetIndexItineraryKnown(knownIts, newIt)
+function getIndexItineraryKnown(knownIts, newIt)
 {
     if (!isValueAtKeyValid(newIt, "id"))
         newIt['id'] = -(Math.round(Date.now() / 1000) % 100000000)

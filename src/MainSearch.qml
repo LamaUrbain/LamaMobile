@@ -120,7 +120,7 @@ Components.Background {
 
                     iconSource = isFavorited ? Constants.LAMA_SAVED_RESSOURCE: Constants.LAMA_SAVE_RESSOURCE
 
-                    var idxKnown = ViewsLogic.GetIndexItineraryKnown(UserSession.LAMA_USER_KNOWN_ITINERARIES, UserSession.LAMA_USER_CURRENT_ITINERARY);
+                    var idxKnown = ViewsLogic.getIndexItineraryKnown(UserSession.LAMA_USER_KNOWN_ITINERARIES, UserSession.LAMA_USER_CURRENT_ITINERARY);
 
                     if (isFavorited && idxKnown < 0)
                         UserSession.LAMA_USER_KNOWN_ITINERARIES.push(UserSession.LAMA_USER_CURRENT_ITINERARY)

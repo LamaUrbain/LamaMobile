@@ -95,7 +95,8 @@ Components.Background {
                     mainModal.setLoadingState(true);
                     mainModal.enableButton = false
                     mainModal.visible = true;
-                    rootView.trylogin(true)
+
+                    UserSession.trylogin(true)
                 }
                 else
                 {

@@ -87,12 +87,13 @@ Components.Background {
                     UserSession.LAMA_USER_IS_LOGGED = false
                     UserSession.LAMA_USER_TOKEN = ""
                     UserSession.LAMA_USER_PASSWORD = pass
-                    if (APILogic.requestAPI("POST", "/users/", jsonParams, onRegistrationResult, null) === false)
-                    {
-                        mainModal.message = "Check your internet connection";
-                        mainModal.setLoadingState(false);
-                        mainModal.enableButton = true
-                    }
+                    userServices.createUser(nickname, pass, mail, onRegistrationResult)
+                    //if (APILogic.requestAPI("POST", "/users/", jsonParams, onRegistrationResult, null) === false)
+                    //{
+                    //    mainModal.message = "Check your internet connection";
+                    //    mainModal.setLoadingState(false);
+                    //    mainModal.enableButton = true
+                    //}
                 }
                 else
                 {

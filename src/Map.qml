@@ -153,7 +153,7 @@ Components.Marker {
             currentIt['name'] = "tmp_itinerary_" + ViewsLogic.getRandomString(8);
 
         //itineraryServices.abortPendingRequests()
-        itineraryServices.createItinerary(currentIt['name'], requestDeparture, requestArrival, false, function(mainModal)
+        itineraryServices.createItinerary(currentIt['name'], requestDeparture, requestArrival, currentIt["favorite"], function(mainModal)
         {
             return (function(statusCode, jsonStr)
             {
