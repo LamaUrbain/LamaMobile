@@ -117,7 +117,7 @@ function getIndexItineraryKnown(knownIts, newIt)
     return (-1);
 }
 
-function spawnPopOver(mapItem, x, y)
+function spawnPopOver(mapItem, x, y, message)
 {
     var component = Qt.createComponent("qrc:/Components/PopOver.qml");
     var coord = mapItem.toCoordinate(Qt.point(x, y));
@@ -129,7 +129,7 @@ function spawnPopOver(mapItem, x, y)
 
     var pop = component.createObject(mapItem,
                                      {
-                                         "message": "plop",
+                                         "message": message,
                                          "coordinate": coord,
                                      });
 

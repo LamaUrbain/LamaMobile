@@ -100,7 +100,7 @@ Components.Marker {
             anchors.fill: parent
 
             onClicked: {
-                var pop = ViewsLogic.spawnPopOver(parent, mapArea.mouseX, mapArea.mouseY)
+                var pop = ViewsLogic.spawnPopOver(parent, mapArea.mouseX, mapArea.mouseY, "je suis une popup :3 !")
                 mouse.accepted = false
                 map.addMapItem(pop)
             }
