@@ -364,6 +364,101 @@ void TestApi::testNoAuthEditItinerary()
         waiter.emitDone();
     });
 
+    // Remove "Porte de Versailles"
+    _itineraryServices.deleteDestination(itineraryId, 1, [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
+    {
+        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonArray destinations = obj.value("destinations").toArray();
+
+        QVERIFY2(destinations.size() == 1, qPrintable(jsonStr));
+
+        QJsonArray::const_iterator it = destinations.begin();
+
+        if (it != destinations.constEnd())
+        {
+            QJsonObject obj = (*it).toObject();
+            QVERIFY2(obj.value("latitude").toString() == "48.823040", qPrintable(jsonStr));
+            QVERIFY2(obj.value("longitude").toString() == "2.325578", qPrintable(jsonStr));
+        }
+        else
+            QVERIFY2(false, qPrintable(jsonStr));
+
+        waiter.emitDone();
+    });
+
+    // Append "Porte de Versailles"
+    _itineraryServices.addDestination(itineraryId, "48.832672, 2.288375", -1, [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
+    {
+        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonArray destinations = obj.value("destinations").toArray();
+
+        QVERIFY2(destinations.size() == 2, qPrintable(jsonStr));
+
+        QJsonArray::const_iterator it = destinations.begin();
+
+        if (it != destinations.constEnd())
+        {
+            QJsonObject obj = (*it).toObject();
+            QVERIFY2(obj.value("latitude").toString() == "48.823040", qPrintable(jsonStr));
+            QVERIFY2(obj.value("longitude").toString() == "2.325578", qPrintable(jsonStr));
+
+            ++it;
+            if (it != destinations.constEnd())
+            {
+                QJsonObject obj2 = (*it).toObject();
+                QVERIFY2(obj2.value("latitude").toString() == "48.832672", qPrintable(jsonStr));
+                QVERIFY2(obj2.value("longitude").toString() == "2.288375", qPrintable(jsonStr));
+            }
+            else
+                QVERIFY2(false, qPrintable(jsonStr));
+        }
+        else
+            QVERIFY2(false, qPrintable(jsonStr));
+
+        waiter.emitDone();
+    });
+
+    // Remove "Porte d'Orléans"
+    _itineraryServices.deleteDestination(itineraryId, 0, [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
+    {
+        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonArray destinations = obj.value("destinations").toArray();
+
+        QVERIFY2(destinations.size() == 1, qPrintable(jsonStr));
+
+        QJsonArray::const_iterator it = destinations.begin();
+
+        if (it != destinations.constEnd())
+        {
+            QJsonObject obj = (*it).toObject();
+            QVERIFY2(obj.value("latitude").toString() == "48.832672", qPrintable(jsonStr));
+            QVERIFY2(obj.value("longitude").toString() == "2.288375", qPrintable(jsonStr));
+        }
+        else
+            QVERIFY2(false, qPrintable(jsonStr));
+
+        waiter.emitDone();
+    });
+
+    // Remove "Porte de Versailles"
+    _itineraryServices.deleteDestination(itineraryId, 0, [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
+    {
+        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonArray destinations = obj.value("destinations").toArray();
+
+        QVERIFY2(destinations.size() == 0, qPrintable(jsonStr));
+
+        waiter.emitDone();
+    });
+
     _itineraryServices.deleteItinerary(itineraryId, [&waiter] (int errorType, QString jsonStr) mutable
     {
         QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
