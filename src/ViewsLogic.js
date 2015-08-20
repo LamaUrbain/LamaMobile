@@ -138,3 +138,10 @@ function spawnPopOver(mapItem, x, y, message)
     }
     return pop
 }
+
+function spawnModal(title, message)
+{
+    mainModal.title = title
+    mainModal.message = message
+    mainModal.visible = true
+}

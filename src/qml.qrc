@@ -61,6 +61,7 @@
         <file>DeleteButton.qml</file>
         <file>IconButton.qml</file>
         <file>ImageButton.qml</file>
+        <file>ShareButton.qml</file>
     </qresource>
     <qresource prefix="/Views">
         <file>AlertInformation.qml</file>

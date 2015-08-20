@@ -99,14 +99,9 @@ Components.Background {
             anchors.fill: parent
             spacing: 2
 
-            Controls.IconButton {
+            Controls.ShareButton {
                 id: shareButton
                 Layout.fillWidth: true
-                text: "Share"
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                height: parent.height
-                iconSource: Constants.LAMA_SHARE_RESSOURCE
             }
 
             Controls.IconButton {
