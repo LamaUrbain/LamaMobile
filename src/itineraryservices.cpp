@@ -181,7 +181,7 @@ void ItineraryServices::deleteItinerary(int id, QJSValue callback)
 
 void ItineraryServices::getItineraryTiles(int id, int zoomLevel, ServicesBase::CallbackType callback)
 {
-    QUrl url(QString("%1/itineraries/coordinates/%2/%3").arg(serverAddress).arg(id).arg(zoomLevel));
+    QUrl url(QString("%1/itineraries/%2/coordinates/%3").arg(serverAddress).arg(id).arg(zoomLevel));
     qDebug() << "getItineraryTiles:" << url.toString();
     getRequest(url, callback);
 }

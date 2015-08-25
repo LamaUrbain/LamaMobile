@@ -681,7 +681,7 @@ quint8 MapWidget::getMapScale() const
 void MapWidget::setMapScale(quint8 scale)
 {
     Q_D(MapWidget);
-    d->setMapScale(qBound<quint8>(1, scale, 18));
+    d->setMapScale(qBound<quint8>(1, scale, 16));
 }
 
 const QPointF &MapWidget::getMapCenter() const
