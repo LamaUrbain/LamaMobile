@@ -205,7 +205,7 @@ function saveCurrentSessionState()
                 sqlStr += columns[idx].name + ' = "' + columns[idx].value.replace(/"/g, "'") + (((++idx) < columns.length) ? '", ' : '"')
             else
                 ++idx;
-        console.log(sqlStr);
+        //console.log(sqlStr);
         tx.executeSql(sqlStr);
     } )
 }

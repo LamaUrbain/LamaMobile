@@ -37,7 +37,6 @@ function _isItineraryValid(itinerary)
 
 function isValueAtKeyValid(obj, key)
 {
-    console.log(obj)
     return (obj !== null
             && key in obj
             && obj[key] !== null)
