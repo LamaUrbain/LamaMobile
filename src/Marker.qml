@@ -89,6 +89,7 @@ Item {
                 root.checked = !root.checked;
             else
                 root.clicked();
+            mouse.accepted = false
         }
         onEntered: {
             if (root.hoverable)

@@ -37,6 +37,7 @@ function _isItineraryValid(itinerary)
 
 function isValueAtKeyValid(obj, key)
 {
+    console.log(obj)
     return (obj !== null
             && key in obj
             && obj[key] !== null)
@@ -48,7 +49,7 @@ function getPtFromIndex(idx, itinerary)
     {
         if (idx === 0)
             return (itinerary["departure"]);
-        else if (idx > 0 && itinerary["destinations"].length > idx)
+        else if (idx > 0 && itinerary["destinations"].length >= idx)
             return (itinerary["destinations"][idx - 1])
     }
     return (null);
@@ -119,24 +120,29 @@ function getIndexItineraryKnown(knownIts, newIt)
 
 function spawnPopOver(mapItem, x, y, message)
 {
-    var component = Qt.createComponent("qrc:/Components/PopOver.qml");
     var coord = mapItem.toCoordinate(Qt.point(x, y));
     if (coord.isValid === false)
-    {
         console.log("Error converting points to coordinate");
-        return -1;
-    }
+    else
+    {
+        var component = Qt.createComponent( "qrc:/Components/PopOver.qml" );
+        if(component.status !== Component.Ready)
+            console.debug("Error:"
+                          + (component.status === Component.Error ? component.errorString() : "Component failure"));
+        else
+        {
+            var pop = component.createObject(mapItem,
+                                             {
+                                                 "message": message,
+                                                 "coordinate": coord,
+                                             });
 
-    var pop = component.createObject(mapItem,
-                                     {
-                                         "message": message,
-                                         "coordinate": coord,
-                                     });
-
-    if (pop === null) {
-        console.log("Error creating object ;)");
+            if (pop === null)
+                console.log("Error creating object ;)");
+            return (pop)
+        }
     }
-    return pop
+    return (null);
 }
 
 function spawnModal(title, message)

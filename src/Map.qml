@@ -1,4 +1,4 @@
-import QtQuick 2.5
+import QtQuick 2.0
 import QtQuick.Layouts 1.1
 import QtQuick.Window 2.1
 import "qrc:/Components/" as Components
@@ -82,6 +82,18 @@ Components.Marker {
 
         anchors.leftMargin: parent.width * 0.005
         anchors.rightMargin: parent.width * 0.005
+
+        MouseArea {
+            id: mapArea
+            anchors.fill: parent
+
+            onClicked: {
+                var pop = ViewsLogic.spawnPopOver(parent, mapArea.mouseX, mapArea.mouseY, "je suis une popup :3 !")
+                mouse.accepted = false
+                map.addMapItem(pop)
+            }
+        }
+
         Controls.ImageButton {
             anchors.left: parent.left
             anchors.bottom: parent.bottom
@@ -92,17 +104,6 @@ Components.Marker {
             {
                 UserSession.LAMA_USER_CURRENT_ITINERARY = Constants.LAMA_BASE_ITINERARY_OBJ
                 rootView.mainViewTo("MainSearch", null)
-            }
-        }
-
-        MouseArea {
-            id: mapArea
-            anchors.fill: parent
-
-            onClicked: {
-                var pop = ViewsLogic.spawnPopOver(parent, mapArea.mouseX, mapArea.mouseY, "je suis une popup :3 !")
-                mouse.accepted = false
-                map.addMapItem(pop)
             }
         }
     }
