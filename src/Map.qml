@@ -151,15 +151,15 @@ Components.Marker {
         var startPoint = currentIt["departure"]
         var lastId = currentIt["destinations"].length - 1
         var arrivalPoint = currentIt["destinations"][lastId]
-        var requestDeparture = startPoint["latitude"] + ',' + startPoint["longitude"]
-        var requestArrival = arrivalPoint["latitude"] + ',' + arrivalPoint["longitude"]
+        var requestDeparture = startPoint["latitude"] + ', ' + startPoint["longitude"]
+        var requestArrival = arrivalPoint["latitude"] + ', ' + arrivalPoint["longitude"]
 
         var waypointArray = [];
         if (lastId !== 0)
             for (var idx = 0; idx < lastId; ++idx)
             {
                 var currentPoint = currentIt["destinations"][idx]
-                waypointArray.push(currentPoint["latitude"] + ',' + currentPoint["longitude"])
+                waypointArray.push(currentPoint["latitude"] + ', ' + currentPoint["longitude"])
             }
 
         if (currentIt['name'] === null || currentIt['name'] === '')
