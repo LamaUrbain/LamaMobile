@@ -330,6 +330,8 @@ void TestApi::testNoAuthEditItinerary()
         waiter.emitDone();
     });
 
+    waiter.waitForDone();
+
     // Add "Porte d'Orléans" between Epitech and "Porte de Versailles"
     _itineraryServices.addDestination(itineraryId, "48.823040, 2.325578", 1, [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
     {
@@ -364,6 +366,8 @@ void TestApi::testNoAuthEditItinerary()
         waiter.emitDone();
     });
 
+    waiter.waitForDone();
+
     // Remove "Porte de Versailles"
     _itineraryServices.deleteDestination(itineraryId, 1, [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
     {
@@ -387,6 +391,8 @@ void TestApi::testNoAuthEditItinerary()
 
         waiter.emitDone();
     });
+
+    waiter.waitForDone();
 
     // Append "Porte de Versailles"
     _itineraryServices.addDestination(itineraryId, "48.832672, 2.288375", -1, [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
@@ -422,6 +428,8 @@ void TestApi::testNoAuthEditItinerary()
         waiter.emitDone();
     });
 
+    waiter.waitForDone();
+
     // Remove "Porte d'Orléans"
     _itineraryServices.deleteDestination(itineraryId, 0, [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
     {
@@ -446,6 +454,8 @@ void TestApi::testNoAuthEditItinerary()
         waiter.emitDone();
     });
 
+    waiter.waitForDone();
+
     // Remove "Porte de Versailles"
     _itineraryServices.deleteDestination(itineraryId, 0, [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
     {
@@ -458,6 +468,8 @@ void TestApi::testNoAuthEditItinerary()
 
         waiter.emitDone();
     });
+
+    waiter.waitForDone();
 
     _itineraryServices.deleteItinerary(itineraryId, [&waiter] (int errorType, QString jsonStr) mutable
     {
@@ -676,6 +688,8 @@ void TestApi::testAuthEditItinerary()
 
         waiter.emitDone();
     });
+
+    waiter.waitForDone();
 
     _itineraryServices.deleteItinerary(itineraryId, [&waiter] (int errorType, QString jsonStr) mutable
     {
