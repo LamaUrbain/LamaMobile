@@ -1,14 +1,12 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.1
 import QtQuick.Window 2.1
+import MapControls 1.0
 import "qrc:/Components/" as Components
 import "qrc:/Controls/" as Controls
 import "qrc:/Constants.js" as Constants
 import "qrc:/UserSession.js" as UserSession
 import "qrc:/Views/ViewsLogic.js" as ViewsLogic
-
-import QtLocation 5.3
-import QtPositioning 5.2
 
 Components.Marker {
     id: mapView
@@ -57,29 +55,11 @@ Components.Marker {
         }
     }
 
-    Map
+    MapWidget
     {
         id: map
 
-        zoomLevel: 12
-
-        gesture.flickDeceleration: 3000
-        gesture.enabled: true
-
-        plugin: Plugin {
-            name: "osm"
-        }
-
-        property GeocodeModel geocodeModel: GeocodeModel {
-            plugin: map.plugin
-        }
-
         anchors.fill: parent
-        center {
-            latitude: 48.85341
-            longitude: 2.3488
-        }
-
         anchors.leftMargin: parent.width * 0.005
         anchors.rightMargin: parent.width * 0.005
 
