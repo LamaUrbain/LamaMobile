@@ -1,120 +1,163 @@
 import QtQuick 2.0
-import QtQuick.Controls 1.2
-import "qrc:/Constants.js" as Constants
-import "qrc:/Components" as Components
-import "qrc:/Controls" as Controls
-import "ViewsLogic.js" as ViewsLogic
+import QtQuick.Controls 1.3
+import "qrc:/Components/" as Components
+import "qrc:/Controls/" as Controls
+import "qrc:/UserSession.js" as UserSession
+import "qrc:/Views/ViewsLogic.js" as ViewsLogic
 
-Rectangle {
-    anchors.fill: parent
+Components.Background {
+    id: waypointSuggestions
 
-    Rectangle
+    property var currentWaypoint: ViewsLogic.getPtFromIndex(UserSession.LAMA_USER_CURRENT_WAYPOINT_ID,
+                                                UserSession.LAMA_USER_CURRENT_ITINERARY)
+    Components.Header
     {
-        anchors.top: parent.top
+        id: header
+        title: "Suggestions of places"
+    }
+
+    Column {
+        anchors.top: header.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.bottom: suggestionsCommandbar.top
+        height: parent.height * 0.8
+        spacing: 2
+        anchors.leftMargin: parent.height * 0.005
+        anchors.rightMargin: parent.height * 0.005
+        anchors.topMargin: parent.height * 0.005
+        anchors.bottomMargin: parent.height * 0.005
 
-        Rectangle
-        {
-            id: inputHeader
-
-            height: parent.height * 0.1
-            anchors.top: parent.top
+        Components.TextField {
+            id: addressInput
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.leftMargin: parent.width * 0.15
-            anchors.rightMargin: anchors.leftMargin
-            TextField
+            height: parent.height * 0.1
+            placeholderText: "Address"
+            Component.onCompleted:
             {
-                id: inputText
-                text: ViewsLogic.originTextControl.text
-                font.pixelSize: Constants.fontSize
-                textColor: "#000"
-                anchors.fill: parent
-                anchors.margins: parent.height * 0.3
-                onTextChanged: ViewsLogic.fillSuggestions(suggestionsModel, inputText.text)
+                if (ViewsLogic.isValueAtKeyValid(currentWaypoint, "address") === true)
+                    text = currentWaypoint["address"]
             }
         }
 
         Rectangle
         {
-            id: splitter
-            height: 3
-            width: parent.width * 0.7
-            anchors.top: inputHeader.bottom
-            anchors.horizontalCenter: parent.horizontalCenter
-            color: "#D0D0D0"
-        }
-
-        ScrollView
-        {
-            anchors.top: splitter.bottom
+            height: parent.height * 0.1
             anchors.left: parent.left
             anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            anchors.leftMargin: parent.width * 0.1
-            anchors.topMargin: parent.height * 0.1
-            ListView
+            color: "Transparent"
+
+            Components.TextField
             {
-                id: suggestionList
-                model: ListModel { id: suggestionsModel }
-                delegate:
-                Column
+                id: latitudeInput
+                width: parent.width * 0.495
+                anchors.right: parent.right
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                placeholderText: "Latitude"
+                Component.onCompleted:
                 {
-                    spacing: parent.width * 0.05
-                    Text
-                    {
-                        text: address
-                        font.pixelSize: Constants.fontSize
-                        MouseArea
-                        {
-                            anchors.fill: parent
-                            onClicked:
-                            {
-                                suggestionList.currentIndex = index;
-                                inputText.text = address
-                            }
-                        }
-                    }
+                    if (ViewsLogic.isValueAtKeyValid(currentWaypoint, "latitude") === true)
+                        text = currentWaypoint["latitude"]
                 }
-                highlight: Rectangle { color: "#80CFBF"; radius: 5 }
+                validator: RegExpValidator { regExp: /^(\-?\d{1,2}(\.\d+)?)$/ }
+            }
+            Components.TextField
+            {
+                id: longitudeInput
+                width: parent.width * 0.495
+                anchors.left: parent.left
+                anchors.top: parent.top
+                anchors.bottom: parent.bottom
+                placeholderText: "Longitude"
+                Component.onCompleted:
+                {
+                    if (ViewsLogic.isValueAtKeyValid(currentWaypoint, "longitude") === true)
+                        text = currentWaypoint["longitude"]
+                }
+                validator: RegExpValidator { regExp: /^(\-?1?\d{1,2}(\.\d+)?)$/ }
+            }
+        }
+
+        Column {
+            id: choices
+            anchors.left: parent.left
+            anchors.right: parent.right
+            height: parent.height * 0.55
+
+            Components.Marker {
+                id: sponsors
+                centerText: "Sponsored Interest Points"
+                anchors.left: parent.left
+                anchors.right: parent.right
+                height: parent.height * 0.25
+            }
+
+            Components.Marker {
+                id: history
+                centerText: "History"
+                anchors.left: parent.left
+                anchors.right: parent.right
+                height: parent.height * 0.25
             }
         }
     }
 
-    Components.CommandBar
-    {
-        id: suggestionsCommandbar
+    Components.BottomAction {
+        Controls.Button {
+            centerText: "Validate"
+            anchors.fill: parent
+            onClicked: {
+                var id = UserSession.LAMA_USER_CURRENT_WAYPOINT_ID
+                var longitude = longitudeInput.text
+                var latitude = latitudeInput.text
+                var areCardinalsHere = longitude.length > 0 || latitude.length > 0
+                if (id < 0 // cheating
+                    || (areCardinalsHere && (Math.abs(longitude) > 180 || Math.abs(latitude) > 90)))
+                {
+                    mainModal.title = "Wrong values"
+                    mainModal.message = "Latitude must be between -90 and 90\n"
+                                      + "Longitude must be between -180 and 180"
+                    mainModal.visible = true
+                    return;
+                }
 
-        Controls.ReturnButton
-        {
-            onReturnButtonPressed:
-            {
-                ViewsLogic.leaveDisplay(null)
+                var waypointKind
+                if (id > 0)
+                {
+                    waypointKind = "destinations"
+                    --id;
+                    if (areCardinalsHere)
+                    {
+                        UserSession.LAMA_USER_CURRENT_ITINERARY[waypointKind][id]["longitude"] = longitude
+                        UserSession.LAMA_USER_CURRENT_ITINERARY[waypointKind][id]["latitude"] = latitude
+                    }
+                    UserSession.LAMA_USER_CURRENT_ITINERARY[waypointKind][id]["address"] = addressInput.text
+                }
+                else
+                {
+                    waypointKind = "departure"
+                    if (areCardinalsHere)
+                    {
+                        UserSession.LAMA_USER_CURRENT_ITINERARY[waypointKind]["longitude"] = longitude
+                        UserSession.LAMA_USER_CURRENT_ITINERARY[waypointKind]["latitude"] = latitude
+                    }
+                    UserSession.LAMA_USER_CURRENT_ITINERARY[waypointKind]["address"] = addressInput.text
+                }
+
+                rootView.raiseUserSessionChanged()
+                var currentRoute = UserSession.LAMA_USER_CURRENT_ITINERARY
+                if ("favorite" in currentRoute && currentRoute["favorite"] === true)
+                {
+                    var idx = ViewsLogic.getIndexItineraryKnown(UserSession.LAMA_USER_KNOWN_ITINERARIES, currentRoute)
+                    if (idx >= 0)
+                    {
+                        UserSession.LAMA_USER_KNOWN_ITINERARIES[idx] = currentRoute;
+                        UserSession.saveCurrentSessionState()
+                    }
+                }
+                rootView.mainViewBack();
             }
-
-            width: parent.width * 0.1
-            anchors.leftMargin: width
-            anchors.left: parent.left
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-        }
-
-        Controls.ValidateButton
-        {
-            id: validateButton
-            onValidateButtonPressed:
-            {
-                ViewsLogic.leaveDisplay(inputText.text)
-            }
-
-            width: parent.width * 0.1;
-            anchors.rightMargin: width;
-            anchors.right: parent.right
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
         }
     }
 }
-

@@ -1,66 +1,63 @@
-import QtQuick 2.2
+import QtQuick 2.0
 import QtQuick.Window 2.1
-import "main.js" as JSModule
+import QtQuick.Controls 1.3
 import "qrc:/Views" as Views
 import "qrc:/Components" as Components
+import "qrc:/Controls" as Controls
+import "qrc:/APILogic.js" as APILogic
+import "qrc:/UserSession.js" as UserSession
+import "qrc:/Views/ViewsLogic.js" as ViewsLogic
 
 Window {
-    id: mainView
+    id: rootView
     visible: true
-    width: 480
-    height: 800
+    width: 640
+    height: 960
 
-    Views.Map
-    {
-        id: mapView
-    }
+    Component.onCompleted: UserSession.tryLogin(false)
+    signal userSessionChanged()
 
-    Loader
-    {
-        id: viewLoader
+    StackView {
+        id: mainView
         anchors.fill: parent
+        initialItem: "qrc:/Views/Map.qml"
     }
 
-    Components.ErrorPopup
+    Views.Modal
     {
-        id: errorPopup
+        id: mainModal
+        Component.onCompleted: UserSession.mainModal = mainModal
     }
 
+    function mainViewTo(name, prop) {
+        if (name === undefined)
+        {
+            mainViewTo("Map")
+            return
+        }
 
-    function navigateFromMenu(name)
-    {
-        JSModule.navigateTo(name);
+        if (name === "Map") // if we go directly to the map, reset the navstack
+        {
+            mainView.clear()
+            mainView.push("qrc:/Views/Map.qml")
+        }
+        else
+        {
+            mainView.push("qrc:/Views/" + name + ".qml", {properties: prop})
+        }
     }
 
-    function navigateToProfileSettings()
-    {
-        JSModule.navigateTo("ProfileSettings");
+    function mainViewBack() {
+        mainView.pop()
     }
 
-    function navigateToSearch()
+    function raiseUserSessionChanged()
     {
-        JSModule.navigateTo("ItinariesSearch");
+        userSessionChanged()
     }
 
-    function navigateToMenu()
+    function resolveCurrentItinerary()
     {
-        JSModule.navigateTo("Menu");
-    }
-
-    function navigateToMap(departure, arrival)
-    {
-        JSModule.navigateTo("Map");
-        if (departure !== null && arrival !== null)
-            JSModule.setWaypoints(mapView, departure, arrival, null);
-    }
-
-    function navigateBack()
-    {
-        JSModule.navigateBack();
-    }
-
-    Component.onCompleted:
-    {
-        //mapView.mapComponent.displayItinerary(0);
+        mainView.get(0, false).resolveCurrentItinerary()
     }
 }

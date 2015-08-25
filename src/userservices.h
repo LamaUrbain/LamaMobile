@@ -4,15 +4,18 @@
 #include <QObject>
 #include "servicesbase.h"
 
+
 class UserServices : public ServicesBase
 {
     Q_OBJECT
+
 
 public:
     UserServices();
     virtual ~UserServices();
     static UserServices *getInstance();
     static const QString &getToken();
+
 
     void getUsers(QString search, ServicesBase::CallbackType callback);
     void getUser(QString username, ServicesBase::CallbackType callback);
@@ -21,6 +24,7 @@ public:
     void deleteUser(QString username, ServicesBase::CallbackType callback);
     void createToken(QString username, QString password, ServicesBase::CallbackType callback);
     void deleteToken(ServicesBase::CallbackType callback);
+
 
 public slots:
     void getUsers(QString search, QJSValue callback);
@@ -31,9 +35,11 @@ public slots:
     void createToken(QString username, QString password, QJSValue callback);
     void deleteToken(QJSValue callback);
 
+
 private:
     static UserServices *_instance;
     QString _token;
 };
+
 
 #endif // USERSERVICES_H

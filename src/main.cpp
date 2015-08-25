@@ -13,12 +13,12 @@ int main(int argc, char *argv[])
     qmlRegisterType<MapGetter>("MapControls", 1, 0, "MapGetter");
     qmlRegisterType<MapWidget>("MapControls", 1, 0, "MapWidget");
 
-    UserServices userServices;
     ItineraryServices itineraryServices;
+    UserServices userServices;
 
     QQmlApplicationEngine engine;
-    engine.rootContext()->setContextProperty("userServices", &userServices);
     engine.rootContext()->setContextProperty("itineraryServices", &itineraryServices);
+    engine.rootContext()->setContextProperty("userServices", &userServices);
     engine.load(QUrl(QStringLiteral("qrc:///main.qml")));
 
     return app.exec();

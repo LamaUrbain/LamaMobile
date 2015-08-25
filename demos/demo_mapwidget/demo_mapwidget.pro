@@ -15,8 +15,8 @@ SOURCES += main.cpp \
     $$SRC_PATH/mapextension.cpp \
     $$SRC_PATH/servicesbase.cpp \
     $$SRC_PATH/itineraryservices.cpp \
-    $$SRC_PATH/userservices.cpp \
     $$SRC_PATH/mapoverlayextension.cpp \
+    $$SRC_PATH/userservices.cpp \
     mapwidgetstub.cpp
 
 HEADERS += $$SRC_PATH/mapwidget.h \
@@ -25,8 +25,8 @@ HEADERS += $$SRC_PATH/mapwidget.h \
     $$SRC_PATH/mapextension.h \
     $$SRC_PATH/servicesbase.h \
     $$SRC_PATH/itineraryservices.h \
-    $$SRC_PATH/userservices.h \
     $$SRC_PATH/mapoverlayextension.h \
+    $$SRC_PATH/userservices.h \
     mapwidgetstub.h
 
 RESOURCES += qml.qrc \
