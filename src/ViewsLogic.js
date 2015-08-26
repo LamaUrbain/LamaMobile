@@ -145,3 +145,10 @@ function spawnModal(title, message)
     mainModal.message = message
     mainModal.visible = true
 }
+
+function spawnModalWithSource(title, source)
+{
+    mainModal.title = title
+    mainModal.modalSourceComponent = source
+    mainModal.visible = true
+}

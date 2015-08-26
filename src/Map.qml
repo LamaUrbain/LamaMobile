@@ -202,7 +202,7 @@ Components.Marker {
                 || !ViewsLogic.isValueAtKeyValid(currentIt, "destinations"))
         {
             mainModal.title = "Error"
-            mainModal.text = "Sadly, an error occured (MAPVIEW_RESOLV_INVALID_OBJ)"
+            mainModal.message = "Sadly, an error occured (MAPVIEW_RESOLV_INVALID_OBJ)"
             mainModal.enableButton = true
             mainModal.visible = true
             return;
@@ -215,7 +215,7 @@ Components.Marker {
                     if (statusCode !== 0)
                     {
                         mainModal.title = "Error"
-                        mainModal.text = "Sadly, an error occured (MAPVIEW_RESOLV_EXIST_IT_FAIL)"
+                        mainModal.message = "Sadly, an error occured (MAPVIEW_RESOLV_EXIST_IT_FAIL)"
                         mainModal.enableButton = true
                         mainModal.visible = true
                     }
