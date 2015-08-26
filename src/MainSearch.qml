@@ -102,6 +102,7 @@ Components.Background {
             Controls.ShareButton {
                 id: shareButton
                 Layout.fillWidth: true
+                itinerary: UserSession.LAMA_USER_CURRENT_ITINERARY
             }
 
             Controls.IconButton {
