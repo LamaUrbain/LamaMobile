@@ -20,10 +20,10 @@ function checkPassword(pass, passConfirm)
 function getRandomString(length)
 {
     var text = "";
-    var charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-()[]";
+    var possibleChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-()[]";
 
     for( var i=0; i < length; i++ )
-        text += possible.charAt(Math.floor(Math.random() * charset.length));
+        text += possibleChars.charAt(Math.floor(Math.random() * possibleChars.length));
 
     return (text);
 }
@@ -108,7 +108,7 @@ function fillWaypoints(listModelId, itinerary)
 function getIndexItineraryKnown(knownIts, newIt)
 {
     if (!isValueAtKeyValid(newIt, "id"))
-        newIt['id'] = -(Math.round(Date.now() / 1000) % 100000000)
+        return (-1);
 
     var exists = false;
     for (var idx = 0; idx < knownIts.length; ++idx)
