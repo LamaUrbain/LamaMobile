@@ -13,12 +13,22 @@ Components.Background {
         title: "Favorites"
     }
 
+    function refreshFavorites()
+    {
+        ViewsLogic.fillFavorites(favoriteModel, UserSession.LAMA_USER_KNOWN_ITINERARIES);
+    }
+
     ListModel {
         id: favoriteModel
 
         Component.onCompleted:
         {
             ViewsLogic.fillFavorites(this, UserSession.LAMA_USER_KNOWN_ITINERARIES)
+            rootView.userSessionChanged.connect(refreshFavorites);
+        }
+        Component.onDestruction:
+        {
+            rootView.userSessionChanged.disconnect(refreshFavorites);
         }
     }
 
