@@ -126,6 +126,7 @@ Rectangle
                     id: modalButton
                     anchors.centerIn: parent
                     font.pixelSize: Constants.LAMA_POINTSIZE * 2
+                    color: "white"
                     text: "Ok"
                     font.weight: Font.Bold
                 }
