@@ -35,7 +35,7 @@ Components.Background {
             placeholderText: "Address"
             Component.onCompleted:
             {
-                if (ViewsLogic.isValueAtKeyValid(currentWaypoint, "address"))
+                if (ViewsLogic.isValueAtKeyValid(currentWaypoint, "address") === true)
                     text = currentWaypoint["address"]
             }
         }
@@ -57,7 +57,7 @@ Components.Background {
                 placeholderText: "Latitude"
                 Component.onCompleted:
                 {
-                    if (ViewsLogic.isValueAtKeyValid(currentWaypoint, "latitude"))
+                    if (ViewsLogic.isValueAtKeyValid(currentWaypoint, "latitude") === true)
                         text = currentWaypoint["latitude"]
                 }
                 validator: RegExpValidator { regExp: /^(\-?\d{1,2}(\.\d+)?)$/ }
@@ -72,7 +72,7 @@ Components.Background {
                 placeholderText: "Longitude"
                 Component.onCompleted:
                 {
-                    if (ViewsLogic.isValueAtKeyValid(currentWaypoint, "longitude"))
+                    if (ViewsLogic.isValueAtKeyValid(currentWaypoint, "longitude") === true)
                         text = currentWaypoint["longitude"]
                 }
                 validator: RegExpValidator { regExp: /^(\-?1?\d{1,2}(\.\d+)?)$/ }
@@ -86,23 +86,8 @@ Components.Background {
             height: parent.height * 0.55
 
             Components.Marker {
-                id: suggestions
-                centerText: "Suggestions"
-                anchors.right: parent.right
-                anchors.left: parent.left
-                height: parent.height * 0.25
-            }
-            Components.Marker {
                 id: sponsors
-                centerText: "Sponsors"
-                anchors.left: parent.left
-                anchors.right: parent.right
-                height: parent.height * 0.25
-            }
-
-            Components.Marker {
-                id: favorites
-                centerText: "Favorites"
+                centerText: "Sponsored Interest Points"
                 anchors.left: parent.left
                 anchors.right: parent.right
                 height: parent.height * 0.25
@@ -163,7 +148,14 @@ Components.Background {
                 rootView.raiseUserSessionChanged()
                 var currentRoute = UserSession.LAMA_USER_CURRENT_ITINERARY
                 if ("favorite" in currentRoute && currentRoute["favorite"] === true)
-                    UserSession.saveCurrentSessionState()
+                {
+                    var idx = ViewsLogic.getIndexItineraryKnown(UserSession.LAMA_USER_KNOWN_ITINERARIES, currentRoute)
+                    if (idx >= 0)
+                    {
+                        UserSession.LAMA_USER_KNOWN_ITINERARIES[idx] = currentRoute;
+                        UserSession.saveCurrentSessionState()
+                    }
+                }
                 rootView.mainViewBack();
             }
         }

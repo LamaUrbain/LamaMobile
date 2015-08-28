@@ -137,13 +137,13 @@ function checkAndFillFromSavedData()
             if (data.rows.length > 0)
             {
                 var row = data.rows.item(0);
-                LAMA_USER_USERNAME = row.user_name.replace("'", '"')
-                LAMA_USER_PASSWORD = row.user_password.replace("'", '"')
-                LAMA_USER_KNOWN_ITINERARIES = JSON.parse(row.user_knownroutes.replace("'", '"'))
+                LAMA_USER_USERNAME = row.user_name.replace(/'/g, '"')
+                LAMA_USER_PASSWORD = row.user_password.replace(/'/g, '"')
+                LAMA_USER_KNOWN_ITINERARIES = JSON.parse(row.user_knownroutes.replace(/'/g, '"'))
                 if (row.user_email !== null)
-                    LAMA_USER_EMAIL = row.user_email.replace("'", '"')
+                    LAMA_USER_EMAIL = row.user_email.replace(/'/g, '"')
                 if (row.user_avatar !== null)
-                    LAMA_USER_AVATAR = row.user_avatar.replace("'", '"')
+                    LAMA_USER_AVATAR = row.user_avatar.replace(/'/g, '"')
             }
         }
     )
@@ -202,10 +202,11 @@ function saveCurrentSessionState()
         var sqlStr = "UPDATE " + LAMA_LOCALDB_TABLENAME + " SET "
         for (var idx = 0; idx < columns.length;)
             if (columns[idx].value !== null)
-                sqlStr += columns[idx].name + ' = "' + columns[idx].value.replace('"', "'") + (((++idx) < columns.length) ? '", ' : '"')
+                sqlStr += columns[idx].name + ' = "' + columns[idx].value.replace(/"/g, "'") + (((++idx) < columns.length) ? '", ' : '"')
             else
                 ++idx;
-        tx.executeSql();
+        console.log(sqlStr);
+        tx.executeSql(sqlStr);
     } )
 }
 

@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import QtQuick.Layouts 1.2
+import QtQuick.Layouts 1.1
 import QtLocation 5.3
 import QtPositioning 5.3
 import "qrc:/Components" as Components
