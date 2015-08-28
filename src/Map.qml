@@ -80,14 +80,10 @@ Components.Marker {
 
 
         Component.onCompleted: {
-            console.log("default map type: " + map.activeMapType.style)
-
             for (var i = 0; i < map.supportedMapTypes.length; ++i)
             {
-                console.log("idx: " + i + " " + map.supportedMapTypes[i].name + " " + map.supportedMapTypes[i].style)
                 if (map.supportedMapTypes[i].style === MapType.CustomMap)
                 {
-                    console.log("set mapType to " + map.supportedMapTypes[i].name);
                     map.activeMapType = map.supportedMapTypes[i]
                 }
             }
