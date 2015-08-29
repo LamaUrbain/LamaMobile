@@ -63,15 +63,9 @@ Components.Marker {
         anchors.leftMargin: parent.width * 0.005
         anchors.rightMargin: parent.width * 0.005
 
-        MouseArea {
-            id: mapArea
-            anchors.fill: parent
-
-            onClicked: {
-                var pop = ViewsLogic.spawnPopOver(parent, mapArea.mouseX, mapArea.mouseY, "je suis une popup :3 !")
-                mouse.accepted = false
-                map.addMapItem(pop)
-            }
+        onMapPointClicked:
+        {
+            ViewsLogic.spawnPopOver(map, coords, "je suis une popup :3 !")
         }
 
         Controls.ImageButton {

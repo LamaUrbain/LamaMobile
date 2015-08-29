@@ -3,14 +3,16 @@ import QtQuick.Layouts 1.1
 import QtLocation 5.3
 import QtPositioning 5.3
 import "qrc:/Components" as Components
+import "qrc:/Controls" as Controls
 import "qrc:/Constants.js" as Constants
 
-MapQuickItem {
+Controls.MapItem {
     id: popover
-    property alias message: popoverMessage.text
-    anchorPoint: Qt.point(popoverItem.width / 2, popoverItem.height)
+    sourceItem: popoverItem
 
-    sourceItem: Column {
+    property string message: popoverMessage.text
+
+    Column {
         id: popoverItem
 
         width: popoverMessage.paintedWidth * 1.4

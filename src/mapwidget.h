@@ -29,6 +29,8 @@ class MapWidget : public QQuickPaintedItem
     Q_OBJECT
     Q_DECLARE_PRIVATE(MapWidget)
 
+    Q_PROPERTY(int offsetX READ getOffsetX NOTIFY offsetXChanged)
+    Q_PROPERTY(int offsetY READ getOffsetY NOTIFY offsetYChanged)
     Q_PROPERTY(qreal mapScale READ getMapScale WRITE setMapScale NOTIFY mapScaleChanged)
     Q_PROPERTY(QPointF mapCenter READ getMapCenter WRITE setMapCenter NOTIFY mapCenterChanged)
 
@@ -54,6 +56,8 @@ signals:
     void mapTileRequired();
     void mapPointClicked(QPoint pos, QPointF coords);
     void mapPointMoved(int id, int point, QPointF newCoords);
+    void offsetXChanged();
+    void offsetYChanged();
 
 public slots:
     void displayItinerary(int id);
@@ -65,6 +69,11 @@ public slots:
 
     const QPointF &getMapCenter() const;
     void setMapCenter(const QPointF &center);
+
+    int getOffsetX() const;
+    int getOffsetY() const;
+    QPointF toCoordinate(QPoint pos) const;
+    QPoint toPosition(QPointF coord) const;
 
     const QList<QPoint> &getMissingTiles() const;
 

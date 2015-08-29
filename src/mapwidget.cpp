@@ -177,6 +177,8 @@ void MapWidgetPrivate::mouseMove(const QPoint &pos)
             updateCenter();
         }
 
+        q->offsetXChanged();
+        q->offsetYChanged();
         q->update();
     }
 }
@@ -368,6 +370,10 @@ void MapWidgetPrivate::updateCenter()
     }
 
     _scrollOffset = QPoint(-256, -256);
+
+    Q_Q(MapWidget);
+    q->offsetXChanged();
+    q->offsetYChanged();
 }
 
 void MapWidgetPrivate::generateCache()
@@ -694,6 +700,42 @@ void MapWidget::setMapCenter(const QPointF &center)
 {
     Q_D(MapWidget);
     d->setMapCenter(center);
+}
+
+int MapWidget::getOffsetX() const
+{
+    Q_D(const MapWidget);
+    return d->getScrollOffset().x();
+}
+
+int MapWidget::getOffsetY() const
+{
+    Q_D(const MapWidget);
+    return d->getScrollOffset().y();
+}
+
+QPointF MapWidget::toCoordinate(QPoint pos) const
+{
+    Q_D(const MapWidget);
+    return d->coordsFromPixels(pos);
+}
+
+QPoint MapWidget::toPosition(QPointF coord) const
+{
+    Q_D(const MapWidget);
+
+    const QPoint &center = d->getCenterPos();
+    const QPoint &centerOffset = d->getCenterOffset();
+    QPointF pos = d->posFromCoords(coord);
+
+    QSize size(width() + 512, height() + 512);
+    QPoint centerPix(size.width() / 2, size.height() / 2);
+
+    QPoint tilePos;
+    tilePos.setX(centerPix.x() - (center.x() - pos.x()) * 256 - centerOffset.x());
+    tilePos.setY(centerPix.y() - (center.y() - pos.y()) * 256 - centerOffset.y());
+
+    return tilePos;
 }
 
 void MapWidget::wheelEvent(QWheelEvent *event)

@@ -117,31 +117,24 @@ function getIndexItineraryKnown(knownIts, newIt)
     return (-1);
 }
 
-function spawnPopOver(mapItem, x, y, message)
+function spawnPopOver(mapItem, coord, message)
 {
-    var coord = mapItem.toCoordinate(Qt.point(x, y));
-    if (coord.isValid === false)
-        console.log("Error converting points to coordinate");
+    var component = Qt.createComponent( "qrc:/Components/PopOver.qml" );
+    if(component.status !== Component.Ready)
+        console.log("Error:"
+                    + (component.status === Component.Error ? component.errorString() : "Component failure"));
     else
     {
-        var component = Qt.createComponent( "qrc:/Components/PopOver.qml" );
-        if(component.status !== Component.Ready)
-            console.debug("Error:"
-                          + (component.status === Component.Error ? component.errorString() : "Component failure"));
-        else
-        {
-            var pop = component.createObject(mapItem,
-                                             {
-                                                 "message": message,
-                                                 "coordinate": coord,
-                                             });
+        var pop = component.createObject(mapItem,
+                                         {
+                                             "message": message,
+                                             "coordinate": coord,
+                                         });
 
-            if (pop === null)
-                console.log("Error creating object ;)");
-            return (pop)
-        }
+        if (pop === null)
+            console.log("Error creating object ;)");
+        return (pop)
     }
-    return (null);
 }
 
 function spawnModal(title, message)
