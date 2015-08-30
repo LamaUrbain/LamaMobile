@@ -126,7 +126,7 @@ function openDb()
     return (db);
 }
 
-function checkAndFillFromSavedData()
+function checkAndLoadFromSavedData()
 {
     var db = openDb()
 
@@ -134,7 +134,7 @@ function checkAndFillFromSavedData()
         function(tx)
         {
             var data = tx.executeSql('SELECT * FROM ' + LAMA_LOCALDB_TABLENAME + ' LIMIT 1');
-            if (data.rows.length > 0)
+            if (data.rowsAffected > 0)
             {
                 var row = data.rows.item(0);
                 LAMA_USER_USERNAME = row.user_name.replace(/'/g, '"')
@@ -205,8 +205,7 @@ function saveCurrentSessionState()
                 sqlStr += columns[idx].name + ' = "' + columns[idx].value.replace(/"/g, "'") + (((++idx) < columns.length) ? '", ' : '"')
             else
                 ++idx;
-        console.log(sqlStr);
-        tx.executeSql(sqlStr);
+        console.log(tx.executeSql(sqlStr).rows.length);
     } )
 }
 
@@ -218,7 +217,7 @@ function tryLogin(clearPreviousData)
     if (clearPreviousData)
         deleteSavedData()
     else
-        checkAndFillFromSavedData()
+        checkAndLoadFromSavedData()
 
     if (LAMA_USER_USERNAME === null ||
         LAMA_USER_PASSWORD === null)

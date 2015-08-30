@@ -24,7 +24,7 @@ var LAMA_PASSWORD_RANDOM_LENGTH = LAMA_MIN_INPUT_LENGTH * 2;
 
 var LAMA_BASE_ITINERARY_OBJ =
         {
-            id: -1,
+            id: null,
             owner: '',
             name: '',
             creation: '',

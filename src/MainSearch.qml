@@ -25,7 +25,12 @@ Components.Background {
             if (UserSession.LAMA_USER_CURRENT_ITINERARY["name"] !== nameInput.text)
             {
                 UserSession.LAMA_USER_CURRENT_ITINERARY["name"] = nameInput.text;
-                rootView.raiseUserSessionChanged()
+                var idxKnown = ViewsLogic.getIndexItineraryKnown(UserSession.LAMA_USER_KNOWN_ITINERARIES, UserSession.LAMA_USER_CURRENT_ITINERARY);
+                if (idxKnown >= 0)
+                {
+                    UserSession.LAMA_USER_KNOWN_ITINERARIES[idxKnown] = UserSession.LAMA_USER_CURRENT_ITINERARY;
+                    rootView.raiseUserSessionChanged()
+                }
             }
         }
     }
@@ -74,7 +79,7 @@ Components.Background {
                 onDeleted:
                 {
                     waypointsModel.remove(index)
-                    delete UserSession.LAMA_USER_CURRENT_ITINERARY["destinations"][index]
+                    UserSession.LAMA_USER_CURRENT_ITINERARY["destinations"].splice(index, 1)
                 }
             }
             footer: Controls.ImageButton {
@@ -119,11 +124,20 @@ Components.Background {
                     var idxKnown = ViewsLogic.getIndexItineraryKnown(UserSession.LAMA_USER_KNOWN_ITINERARIES, UserSession.LAMA_USER_CURRENT_ITINERARY);
 
                     if (isFavorited && idxKnown < 0)
+                    {
+                        UserSession.LAMA_USER_CURRENT_ITINERARY['id'] = -(Math.round(Date.now() / 1000) % 100000000)
                         UserSession.LAMA_USER_KNOWN_ITINERARIES.push(UserSession.LAMA_USER_CURRENT_ITINERARY)
-                    else if (!isFavorited && idxKnown >= 0)
-                        delete UserSession.LAMA_USER_KNOWN_ITINERARIES[idxKnown];
+                    }
+                    else if (idxKnown >= 0)
+                    {
+                        if (isFavorited)
+                            UserSession.LAMA_USER_KNOWN_ITINERARIES[idx] = UserSession.LAMA_USER_CURRENT_ITINERARY;
+                        else
+                            UserSession.LAMA_USER_KNOWN_ITINERARIES.splice(idxKnown, 1);
+                    }
 
                     rootView.raiseUserSessionChanged()
+                    UserSession.saveCurrentSessionState()
                     // edit itineraryServices in raiseusersessionchanged
                     //itineraryServices.editItinerary(int id, QString name, QString departure, QString favorite, ServicesBase::CallbackType callback);
                 }

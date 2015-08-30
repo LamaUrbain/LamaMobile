@@ -66,7 +66,7 @@ void ItineraryServices::createItinerary(QString name, QString departure, QString
     query.addQueryItem("departure", departure);
     if (!destination.isEmpty())
         query.addQueryItem("destination", destination);
-    query.addQueryItem("favorite", favorite == "true" ? "true" : "false");
+    query.addQueryItem("favorite", !UserServices::getToken().isEmpty() && favorite == "true" ? "true" : "false");
     if (!UserServices::getToken().isEmpty())
         query.addQueryItem("token", UserServices::getToken());
 
@@ -162,7 +162,7 @@ void ItineraryServices::deleteDestination(int id, int position, QJSValue callbac
 
 void ItineraryServices::deleteItinerary(int id, ServicesBase::CallbackType callback)
 {
-    QUrl url(QString("%1/itineraries/%2/").arg(serverAddress).arg(id));
+    QUrl url(QString("%1/itineraries/%2").arg(serverAddress).arg(id));
 
     if (!UserServices::getToken().isEmpty())
     {
@@ -181,7 +181,7 @@ void ItineraryServices::deleteItinerary(int id, QJSValue callback)
 
 void ItineraryServices::getItineraryTiles(int id, int zoomLevel, ServicesBase::CallbackType callback)
 {
-    QUrl url(QString("%1/itineraries/coordinates/%2/%3").arg(serverAddress).arg(id).arg(zoomLevel));
+    QUrl url(QString("%1/itineraries/%2/coordinates/%3").arg(serverAddress).arg(id).arg(zoomLevel));
     qDebug() << "getItineraryTiles:" << url.toString();
     getRequest(url, callback);
 }

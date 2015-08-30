@@ -171,7 +171,7 @@ void MapGetter::onTilesRequired()
             if (!getter)
                 return;
 
-            QString address = ServicesBase::serverAddress + "/itineraries/tiles/%1/%2/%3/%4";
+            QString address = ServicesBase::serverAddress + "/itineraries/%1/tiles/%2/%3/%4";
             QUrl url(address.arg(ext->getItinerary()).arg(tile.scale).arg(tile.pos.x()).arg(tile.pos.y()));
 
             QNetworkRequest request(url);

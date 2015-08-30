@@ -25,7 +25,7 @@ RowLayout {
         onNavButtonPressed:
         {
             UserSession.LAMA_USER_CURRENT_ITINERARY = linkedItinerary
-            rootView.raiseUserSessionChanged()
+            //rootView.raiseUserSessionChanged()
         }
     }
 
