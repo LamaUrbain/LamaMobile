@@ -18,6 +18,7 @@ Window {
     signal userSessionChanged()
 
     property var lamaSession: UserSession.LAMA_SESSION
+    property alias modal: mainModal
 
     StackView {
         id: mainView

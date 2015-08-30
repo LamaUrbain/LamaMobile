@@ -57,7 +57,7 @@ Components.Marker {
 
     MapWidget
     {
-        id: map
+        id: mapComponent
 
         anchors.fill: parent
         anchors.leftMargin: parent.width * 0.005
@@ -65,7 +65,7 @@ Components.Marker {
 
         onMapPointClicked:
         {
-            ViewsLogic.spawnPopOver(map, coords, "je suis une popup :3 !")
+            ViewsLogic.spawnPopOver(mapComponent, coords, "je suis une popup :3 !")
         }
 
         Controls.ImageButton {
@@ -82,33 +82,39 @@ Components.Marker {
         }
     }
 
-    property var _currentResolutionWayPointCount;
-    function proceedToAddWayPoints(itineraryId, wayPointsArray)
+    function proceedToAddWayPoints(itineraryId, wayPointsArray, rootView, displayCallback)
     {
-        CurrentResolutionWayPointCount = 0;
         var wayPointCount = wayPointsArray.length; // Fucking flies because of dereferencement
 
-        if (CurrentResolutionWayPointCount === wayPointCount)
-            mapView.mapComponent.displayItinerary(jsonObj["id"]);
+        if (wayPointCount === 0)
+        {
+            try {
+            displayCallback(parseInt(rootView.lamaSession.CURRENT_ITINERARY['id']));
+            } catch (e) { console.log(e) }
+            rootView.modal.visible = false;
+        }
         else
         {
             for (var idx = 0; idx < wayPointCount; ++idx)
-                itineraryServices.addDestination(itineraryId, wayPointsArray[idx], idx, function ()
+            {
+                itineraryServices.addDestination(itineraryId, wayPointsArray[idx], idx,
+                                                 function (rootView, mapComponent, idx)
                 {
                     return (function(statusCode, jsonStr)
                     {
                         if (statusCode !== 0)
                         {
-                            mainModal.title = "Error"
-                            mainModal.text = "Sadly, an error occured (MAPVIEW_RESOLV_DEST_ADD_FAIL)"
-                            mainModal.enableButton = true
-                            mainModal.visible = true
+                            rootView.modal.title = "Error"
+                            rootView.modal.text = "Sadly, an error occured (MAPVIEW_RESOLV_DEST_ADD_FAIL)"
+                            rootView.modal.enableButton = true
+                            rootView.modal.visible = true
                         }
 
-                        if (++CurrentResolutionWayPointCount === wayPointCount)
-                            mapView.mapComponent.displayItinerary(jsonObj["id"]);
+                        if (idx + 1 === wayPointCount)
+                            displayCallback(jsonObj["id"]);
                     });
-                }());
+                }(rootView, mapComponent, idx));
+            }
         }
     }
 
@@ -140,7 +146,8 @@ Components.Marker {
             currentIt['name'] = "tmp_itinerary_" + ViewsLogic.getRandomString(8);
 
         //itineraryServices.abortPendingRequests()
-        itineraryServices.createItinerary(currentIt['name'], requestDeparture, requestArrival, currentIt["favorite"] ? "true" : "false", function(mainModal)
+        itineraryServices.createItinerary(currentIt['name'], requestDeparture, requestArrival, currentIt["favorite"] ? "true" : "false",
+                        function(rootView1, nextCallBack, displayCallback, waypointArray)
         {
             return (function(statusCode, jsonStr)
             {
@@ -150,18 +157,18 @@ Components.Marker {
                     var jsonObj = JSON.parse(jsonStr)
                     var ItId = jsonObj["id"]
                     console.log("CreateItinerary Response Id : " + ItId);
-                    rootView.lamaSession.CURRENT_ITINERARY['id'] = ItId;
-                    proceedToAddWayPoints(ItId, waypointArray)
+                    rootView1.lamaSession.CURRENT_ITINERARY['id'] = ItId;
+                    nextCallBack(ItId, waypointArray, rootView1, displayCallback)
                 }
                 else
                 {
-                    mainModal.title = "Error"
-                    mainModal.message = "Unfortunatly the llama did not find his way"
-                    mainModal.enableButton = true
-                    mainModal.setLoadingState(false)
+                    rootView1.Modal.title = "Error"
+                    rootView1.Modal.message = "Unfortunatly the llama did not find his way"
+                    rootView1.Modal.enableButton = true
+                    rootView1.Modal.setLoadingState(false)
                 }
             });
-        }(mainModal));
+        }(rootView, proceedToAddWayPoints, mapComponent.displayItinerary, waypointArray));
     }
 
     function resolveCurrentItinerary()
