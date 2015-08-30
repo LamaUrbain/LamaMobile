@@ -67,7 +67,12 @@ MapQuickItem {
                     Layout.preferredWidth: 35
 
                     onDeleted: {
-                        popover.destroy()
+                        popover.destroy();
+                        mainRouteQuery.removeWaypoint(popover.coordinate);
+                        if (mainRouteQuery.waypoints.length <= 1)
+                            mainRoute.reset();
+                        else
+                            mainRoute.update();
                     }
                 }
             }

@@ -108,6 +108,49 @@ Components.Marker {
         anchors.leftMargin: parent.width * 0.005
         anchors.rightMargin: parent.width * 0.005
 
+        RouteQuery {
+            id: mainRouteQuery
+        }
+
+        RouteModel {
+            id: mainRoute
+            plugin: map.plugin
+            query: mainRouteQuery
+            autoUpdate: false
+            onStatusChanged: {
+                if (status === RouteModel.Ready)
+                {
+                    console.log("count:", count);
+                    if (count == 0)
+                    {
+                        mainRoute.reset();
+                    }
+                }
+                else if (status == RouteModel.Error)
+                {
+                    console.log("RouteModel:", mainRoute.errorString);
+                    mainRoute.reset();
+                }
+            }
+        }
+
+        Component {
+            id: routeDelegate
+
+            MapRoute {
+                route: routeData
+                line.color: Constants.LAMA_ORANGE
+                line.width: 5
+                smooth: true
+                opacity: 0.8
+            }
+        }
+
+        MapItemView {
+            id: mainRouteView
+            model: mainRoute
+            delegate: routeDelegate
+        }
 
         MouseArea {
             id: mapArea
@@ -130,21 +173,21 @@ Components.Marker {
             MenuItem {
                 text: "Set Departure"
                 onTriggered: {
-                    ViewsLogic.spawnPopOver(map, mapPieMenu.mouseX, mapPieMenu.mouseY, "popop", "departure")
+                    ViewsLogic.spawnDeparturePopOver(map, mapPieMenu.mouseX, mapPieMenu.mouseY, "popop");
                 }
                 iconSource: Constants.LAMA_DEPARTURE_RESSOURCE
             }
             MenuItem {
                 text: "Add Waypoint"
                 onTriggered: {
-                    ViewsLogic.spawnPopOver(map, mapPieMenu.mouseX, mapPieMenu.mouseY, "waypoint", "waypoint")
+                    ViewsLogic.spawnWaypointPopOver(map, mapPieMenu.mouseX, mapPieMenu.mouseY, "waypoint");
                 }
                 iconSource: Constants.LAMA_INDICATOR_RESSOURCE
             }
             MenuItem {
                 text: "Set Destination"
                 onTriggered: {
-                    ViewsLogic.spawnPopOver(map, mapPieMenu.mouseX, mapPieMenu.mouseY, "destination", "arrival")
+                    ViewsLogic.spawnArrivalPopOver(map, mapPieMenu.mouseX, mapPieMenu.mouseY, "destination");
                 }
                 iconSource: Constants.LAMA_ARRIVAL_RESSOURCE
             }

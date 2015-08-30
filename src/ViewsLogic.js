@@ -118,6 +118,21 @@ function getIndexItineraryKnown(knownIts, newIt)
     return (-1);
 }
 
+function spawnDeparturePopOver(mapItem, x, y, message)
+{
+    spawnPopOver(mapItem, x, y, message, "departure")
+}
+
+function spawnWaypointPopOver(mapItem, x, y, message)
+{
+    spawnPopOver(mapItem, x, y, message, "waypoint")
+}
+
+function spawnArrivalPopOver(mapItem, x, y, message)
+{
+    spawnPopOver(mapItem, x, y, message, "arrival")
+}
+
 function spawnPopOver(mapItem, x, y, message, popType)
 {
     var coord = mapItem.toCoordinate(Qt.point(x, y));
@@ -169,7 +184,10 @@ function spawnPopOver(mapItem, x, y, message, popType)
                                 return null;
                             }
 
+                            console.log("geocoding sucessfull, seting address and add waypoint to query");
                             pop.setAddress(loc.address);
+                            mainRouteQuery.addWaypoint(pop.coordinate);
+                            mainRoute.update();
                         });
 
             if (pop === null)
