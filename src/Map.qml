@@ -7,6 +7,10 @@ import "qrc:/Constants.js" as Constants
 import "qrc:/UserSession.js" as UserSession
 import "qrc:/Views/ViewsLogic.js" as ViewsLogic
 
+import QtQuick.Controls 1.4
+import QtQuick.Controls.Styles 1.4
+import QtQuick.Extras 1.4
+
 import QtLocation 5.3
 import QtPositioning 5.2
 
@@ -66,6 +70,7 @@ Components.Marker {
         gesture.flickDeceleration: 3000
         gesture.enabled: true
 
+        // TODO: Find a way to remove the fucking copyright !!
         plugin: Plugin {
             name: "osm"
             PluginParameter {
@@ -90,9 +95,9 @@ Components.Marker {
 
         }
 
-        property GeocodeModel geocodeModel: GeocodeModel {
-            plugin: map.plugin
-        }
+        //property GeocodeModel geocodeModel: GeocodeModel {
+        //    plugin: map.plugin
+        //}
 
         anchors.fill: parent
         center {
@@ -103,27 +108,45 @@ Components.Marker {
         anchors.leftMargin: parent.width * 0.005
         anchors.rightMargin: parent.width * 0.005
 
+
         MouseArea {
             id: mapArea
             anchors.fill: parent
 
             onClicked: {
-                var pop = ViewsLogic.spawnPopOver(parent, mapArea.mouseX, mapArea.mouseY, "je suis une popup :3 !")
                 mouse.accepted = false
-                map.addMapItem(pop)
+
+                mapPieMenu.mouseX = mapArea.mouseX
+                mapPieMenu.mouseY = mapArea.mouseY
+                mapPieMenu.popup(mapArea.mouseX, mapArea.mouseY)
             }
         }
 
-        Controls.ImageButton {
-            anchors.left: parent.left
-            anchors.bottom: parent.bottom
-            width: parent.width * (0.10 + 0.04)
-            height: parent.height * (0.10 + 0.02)
-            iconSource: Constants.LAMA_ADD_RESSOURCE
-            onClicked:
-            {
-                UserSession.LAMA_USER_CURRENT_ITINERARY = Constants.LAMA_BASE_ITINERARY_OBJ
-                rootView.mainViewTo("MainSearch", null)
+        Components.MapPieMenu {
+            id: mapPieMenu
+
+            scale: 1.2
+
+            MenuItem {
+                text: "Set Departure"
+                onTriggered: {
+                    ViewsLogic.spawnPopOver(map, mapPieMenu.mouseX, mapPieMenu.mouseY, "popop", "departure")
+                }
+                iconSource: Constants.LAMA_DEPARTURE_RESSOURCE
+            }
+            MenuItem {
+                text: "Add Waypoint"
+                onTriggered: {
+                    ViewsLogic.spawnPopOver(map, mapPieMenu.mouseX, mapPieMenu.mouseY, "waypoint", "waypoint")
+                }
+                iconSource: Constants.LAMA_INDICATOR_RESSOURCE
+            }
+            MenuItem {
+                text: "Set Destination"
+                onTriggered: {
+                    ViewsLogic.spawnPopOver(map, mapPieMenu.mouseX, mapPieMenu.mouseY, "destination", "arrival")
+                }
+                iconSource: Constants.LAMA_ARRIVAL_RESSOURCE
             }
         }
     }

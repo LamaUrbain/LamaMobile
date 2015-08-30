@@ -15,6 +15,9 @@ var LAMA_SHARE_RESSOURCE = "qrc:/Assets/Images/20.png";
 var LAMA_SAVE_RESSOURCE = "qrc:/Assets/Images/21.png";
 var LAMA_SAVED_RESSOURCE = "qrc:/Assets/Images/21b.png";
 var LAMA_ADD_RESSOURCE = "qrc:/Assets/Images/8.png";
+var LAMA_DEPARTURE_RESSOURCE = "qrc:/Assets/Images/departure.png";
+var LAMA_INDICATOR_RESSOURCE = "qrc:/Assets/Images/map_indicator.png";
+var LAMA_ARRIVAL_RESSOURCE = "qrc:/Assets/Images/arrival.png";
 
 var LAMA_MIN_INPUT_LENGTH = 2;
 var LAMA_PASSWORD_RANDOM_LENGTH = LAMA_MIN_INPUT_LENGTH * 2;

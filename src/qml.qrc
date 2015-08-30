@@ -37,6 +37,10 @@
         <file>Images/27.png</file>
         <file>Images/21b.png</file>
         <file>Images/spinnerIcon.png</file>
+        <file>Images/arrival.png</file>
+        <file>Images/departure.png</file>
+        <file>Images/map_indicator_selected.png</file>
+        <file>Images/map_indicator.png</file>
     </qresource>
     <qresource prefix="/Components">
         <file>Marker.qml</file>
@@ -52,6 +56,7 @@
         <file>DeleteButton.qml</file>
         <file>PopOver.qml</file>
         <file>Triangle.qml</file>
+        <file>MapPieMenu.qml</file>
     </qresource>
     <qresource prefix="/Controls">
         <file>BackButton.qml</file>

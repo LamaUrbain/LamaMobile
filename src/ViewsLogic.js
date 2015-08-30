@@ -118,7 +118,7 @@ function getIndexItineraryKnown(knownIts, newIt)
     return (-1);
 }
 
-function spawnPopOver(mapItem, x, y, message)
+function spawnPopOver(mapItem, x, y, message, popType)
 {
     var coord = mapItem.toCoordinate(Qt.point(x, y));
     if (coord.isValid === false)
@@ -133,12 +133,48 @@ function spawnPopOver(mapItem, x, y, message)
         {
             var pop = component.createObject(mapItem,
                                              {
-                                                 "message": message,
+                                                 "message": "loading",
                                                  "coordinate": coord,
+                                                 "popOverType": popType,
                                              });
+
+            var geocode = Qt.createQmlObject("import QtLocation 5.3; GeocodeModel {}", pop)
+            geocode.plugin = map.plugin;
+            geocode.query = coord;
+            geocode.update();
+
+            geocode.locationsChanged.connect(
+                        function ()
+                        {
+                            if (geocode.status !== GeocodeModel.Ready)
+                            {
+                                console.log("geomodel error: "+ geocode.errorString);
+                                return null;
+                            }
+                            if (geocode.count < 1)
+                            {
+                                console.log("not enought returned values ?");
+                                return null;
+                            }
+
+                            var loc = geocode.get(0);
+
+                            console.log("geocode model updated, got %1 response".arg(geocode.count));
+                            console.log("geocode: steet: %1".arg(loc.address.text))
+
+                            if (loc.address === null)
+                            {
+                                console.log("geocoding returned null result.");
+                                pop.destroy();
+                                return null;
+                            }
+
+                            pop.setAddress(loc.address);
+                        });
 
             if (pop === null)
                 console.log("Error creating object ;)");
+            mapItem.addMapItem(pop);
             return (pop)
         }
     }
