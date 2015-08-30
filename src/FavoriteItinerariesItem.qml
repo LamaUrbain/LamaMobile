@@ -24,7 +24,7 @@ RowLayout {
         navigationTarget: "MainSearch"
         onNavButtonPressed:
         {
-            UserSession.LAMA_USER_CURRENT_ITINERARY = linkedItinerary
+            rootView.lamaSession.CURRENT_ITINERARY = linkedItinerary
             //rootView.raiseUserSessionChanged()
         }
     }

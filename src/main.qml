@@ -14,8 +14,10 @@ Window {
     width: 640
     height: 960
 
-    Component.onCompleted: UserSession.tryLogin(false)
+    Component.onCompleted: UserSession.tryLogin(rootView.lamaSession, false)
     signal userSessionChanged()
+
+    property var lamaSession: UserSession.LAMA_SESSION
 
     StackView {
         id: mainView
@@ -26,7 +28,7 @@ Window {
     Views.Modal
     {
         id: mainModal
-        Component.onCompleted: UserSession.mainModal = mainModal
+        Component.onCompleted: rootView.lamaSession.mainModal = mainModal
     }
 
     function mainViewTo(name, prop) {

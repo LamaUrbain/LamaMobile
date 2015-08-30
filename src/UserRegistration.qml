@@ -84,9 +84,9 @@ Components.Background {
                         password: pass,
                         email: mail
                     }
-                    UserSession.LAMA_USER_IS_LOGGED = false
-                    UserSession.LAMA_USER_TOKEN = ""
-                    UserSession.LAMA_USER_PASSWORD = pass
+                    rootView.lamaSession.IS_LOGGED = false
+                    rootView.lamaSession.TOKEN = ""
+                    rootView.lamaSession.PASSWORD = pass
                     userServices.createUser(nickname, pass, mail, onRegistrationResult)
                     //if (APILogic.requestAPI("POST", "/users/", jsonParams, onRegistrationResult, null) === false)
                     //{

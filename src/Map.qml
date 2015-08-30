@@ -76,7 +76,7 @@ Components.Marker {
             iconSource: Constants.LAMA_ADD_RESSOURCE
             onClicked:
             {
-                UserSession.LAMA_USER_CURRENT_ITINERARY = Constants.LAMA_BASE_ITINERARY_OBJ
+                rootView.lamaSession.CURRENT_ITINERARY = Constants.LAMA_BASE_ITINERARY_OBJ
                 rootView.mainViewTo("MainSearch", null)
             }
         }
@@ -121,7 +121,7 @@ Components.Marker {
 
     function createItineraryAndDisplay()
     {
-        var currentIt = UserSession.LAMA_USER_CURRENT_ITINERARY
+        var currentIt = rootView.lamaSession.CURRENT_ITINERARY
         var startPoint = currentIt["departure"]
         var lastId = currentIt["destinations"].length - 1
         var arrivalPoint = currentIt["destinations"][lastId]
@@ -150,7 +150,7 @@ Components.Marker {
                     var jsonObj = JSON.parse(jsonStr)
                     var ItId = jsonObj["id"]
                     console.log("CreateItinerary Response Id : " + ItId);
-                    UserSession.LAMA_USER_CURRENT_ITINERARY['id'] = ItId;
+                    rootView.lamaSession.CURRENT_ITINERARY['id'] = ItId;
                     proceedToAddWayPoints(ItId, waypointArray)
                 }
                 else
@@ -171,7 +171,7 @@ Components.Marker {
         mainModal.enableButton = false
         mainModal.visible = true
 
-        var currentIt = UserSession.LAMA_USER_CURRENT_ITINERARY;
+        var currentIt = rootView.lamaSession.CURRENT_ITINERARY;
 
         if (!ViewsLogic.isValueAtKeyValid(currentIt, "departure")
                 || !ViewsLogic.isValueAtKeyValid(currentIt, "destinations"))

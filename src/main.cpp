@@ -1,3 +1,4 @@
+#include <iostream>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
@@ -21,5 +22,13 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("userServices", &userServices);
     engine.load(QUrl(QStringLiteral("qrc:///main.qml")));
 
-    return app.exec();
+    try
+    {
+        return app.exec();
+    }
+    catch (std::exception e)
+    {
+        std::cout << e.what() << std::endl;
+    }
+    return (-1);
 }

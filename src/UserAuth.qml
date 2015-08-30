@@ -89,14 +89,14 @@ Components.Background {
                 if (ViewsLogic.checkInput(nick) === false &&
                     ViewsLogic.checkInput(pass) === false)
                 {
-                    UserSession.LAMA_USER_USERNAME = nick
-                    UserSession.LAMA_USER_PASSWORD = pass
+                    rootView.lamaSession.USERNAME = nick
+                    rootView.lamaSession.PASSWORD = pass
                     mainModal.title = "Authentication"
                     mainModal.setLoadingState(true);
                     mainModal.enableButton = false
                     mainModal.visible = true;
 
-                    UserSession.trylogin(true)
+                    UserSession.trylogin(rootView.lamaSession, true)
                 }
                 else
                 {

@@ -30,7 +30,7 @@ Components.Background {
             anchors.right: parent.right
             anchors.top: parent.top
             fieldName: "Username"
-            textFieldText: UserSession.LAMA_USER_USERNAME
+            textFieldText: rootView.lamaSession.USERNAME
         }
         Components.FormEntry {
             id: emailForm
@@ -38,7 +38,7 @@ Components.Background {
             anchors.right: parent.right
             anchors.top: usernameForm.bottom
             fieldName: "Email"
-            textFieldText: UserSession.LAMA_USER_EMAIL
+            textFieldText: rootView.lamaSession.EMAIL
         }
 
     }
@@ -89,9 +89,9 @@ Components.Background {
                 }
                 else
                 {
-                    UserSession.LAMA_USER_PASSWORD = getRandomString(Constants.LAMA_PASSWORD_RANDOM_LENGTH)
+                    rootView.lamaSession.PASSWORD = ViewsLogic.getRandomString(Constants.LAMA_PASSWORD_RANDOM_LENGTH)
                     var params = {
-                        password: UserSession.LAMA_USER_PASSWORD,
+                        password: rootView.lamaSession.PASSWORD,
                         username: usernameForm.textFieldText
                     }
 
@@ -103,12 +103,12 @@ Components.Background {
             {
                 if (status === true)
                 {
-                    mainModal.message = "Your password has been reset to :\n" + UserSession.LAMA_USER_PASSWORD
+                    mainModal.message = "Your password has been reset to :\n" + rootView.lamaSession.PASSWORD
                     mainModal.onModalButtonClicked.connect(newPasswordSet_ClickedModal)
                 }
                 else
                 {
-                    UserSession.LAMA_USER_PASSWORD = ""
+                    rootView.lamaSession.PASSWORD = ""
                     mainModal.message = "Sorry, we could not reset your password."
                 }
                 mainModal.setLoadingState(false);

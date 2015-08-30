@@ -2,87 +2,94 @@
 .import "APILogic.js" as APILogic
 .import QtQuick.LocalStorage 2.0 as Sql
 
-var LAMA_USER_IS_LOGGED = false
-var LAMA_USER_TOKEN = null
-var LAMA_USER_USERNAME = null
-var LAMA_USER_EMAIL = null
-var LAMA_USER_PASSWORD = null
-var LAMA_USER_AVATAR = null
-
 var LAMA_LOCALDB_NAME = "LamaLocalDB"
 var LAMA_LOCALDB_TABLENAME = "USER"
-var LAMA_LOCALDB_VERSION = "2.0"
+var LAMA_LOCALDB_VERSION = "1.0"
 var LAMA_LOCALDB_DESC = "The llama urbain DB"
-var LAMA_LOCALDB_ESIZE = 1000000
+var LAMA_LOCALDB_ESIZE = 1 * 1024 * 1024
 
-var LAMA_USER_CURRENT_ITINERARY = {}
-var LAMA_USER_CURRENT_WAYPOINT_ID = -1
-var LAMA_USER_CURRENT_WAYPOINT = {}
-var LAMA_USER_KNOWN_ITINERARIES =
-[
-    {
-        id: -1,
-        owner: 'sw3g b0y',
-        name: 'From home to work',
-        creation: '2015-03-31T08:00:00Z',
-        favorite: true,
-        departure:
+var LAMA_SESSION =
+{
+    IS_LOGGED: false,
+    TOKEN: null,
+    USERNAME: null,
+    EMAIL: null,
+    PASSWORD: null,
+    AVATAR: null,
+    CURRENT_ITINERARY: {},
+    CURRENT_WAYPOINT_ID: -1,
+    CURRENT_WAYPOINT: {},
+    KNOWN_SPONSORS:
+    [
         {
-            address: '26 Rue du bailly',
-            latitude: 2.355989,
-            longitude: 48.912903
+            name: "McDo",
         },
-        destinations:
-        [
-            {
-                address: 'ARROW ECS',
-                latitude: 2.256769,
-                longitude: 48.893592
-            }
-        ]
-    },
-    {
-        id: 1336,
-        owner: 'sw3g b0y',
-        name: 'Wrong itinerary',
-        creation: '2015-03-31T08:00:00Z',
-        favorite: false,
-        departure:
         {
-            address: 'Sex Shop',
-            latitude: 2.355989,
-            longitude: 48.912903
-        },
-        destinations:
-        [
+            name: "KFC",
+        }
+    ],
+    KNOWN_ITINERARIES:
+    [
+        {
+            id: -1,
+            owner: 'sw3g b0y',
+            name: 'From home to work',
+            creation: '2015-03-31T08:00:00Z',
+            favorite: true,
+            departure:
             {
-                address: 'Dildo Playground',
-                latitude: 2.256769,
-                longitude: 48.893592
-            }
-        ]
-    }
-]
-
-var LAMA_USER_KNOWN_SPONSORS = [
-            {
-                name: "McDo",
+                address: '26 Rue du bailly',
+                latitude: 2.355989,
+                longitude: 48.912903
             },
+            destinations:
+            [
+                {
+                    address: 'ARROW ECS',
+                    latitude: 2.256769,
+                    longitude: 48.893592
+                }
+            ]
+        },
+        {
+            id: 1336,
+            owner: 'sw3g b0y',
+            name: 'Wrong itinerary',
+            creation: '2015-03-31T08:00:00Z',
+            favorite: false,
+            departure:
             {
-                name: "KFC",
-            }
-]
+                address: 'Sex Shop',
+                latitude: 2.355989,
+                longitude: 48.912903
+            },
+            destinations:
+            [
+                {
+                    address: 'Dildo Playground',
+                    latitude: 2.256769,
+                    longitude: 48.893592
+                }
+            ]
+        }
+    ]
+}
 
 var mainModal;
 
 function createDB(db)
 {
-    db.changeVersion("", LAMA_LOCALDB_VERSION);
+    if (db.version === '')
+        db.changeVersion("", LAMA_LOCALDB_VERSION);
     var columns =
             [
                 {
+                    name: "id",
+                    type: "INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE"
+                },
+                {
                     name: "user_name",
-                    type: "TEXT NOT NULL"
+                    type: "TEXT"
                 },
                 {
                     name: "user_password",
@@ -90,7 +97,7 @@ function createDB(db)
                 },
                 {
                     name: "user_email",
-                    type: "TEXT" // NOT NULL"
+                    type: "TEXT"
                 },
                 {
                     name: "user_avatar",
@@ -98,22 +105,22 @@ function createDB(db)
                 },
                 {
                     name: "user_knownroutes",
-                    type: "TEXT NOT NULL"
+                    type: "TEXT"
                 },
             ]
 
     var sqlStr = "CREATE TABLE IF NOT EXISTS " + LAMA_LOCALDB_TABLENAME + "(";
     for (var idx = 0; idx < columns.length;)
         sqlStr += columns[idx].name + " " + columns[idx].type + (((++idx) < columns.length) ? ", " : '');
-    sqlStr += ")"
-
+    sqlStr += ");"
     db.transaction(function (tx)
     {
+        console.log("Table creation...")
         tx.executeSql(sqlStr)
-        if (tx.executeSql("SELECT COUNT(user_name) FROM " + LAMA_LOCALDB_TABLENAME).rows.length < 1)
-            tx.executeSql("INSERT INTO " + LAMA_LOCALDB_TABLENAME
-                      + " VALUES ('', NULL, '', NULL, '[]')")
+        console.log("Table created !")
     });
+    console.log("Database created !")
+    return (db);
 }
 
 function openDb()
@@ -123,47 +130,53 @@ function openDb()
                                          LAMA_LOCALDB_DESC,
                                          LAMA_LOCALDB_ESIZE,
                                          createDB);
-    return (db);
+     return (db);
 }
 
-function checkAndLoadFromSavedData()
+function checkAndLoadFromSavedData(Session)
 {
     var db = openDb()
 
     db.transaction(
         function(tx)
         {
-            var data = tx.executeSql('SELECT * FROM ' + LAMA_LOCALDB_TABLENAME + ' LIMIT 1');
-            if (data.rowsAffected > 0)
+            var query = tx.executeSql('SELECT * FROM ' + LAMA_LOCALDB_TABLENAME + ';');
+            if (query.rows.length > 0)
             {
-                var row = data.rows.item(0);
-                LAMA_USER_USERNAME = row.user_name.replace(/'/g, '"')
-                LAMA_USER_PASSWORD = row.user_password.replace(/'/g, '"')
-                LAMA_USER_KNOWN_ITINERARIES = JSON.parse(row.user_knownroutes.replace(/'/g, '"'))
-                if (row.user_email !== null)
-                    LAMA_USER_EMAIL = row.user_email.replace(/'/g, '"')
-                if (row.user_avatar !== null)
-                    LAMA_USER_AVATAR = row.user_avatar.replace(/'/g, '"')
+                var row = query.rows.item(0);
+                if (row.user_name.length > 0)
+                    Session.USERNAME = row.user_name.replace(/'/g, '"')
+                if (row.user_password.length > 0)
+                    Session.PASSWORD = row.user_password.replace(/'/g, '"')
+                if (row.user_knownroutes.length > 0)
+                    Session.KNOWN_ITINERARIES = JSON.parse(row.user_knownroutes.replace(/'/g, '"'))
+                if (row.user_email.length > 0)
+                    Session.EMAIL = row.user_email.replace(/'/g, '"')
+                if (row.user_avatar.length > 0)
+                    Session.AVATAR = row.user_avatar.replace(/'/g, '"')
+                console.log("Offline data loaded !")
             }
+            else
+                console.log("Unable to load offline data...")
         }
     )
 }
 
-function deleteCurrentToken()
+function deleteCurrentToken(Session)
 {
-    APILogic.requestAPI("DELETE", "/tokens/" + LAMA_USER_TOKEN + "/", null, null, null)
-    LAMA_USER_TOKEN = ""
-    LAMA_USER_IS_LOGGED = false
+    APILogic.requestAPI("DELETE", "/tokens/" + Session.TOKEN + "/", null, null, null)
+    Session.TOKEN = ""
+    Session.IS_LOGGED = false
 }
 
-function deleteSavedData()
+function deleteSavedData(Session)
 {
-    LAMA_USER_EMAIL = ""
-    LAMA_USER_AVATAR = ""
-    LAMA_USER_CURRENT_ITINERARY = {}
-    LAMA_USER_CURRENT_WAYPOINT_ID = -1
-    LAMA_USER_CURRENT_WAYPOINT = {}
-    LAMA_USER_KNOWN_ITINERARIES = []
+    Session.EMAIL = ""
+    Session.AVATAR = ""
+    Session.CURRENT_ITINERARY = {}
+    Session.CURRENT_WAYPOINT_ID = -1
+    Session.CURRENT_WAYPOINT = {}
+    Session.KNOWN_ITINERARIES = []
 
     var db = openDb()
 
@@ -171,8 +184,10 @@ function deleteSavedData()
     { tx.executeSql("DELETE FROM " + LAMA_LOCALDB_TABLENAME); } )
 }
 
-function saveCurrentSessionState()
+function saveSessionState(Session)
 {
+    if (Session === null || typeof(Session) === "undefined")
+        throw ("What the fuck man");
     var db = openDb()
     db.transaction(function (tx)
     {
@@ -180,64 +195,73 @@ function saveCurrentSessionState()
                 [
                     {
                         name: "user_name",
-                        value: LAMA_USER_USERNAME
+                        value: Session.USERNAME
                     },
                     {
                         name: "user_password",
-                        value: LAMA_USER_PASSWORD
+                        value: Session.PASSWORD
                     },
                     {
                         name: "user_email",
-                        value: LAMA_USER_EMAIL
+                        value: Session.EMAIL
                     },
                     {
                         name: "user_avatar",
-                        value: LAMA_USER_AVATAR
+                        value: Session.AVATAR
                     },
                     {
                         name: "user_knownroutes",
-                        value: JSON.stringify(LAMA_USER_KNOWN_ITINERARIES)
+                        value: JSON.stringify(Session.KNOWN_ITINERARIES)
                     },
                 ]
-        var sqlStr = "UPDATE " + LAMA_LOCALDB_TABLENAME + " SET "
-        for (var idx = 0; idx < columns.length;)
+        var sqlStr = "INSERT OR REPLACE INTO USER (id, user_name, user_password, user_email, user_avatar, user_knownroutes) VALUES (1, ";
+        var idx = 0;
+        var val = '';
+        while (idx < columns.length)
+        {
             if (columns[idx].value !== null)
-                sqlStr += columns[idx].name + ' = "' + columns[idx].value.replace(/"/g, "'") + (((++idx) < columns.length) ? '", ' : '"')
-            else
-                ++idx;
-        console.log(tx.executeSql(sqlStr).rows.length);
-    } )
+                val = columns[idx].value.replace(/"/g, "'")
+            sqlStr += '"' + val + (((++idx) < columns.length) ? '", ' : '"')
+            val = ''
+        }
+        sqlStr += ');';
+
+        if (tx.executeSql(sqlStr).rowsAffected > 0)
+            console.log("Offline data saved !")
+        else
+            console.log("Could not save offline data !")
+        } );
 }
 
-function tryLogin(clearPreviousData)
+function tryLogin(Session, clearPreviousData)
 {
-    if (LAMA_USER_TOKEN != null && LAMA_USER_TOKEN.length > 0)
-        deleteCurrentToken()
+    if (Session.TOKEN !== null && Session.TOKEN.length > 0)
+        deleteCurrentToken(Session)
 
     if (clearPreviousData)
-        deleteSavedData()
+        deleteSavedData(Session)
     else
-        checkAndLoadFromSavedData()
+        checkAndLoadFromSavedData(Session)
 
-    if (LAMA_USER_USERNAME === null ||
-        LAMA_USER_PASSWORD === null)
+    if (Session.USERNAME === null ||
+        Session.PASSWORD === null)
     {
-        LAMA_USER_USERNAME = null // Paranoia
-        LAMA_USER_PASSWORD = null // Paranoia
+        Session.USERNAME = null // Paranoia
+        Session.PASSWORD = null // Paranoia
         return;
     }
 
     loginAndCreateToken();
 }
 
-function loginAndCreateToken(callback)
+function loginAndCreateToken(Session, callback)
 {
-    userServices.createToken(LAMA_USER_USERNAME, LAMA_USER_PASSWORD, function (success, userInfos)
+    userServices.createToken(Session.USERNAME, Session.PASSWORD, function (success, userInfos)
     {
         if (success === false || userInfos === null)
         {
-            LAMA_USER_USERNAME = null
-            LAMA_USER_PASSWORD = null
+            Session.USERNAME = null
+            Session.PASSWORD = null
             mainModal.title = "No internet connexion"
             mainModal.message = "Please check your connectivity to the internet.\n"
                                 + "once it's done you shall restart the application."
@@ -246,25 +270,25 @@ function loginAndCreateToken(callback)
         }
         else
         {
-            LAMA_USER_IS_LOGGED = true
-            LAMA_USER_TOKEN = userInfos.token
-            LAMA_USER_IS_LOGGED = true
-            loadItineraries()
-            getFurtherUserDetails()
+            Session.IS_LOGGED = true
+            Session.TOKEN = userInfos.token
+            Session.IS_LOGGED = true
+            loadItineraries(Session)
+            getFurtherUserDetails(Session)
         }
     })
 }
 
-function getFurtherUserDetails()
+function getFurtherUserDetails(Session)
 {
-    //LAMA_USER_EMAIL = userInfos.email
-    //LAMA_USER_AVATAR = userInfos.avatar
-    //saveCurrentSessionState()
+    //EMAIL = userInfos.email
+    //AVATAR = userInfos.avatar
+    //saveSessionState()
 }
 
-function loadItineraries()
+function loadItineraries(Session)
 {
-    itineraryServices.getItineraries(null, LAMA_USER_USERNAME, true, null, function (success, userRoutes)
+    itineraryServices.getItineraries(null, Session.USERNAME, true, null, function (success, userRoutes)
     {
         if (success === false || userRoutes === null)
         {
@@ -277,11 +301,11 @@ function loadItineraries()
         }
         else
         {
-            LAMA_USER_KNOWN_ITINERARIES = userRoutes
+            Session.KNOWN_ITINERARIES = userRoutes
             mainModal.message = "You've successfully logged in !"
             mainModal.setLoadingState(false)
             mainModal.enableButton = true
-            saveCurrentSessionState()
+            saveSessionState()
         }
     }, null)
 

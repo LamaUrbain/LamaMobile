@@ -18,7 +18,7 @@ Components.Background {
 
         Component.onCompleted:
         {
-            ViewsLogic.fillSponsors(this, UserSession.LAMA_USER_KNOWN_SPONSORS)
+            ViewsLogic.fillSponsors(this, rootView.lamaSession.KNOWN_SPONSORS)
         }
     }
 

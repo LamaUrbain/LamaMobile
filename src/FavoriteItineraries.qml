@@ -15,7 +15,7 @@ Components.Background {
 
     function refreshFavorites()
     {
-        ViewsLogic.fillFavorites(favoriteModel, UserSession.LAMA_USER_KNOWN_ITINERARIES);
+        ViewsLogic.fillFavorites(favoriteModel, rootView.lamaSession.KNOWN_ITINERARIES);
     }
 
     ListModel {
@@ -23,7 +23,7 @@ Components.Background {
 
         Component.onCompleted:
         {
-            ViewsLogic.fillFavorites(this, UserSession.LAMA_USER_KNOWN_ITINERARIES)
+            ViewsLogic.fillFavorites(this, rootView.lamaSession.KNOWN_ITINERARIES)
             rootView.userSessionChanged.connect(refreshFavorites);
         }
         Component.onDestruction:
@@ -57,8 +57,8 @@ Components.Background {
                 linkedItinerary: itinerary
                 onDeleted: {
                     favoriteModel.remove(index)
-                    UserSession.LAMA_USER_KNOWN_ITINERARIES[index]["favorite"] = false
-                    UserSession.saveCurrentSessionState()
+                    rootView.lamaSession.KNOWN_ITINERARIES[index]["favorite"] = false
+                    UserSession.saveSessionState(rootView.lamaSession)
                 }
             }
         }

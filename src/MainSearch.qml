@@ -11,7 +11,7 @@ Components.Background {
 
     function refreshModel()
     {
-        ViewsLogic.fillWaypoints(waypointsModel, UserSession.LAMA_USER_CURRENT_ITINERARY)
+        ViewsLogic.fillWaypoints(waypointsModel, rootView.lamaSession.CURRENT_ITINERARY)
     }
 
     Component.onCompleted: rootView.onUserSessionChanged.connect(refreshModel)
@@ -22,13 +22,13 @@ Components.Background {
         title: "Search"
         onBackClicked:
         {
-            if (UserSession.LAMA_USER_CURRENT_ITINERARY["name"] !== nameInput.text)
+            if (rootView.lamaSession.CURRENT_ITINERARY["name"] !== nameInput.text)
             {
-                UserSession.LAMA_USER_CURRENT_ITINERARY["name"] = nameInput.text;
-                var idxKnown = ViewsLogic.getIndexItineraryKnown(UserSession.LAMA_USER_KNOWN_ITINERARIES, UserSession.LAMA_USER_CURRENT_ITINERARY);
+                rootView.lamaSession.CURRENT_ITINERARY["name"] = nameInput.text;
+                var idxKnown = ViewsLogic.getIndexItineraryKnown(rootView.lamaSession.KNOWN_ITINERARIES, rootView.lamaSession.CURRENT_ITINERARY);
                 if (idxKnown >= 0)
                 {
-                    UserSession.LAMA_USER_KNOWN_ITINERARIES[idxKnown] = UserSession.LAMA_USER_CURRENT_ITINERARY;
+                    rootView.lamaSession.KNOWN_ITINERARIES[idxKnown] = rootView.lamaSession.CURRENT_ITINERARY;
                     rootView.raiseUserSessionChanged()
                 }
             }
@@ -55,8 +55,8 @@ Components.Background {
         placeholderText: "Name"
         Component.onCompleted:
         {
-            if (ViewsLogic.isValueAtKeyValid(UserSession.LAMA_USER_CURRENT_ITINERARY, "name"))
-                text = UserSession.LAMA_USER_CURRENT_ITINERARY["name"]
+            if (ViewsLogic.isValueAtKeyValid(rootView.lamaSession.CURRENT_ITINERARY, "name"))
+                text = rootView.lamaSession.CURRENT_ITINERARY["name"]
         }
     }
 
@@ -79,7 +79,7 @@ Components.Background {
                 onDeleted:
                 {
                     waypointsModel.remove(index)
-                    UserSession.LAMA_USER_CURRENT_ITINERARY["destinations"].splice(index, 1)
+                    rootView.lamaSession.CURRENT_ITINERARY["destinations"].splice(index, 1)
                 }
             }
             footer: Controls.ImageButton {
@@ -89,9 +89,9 @@ Components.Background {
                 onClicked: {
                     var newDest = {address: "New Waypoint"}
                     waypointsModel.append({waypointData: newDest})
-                    if (!ViewsLogic.isValueAtKeyValid(UserSession.LAMA_USER_CURRENT_ITINERARY, "destinations"))
-                        UserSession.LAMA_USER_CURRENT_ITINERARY["destinations"] = ([]);
-                    UserSession.LAMA_USER_CURRENT_ITINERARY["destinations"].push(newDest)
+                    if (!ViewsLogic.isValueAtKeyValid(rootView.lamaSession.CURRENT_ITINERARY, "destinations"))
+                        rootView.lamaSession.CURRENT_ITINERARY["destinations"] = ([]);
+                    rootView.lamaSession.CURRENT_ITINERARY["destinations"].push(newDest)
                 }
             }
         }
@@ -113,30 +113,30 @@ Components.Background {
                 property bool saved: false
 
                 onClicked: {
-                    UserSession.LAMA_USER_CURRENT_ITINERARY["name"] = nameInput.text;
+                    rootView.lamaSession.CURRENT_ITINERARY["name"] = nameInput.text;
 
-                    UserSession.LAMA_USER_CURRENT_ITINERARY["favorite"] = !UserSession.LAMA_USER_CURRENT_ITINERARY["favorite"]
-                    var isFavorited = UserSession.LAMA_USER_CURRENT_ITINERARY["favorite"]
+                    rootView.lamaSession.CURRENT_ITINERARY["favorite"] = !rootView.lamaSession.CURRENT_ITINERARY["favorite"]
+                    var isFavorited = rootView.lamaSession.CURRENT_ITINERARY["favorite"]
 
                     iconSource = isFavorited ? Constants.LAMA_SAVED_RESSOURCE: Constants.LAMA_SAVE_RESSOURCE
 
-                    var idxKnown = ViewsLogic.getIndexItineraryKnown(UserSession.LAMA_USER_KNOWN_ITINERARIES, UserSession.LAMA_USER_CURRENT_ITINERARY);
+                    var idxKnown = ViewsLogic.getIndexItineraryKnown(rootView.lamaSession.KNOWN_ITINERARIES, rootView.lamaSession.CURRENT_ITINERARY);
 
                     if (isFavorited && idxKnown < 0)
                     {
-                        UserSession.LAMA_USER_CURRENT_ITINERARY['id'] = -(Math.round(Date.now() / 1000) % 100000000)
-                        UserSession.LAMA_USER_KNOWN_ITINERARIES.push(UserSession.LAMA_USER_CURRENT_ITINERARY)
+                        rootView.lamaSession.CURRENT_ITINERARY['id'] = -(Math.round(Date.now() / 1000) % 100000000)
+                        rootView.lamaSession.KNOWN_ITINERARIES.push(rootView.lamaSession.CURRENT_ITINERARY)
                     }
                     else if (idxKnown >= 0)
                     {
                         if (isFavorited)
-                            UserSession.LAMA_USER_KNOWN_ITINERARIES[idx] = UserSession.LAMA_USER_CURRENT_ITINERARY;
+                            rootView.lamaSession.KNOWN_ITINERARIES[idxKnown] = rootView.lamaSession.CURRENT_ITINERARY;
                         else
-                            UserSession.LAMA_USER_KNOWN_ITINERARIES.splice(idxKnown, 1);
+                            rootView.lamaSession.KNOWN_ITINERARIES.splice(idxKnown, 1);
                     }
 
                     rootView.raiseUserSessionChanged()
-                    UserSession.saveCurrentSessionState()
+                    UserSession.saveSessionState(rootView.lamaSession)
                     // edit itineraryServices in raiseusersessionchanged
                     //itineraryServices.editItinerary(int id, QString name, QString departure, QString favorite, ServicesBase::CallbackType callback);
                 }
@@ -144,7 +144,7 @@ Components.Background {
                 id: modifyButton
                 Layout.fillWidth: true
                 text: "Save"
-                iconSource: UserSession.LAMA_USER_CURRENT_ITINERARY["favorite"] ? Constants.LAMA_SAVED_RESSOURCE: Constants.LAMA_SAVE_RESSOURCE
+                iconSource: rootView.lamaSession.CURRENT_ITINERARY["favorite"] ? Constants.LAMA_SAVED_RESSOURCE: Constants.LAMA_SAVE_RESSOURCE
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
                 height: parent.height
@@ -158,9 +158,9 @@ Components.Background {
                 navigationTarget: "Map"
                 onNavButtonPressed:
                 {
-                    if (UserSession.LAMA_USER_CURRENT_ITINERARY["name"] !== nameInput.text)
+                    if (rootView.lamaSession.CURRENT_ITINERARY["name"] !== nameInput.text)
                     {
-                        UserSession.LAMA_USER_CURRENT_ITINERARY["name"] = nameInput.text;
+                        rootView.lamaSession.CURRENT_ITINERARY["name"] = nameInput.text;
                         rootView.raiseUserSessionChanged()
                     }
 
