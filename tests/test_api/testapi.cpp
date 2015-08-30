@@ -156,8 +156,8 @@ void TestApi::testNoAuthCreateItinerary()
 
         QVERIFY2(itineraryId >= 0, qPrintable(jsonStr));
         QVERIFY2(obj.value("departure").isObject(), qPrintable(jsonStr));
-        QVERIFY2(obj.value("departure").toObject().value("latitude") == "48.815346", qPrintable(jsonStr));
-        QVERIFY2(obj.value("departure").toObject().value("longitude") == "2.363165", qPrintable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("latitude").toDouble(), 48.815346), qPrintable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("longitude").toDouble(), 2.363165), qPrintable(jsonStr));
 
         waiter.emitDone();
     });
@@ -185,8 +185,8 @@ void TestApi::testNoAuthCreateItinerary()
 
         QVERIFY2(itineraryId >= 0, qPrintable(jsonStr));
         QVERIFY2(obj.value("departure").isObject(), qPrintable(jsonStr));
-        QVERIFY2(obj.value("departure").toObject().value("latitude") == "48.815346", qPrintable(jsonStr));
-        QVERIFY2(obj.value("departure").toObject().value("longitude") == "2.363165", qPrintable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("latitude").toDouble(), 48.815346), qPrintable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("longitude").toDouble(), 2.363165), qPrintable(jsonStr));
 
         QJsonArray destinations = obj.value("destinations").toArray();
 
@@ -197,8 +197,8 @@ void TestApi::testNoAuthCreateItinerary()
         if (it != destinations.constEnd())
         {
             QJsonObject obj = (*it).toObject();
-            QVERIFY2(obj.value("latitude").toString() == "48.832672", qPrintable(jsonStr));
-            QVERIFY2(obj.value("longitude").toString() == "2.288375", qPrintable(jsonStr));
+            QVERIFY2(qFuzzyCompare(obj.value("latitude").toDouble(), 48.832672), qPrintable(jsonStr));
+            QVERIFY2(qFuzzyCompare(obj.value("longitude").toDouble(), 2.288375), qPrintable(jsonStr));
         }
         else
             QVERIFY2(false, qPrintable(jsonStr));
@@ -235,8 +235,8 @@ void TestApi::testNoAuthGetItineraries()
 
         QVERIFY2(itineraryId >= 0, qPrintable(jsonStr));
         QVERIFY2(obj.value("departure").isObject(), qPrintable(jsonStr));
-        QVERIFY2(obj.value("departure").toObject().value("latitude") == "48.815346", qPrintable(jsonStr));
-        QVERIFY2(obj.value("departure").toObject().value("longitude") == "2.363165", qPrintable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("latitude").toDouble(), 48.815346), qPrintable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("longitude").toDouble(), 2.363165), qPrintable(jsonStr));
 
         waiter.emitDone();
     });
@@ -289,8 +289,8 @@ void TestApi::testNoAuthGetItinerary()
 
         QVERIFY2(itineraryId >= 0, qPrintable(jsonStr));
         QVERIFY2(obj.value("departure").isObject(), qPrintable(jsonStr));
-        QVERIFY2(obj.value("departure").toObject().value("latitude") == "48.815346", qPrintable(jsonStr));
-        QVERIFY2(obj.value("departure").toObject().value("longitude") == "2.363165", qPrintable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("latitude").toDouble(), 48.815346), qPrintable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("longitude").toDouble(), 2.363165), qPrintable(jsonStr));
 
         waiter.emitDone();
     });
@@ -339,8 +339,8 @@ void TestApi::testNoAuthEditItinerary()
 
         QVERIFY2(itineraryId >= 0, qPrintable(jsonStr));
         QVERIFY2(obj.value("departure").isObject(), qPrintable(jsonStr));
-        QVERIFY2(obj.value("departure").toObject().value("latitude") == "48.815346", qPrintable(jsonStr));
-        QVERIFY2(obj.value("departure").toObject().value("longitude") == "2.363165", qPrintable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("latitude").toDouble(), 48.815346), qPrintable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("longitude").toDouble(), 2.363165), qPrintable(jsonStr));
 
         waiter.emitDone();
     });
@@ -365,8 +365,8 @@ void TestApi::testNoAuthEditItinerary()
         if (it != destinations.constEnd())
         {
             QJsonObject obj = (*it).toObject();
-            QVERIFY2(obj.value("latitude").toString() == "48.832672", qPrintable(jsonStr));
-            QVERIFY2(obj.value("longitude").toString() == "2.288375", qPrintable(jsonStr));
+            QVERIFY2(qFuzzyCompare(obj.value("latitude").toDouble(), 48.832672), qPrintable(jsonStr));
+            QVERIFY2(qFuzzyCompare(obj.value("longitude").toDouble(), 2.288375), qPrintable(jsonStr));
         }
         else
             QVERIFY2(false, qPrintable(jsonStr));
@@ -391,15 +391,15 @@ void TestApi::testNoAuthEditItinerary()
         if (it != destinations.constEnd())
         {
             QJsonObject obj = (*it).toObject();
-            QVERIFY2(obj.value("latitude").toString() == "48.823040", qPrintable(jsonStr));
-            QVERIFY2(obj.value("longitude").toString() == "2.325578", qPrintable(jsonStr));
+            QVERIFY2(qFuzzyCompare(obj.value("latitude").toDouble(), 48.823040), qPrintable(jsonStr));
+            QVERIFY2(qFuzzyCompare(obj.value("longitude").toDouble(), 2.325578), qPrintable(jsonStr));
 
             ++it;
             if (it != destinations.constEnd())
             {
                 QJsonObject obj2 = (*it).toObject();
-                QVERIFY2(obj2.value("latitude").toString() == "48.832672", qPrintable(jsonStr));
-                QVERIFY2(obj2.value("longitude").toString() == "2.288375", qPrintable(jsonStr));
+                QVERIFY2(qFuzzyCompare(obj2.value("latitude").toDouble(), 48.832672), qPrintable(jsonStr));
+                QVERIFY2(qFuzzyCompare(obj2.value("longitude").toDouble(), 2.288375), qPrintable(jsonStr));
             }
             else
                 QVERIFY2(false, qPrintable(jsonStr));
@@ -427,8 +427,8 @@ void TestApi::testNoAuthEditItinerary()
         if (it != destinations.constEnd())
         {
             QJsonObject obj = (*it).toObject();
-            QVERIFY2(obj.value("latitude").toString() == "48.823040", qPrintable(jsonStr));
-            QVERIFY2(obj.value("longitude").toString() == "2.325578", qPrintable(jsonStr));
+            QVERIFY2(qFuzzyCompare(obj.value("latitude").toDouble(), 48.823040), qPrintable(jsonStr));
+            QVERIFY2(qFuzzyCompare(obj.value("longitude").toDouble(), 2.325578), qPrintable(jsonStr));
         }
         else
             QVERIFY2(false, qPrintable(jsonStr));
@@ -453,15 +453,15 @@ void TestApi::testNoAuthEditItinerary()
         if (it != destinations.constEnd())
         {
             QJsonObject obj = (*it).toObject();
-            QVERIFY2(obj.value("latitude").toString() == "48.823040", qPrintable(jsonStr));
-            QVERIFY2(obj.value("longitude").toString() == "2.325578", qPrintable(jsonStr));
+            QVERIFY2(qFuzzyCompare(obj.value("latitude").toDouble(), 48.823040), qPrintable(jsonStr));
+            QVERIFY2(qFuzzyCompare(obj.value("longitude").toDouble(), 2.325578), qPrintable(jsonStr));
 
             ++it;
             if (it != destinations.constEnd())
             {
                 QJsonObject obj2 = (*it).toObject();
-                QVERIFY2(obj2.value("latitude").toString() == "48.832672", qPrintable(jsonStr));
-                QVERIFY2(obj2.value("longitude").toString() == "2.288375", qPrintable(jsonStr));
+                QVERIFY2(qFuzzyCompare(obj2.value("latitude").toDouble(), 48.832672), qPrintable(jsonStr));
+                QVERIFY2(qFuzzyCompare(obj2.value("longitude").toDouble(), 2.288375), qPrintable(jsonStr));
             }
             else
                 QVERIFY2(false, qPrintable(jsonStr));
@@ -489,8 +489,8 @@ void TestApi::testNoAuthEditItinerary()
         if (it != destinations.constEnd())
         {
             QJsonObject obj = (*it).toObject();
-            QVERIFY2(obj.value("latitude").toString() == "48.832672", qPrintable(jsonStr));
-            QVERIFY2(obj.value("longitude").toString() == "2.288375", qPrintable(jsonStr));
+            QVERIFY2(qFuzzyCompare(obj.value("latitude").toDouble(), 48.832672), qPrintable(jsonStr));
+            QVERIFY2(qFuzzyCompare(obj.value("longitude").toDouble(), 2.288375), qPrintable(jsonStr));
         }
         else
             QVERIFY2(false, qPrintable(jsonStr));
@@ -548,8 +548,8 @@ void TestApi::testAuthCreateItinerary()
 
         QVERIFY2(itineraryId >= 0, qPrintable(jsonStr));
         QVERIFY2(obj.value("departure").isObject(), qPrintable(jsonStr));
-        QVERIFY2(obj.value("departure").toObject().value("latitude") == "48.815346", qPrintable(jsonStr));
-        QVERIFY2(obj.value("departure").toObject().value("longitude") == "2.363165", qPrintable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("latitude").toDouble(), 48.815346), qPrintable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("longitude").toDouble(), 2.363165), qPrintable(jsonStr));
 
         waiter.emitDone();
     });
@@ -586,8 +586,8 @@ void TestApi::testAuthGetItineraries()
 
         QVERIFY2(itineraryId >= 0, qPrintable(jsonStr));
         QVERIFY2(obj.value("departure").isObject(), qPrintable(jsonStr));
-        QVERIFY2(obj.value("departure").toObject().value("latitude") == "48.815346", qPrintable(jsonStr));
-        QVERIFY2(obj.value("departure").toObject().value("longitude") == "2.363165", qPrintable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("latitude").toDouble(), 48.815346), qPrintable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("longitude").toDouble(), 2.363165), qPrintable(jsonStr));
 
         waiter.emitDone();
     });
@@ -644,8 +644,8 @@ void TestApi::testAuthGetItinerary()
 
         QVERIFY2(itineraryId >= 0, qPrintable(jsonStr));
         QVERIFY2(obj.value("departure").isObject(), qPrintable(jsonStr));
-        QVERIFY2(obj.value("departure").toObject().value("latitude") == "48.815346", qPrintable(jsonStr));
-        QVERIFY2(obj.value("departure").toObject().value("longitude") == "2.363165", qPrintable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("latitude").toDouble(), 48.815346), qPrintable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("longitude").toDouble(), 2.363165), qPrintable(jsonStr));
 
         waiter.emitDone();
     });
@@ -698,8 +698,8 @@ void TestApi::testAuthEditItinerary()
 
         QVERIFY2(itineraryId >= 0, qPrintable(jsonStr));
         QVERIFY2(obj.value("departure").isObject(), qPrintable(jsonStr));
-        QVERIFY2(obj.value("departure").toObject().value("latitude") == "48.815346", qPrintable(jsonStr));
-        QVERIFY2(obj.value("departure").toObject().value("longitude") == "2.363165", qPrintable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("latitude").toDouble(), 48.815346), qPrintable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("longitude").toDouble(), 2.363165), qPrintable(jsonStr));
 
         waiter.emitDone();
     });
@@ -724,8 +724,8 @@ void TestApi::testAuthEditItinerary()
         if (it != destinations.constEnd())
         {
             QJsonObject obj = (*it).toObject();
-            QVERIFY2(obj.value("latitude").toString() == "48.832672", qPrintable(jsonStr));
-            QVERIFY2(obj.value("longitude").toString() == "2.288375", qPrintable(jsonStr));
+            QVERIFY2(qFuzzyCompare(obj.value("latitude").toDouble(), 48.832672), qPrintable(jsonStr));
+            QVERIFY2(qFuzzyCompare(obj.value("longitude").toDouble(), 2.288375), qPrintable(jsonStr));
         }
         else
             QVERIFY2(false, qPrintable(jsonStr));
