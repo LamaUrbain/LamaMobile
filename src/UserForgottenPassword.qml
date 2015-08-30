@@ -30,7 +30,7 @@ Components.Background {
             anchors.right: parent.right
             anchors.top: parent.top
             fieldName: "Username"
-            textFieldText: rootView.lamaSession.USERNAME
+            textFieldText: rootView.lamaSession.USERNAME !== null ? rootView.lamaSession.USERNAME : ''
         }
         Components.FormEntry {
             id: emailForm
@@ -38,7 +38,7 @@ Components.Background {
             anchors.right: parent.right
             anchors.top: usernameForm.bottom
             fieldName: "Email"
-            textFieldText: rootView.lamaSession.EMAIL
+            textFieldText: rootView.lamaSession.EMAIL !== null  ? rootView.lamaSession.EMAIL : ''
         }
 
     }

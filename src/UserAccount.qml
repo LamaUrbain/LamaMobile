@@ -25,7 +25,7 @@ Components.Background {
 
         Components.Marker {
             id: username
-            centerText: "Username"
+            centerText: rootView.lamaSession.USERNAME
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             width: parent.width * 0.75
@@ -33,7 +33,7 @@ Components.Background {
 
         Components.Marker {
             id: avatar
-            centerText: "Avatar"
+            centerText: rootView.lamaSession.AVATAR
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             width: parent.width * 0.25
