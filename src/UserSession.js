@@ -67,9 +67,11 @@ var LAMA_USER_KNOWN_ITINERARIES =
 var LAMA_USER_KNOWN_SPONSORS = [
             {
                 name: "McDo",
+                logo: "http://img2.wikia.nocookie.net/__cb20110404033201/happymeal/images/1/13/McDonald's_logo.png",
             },
             {
                 name: "KFC",
+                logo: "http://www.pocketnews.com.my/wp-content/uploads/2014/10/KFC_logo.jpg",
             }
 ]
 
