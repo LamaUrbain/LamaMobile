@@ -7,6 +7,7 @@ import "qrc:/UserSession.js" as UserSession
 import "qrc:/Views/ViewsLogic.js" as ViewsLogic
 
 Components.Background {
+    id: rootBackground
 
     Components.Header {
         id: header
@@ -22,30 +23,40 @@ Components.Background {
         }
     }
 
-    ScrollView {
-        id: sponsors
+    Component {
+        id: sponsorDelegate
+
+        Rectangle {
+            height: sponsorGrid.cellHeight
+            width: sponsorGrid.cellWidth
+
+            color: "transparent"
+
+            Components.SponsorItem {
+                anchors.fill: parent
+
+                sponsorName: sponsor.name
+                sponsorLogoUrl: sponsor.logo
+            }
+        }
+    }
+
+    GridView {
+        id: sponsorGrid
         anchors.top: header.bottom
         anchors.left: parent.left
         anchors.right: parent.right
 
-        anchors.leftMargin: parent.height * 0.005
-        anchors.rightMargin: parent.height * 0.005
-        anchors.topMargin: parent.height * 0.005
-        anchors.bottomMargin: parent.height * 0.005
-        height: parent.height * 0.8
+        anchors.leftMargin: parent.width * 0.005
+        anchors.rightMargin: parent.width * 0.005
+        anchors.topMargin: parent.height* 0.005
+        anchors.bottomMargin: parent.height* 0.005
 
-        ListView {
-            model: sponsorsModel
-            spacing: parent.height * 0.005
-            delegate: Components.SponsorItem {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                height: sponsors.height * 0.09
-                sponsorDescription: sponsor.name
-                onDeleted: {
-                    sponsorsModel.remove(index)
-                }
-            }
-        }
+        height: parent.height * 0.9
+
+        model: sponsorsModel
+        delegate: sponsorDelegate
+        cellWidth: parent.width * 1/3
+        cellHeight: parent.height * 1/5
     }
 }
