@@ -1,5 +1,4 @@
 .pragma library // Statefull
-.import "APILogic.js" as APILogic
 .import QtQuick.LocalStorage 2.0 as Sql
 
 var LAMA_LOCALDB_NAME = "LamaLocalDB"
@@ -164,6 +163,7 @@ function checkAndLoadFromSavedData(Session)
 
 function deleteCurrentToken(Session)
 {
+    // FIXME
     APILogic.requestAPI("DELETE", "/tokens/" + Session.TOKEN + "/", null, null, null)
     Session.TOKEN = ""
     Session.IS_LOGGED = false

@@ -4,7 +4,6 @@ import QtQuick.Controls 1.3
 import "qrc:/Views" as Views
 import "qrc:/Components" as Components
 import "qrc:/Controls" as Controls
-import "qrc:/APILogic.js" as APILogic
 import "qrc:/UserSession.js" as UserSession
 import "qrc:/Views/ViewsLogic.js" as ViewsLogic
 
