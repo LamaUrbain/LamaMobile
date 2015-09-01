@@ -40,7 +40,15 @@ ServicesBase::CallbackType ServicesBase::fromJSCallback(QJSValue callback)
         {
             QJSValueList args;
             args << QJSValue(errorType) << QJSValue(jsonStr);
-            callback.call(args);
+            QJSValue result = callback.call(args);
+            if (result.isError())
+            {
+                QString errorString = QString("%1:%2: %3")
+                        .arg(result.property("fileName").toString())
+                        .arg(result.property("lineNumber").toInt())
+                        .arg(result.toString());
+                qWarning() << errorString.toLatin1().constData();
+            }
         }
     };
     return cb;
