@@ -4,6 +4,7 @@
         <file>Constants.js</file>
         <file>UserSession.js</file>
         <file>APILogic.js</file>
+        <file>MapLogic.js</file>
     </qresource>
     <qresource prefix="/Assets">
         <file>Images/vehicleMean.png</file>
