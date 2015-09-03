@@ -4,6 +4,7 @@ import QtQuick.Controls 1.3
 import "qrc:/Views" as Views
 import "qrc:/Components" as Components
 import "qrc:/Controls" as Controls
+import "qrc:/MapLogic.js" as MapLogic
 import "qrc:/APILogic.js" as APILogic
 import "qrc:/UserSession.js" as UserSession
 import "qrc:/Views/ViewsLogic.js" as ViewsLogic
@@ -19,6 +20,7 @@ Window {
 
     property var lamaSession: UserSession.LAMA_SESSION
     property alias modal: mainModal
+    property alias mainView: mainView
 
     StackView {
         id: mainView
@@ -59,8 +61,20 @@ Window {
         userSessionChanged()
     }
 
+    function clone(obj)
+    {
+        if (obj === null  || typeof obj != "object")
+            return obj;
+        var copy = obj.constructor();
+        for (var attr in obj)
+            if (obj.hasOwnProperty(attr))
+                copy[attr] = obj[attr];
+
+        return (copy);
+    }
+
     function resolveCurrentItinerary()
     {
-        mainView.get(0, false).resolveCurrentItinerary()
+        MapLogic.resolveCurrentItinerary()
     }
 }
