@@ -87,12 +87,6 @@ Components.Background {
                     rootView.lamaSession.TOKEN = ""
                     rootView.lamaSession.PASSWORD = pass
                     userServices.createUser(nickname, pass, mail, onRegistrationResult)
-                    //if (APILogic.requestAPI("POST", "/users/", jsonParams, onRegistrationResult, null) === false)
-                    //{
-                    //    mainModal.message = "Check your internet connection";
-                    //    mainModal.setLoadingState(false);
-                    //    mainModal.enableButton = true
-                    //}
                 }
                 else
                 {

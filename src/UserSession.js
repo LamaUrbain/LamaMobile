@@ -163,8 +163,7 @@ function checkAndLoadFromSavedData(Session)
 
 function deleteCurrentToken(Session)
 {
-    // FIXME
-    APILogic.requestAPI("DELETE", "/tokens/" + Session.TOKEN + "/", null, null, null)
+    userServices.deleteToken(Session.TOKEN)
     Session.TOKEN = ""
     Session.IS_LOGGED = false
 }

@@ -60,13 +60,7 @@ Components.Background {
                     mainModal.enableButton = false
                     mainModal.visible = true;
 
-                    // FIXME
-                    if (APILogic.requestAPI("GET", "/users/" + nickname + "/", null, onGetUserResult, null) === false)
-                    {
-                        mainModal.message = "Check your internet connection";
-                        mainModal.setLoadingState(false);
-                        mainModal.enableButton = true
-                    }
+                    userServices.getUser(nickname, onGetUserResult)
                 }
                 else
                 {
@@ -80,9 +74,9 @@ Components.Background {
 
             function onGetUserResult(status, json)
             {
-                if (status === false)
+                if (status !== 0)
                 {
-                    mainModal.message = "Sorry, it seems your informations are incorrect."
+                    mainModal.message = "Sorry, it seems your this nickname does not exists."
                     mainModal.setLoadingState(false);
                     mainModal.enableButton = true;
                     navButton.acceptClick = true
@@ -90,19 +84,13 @@ Components.Background {
                 else
                 {
                     rootView.lamaSession.PASSWORD = ViewsLogic.getRandomString(Constants.LAMA_PASSWORD_RANDOM_LENGTH)
-                    var params = {
-                        password: rootView.lamaSession.PASSWORD,
-                        username: usernameForm.textFieldText
-                    }
-
-                    // FIXME
-                    APILogic.requestAPI("PATCH", "/users/" + json["username"] + "/", params, onEditUserResult, null)
+                    userServices.editUser(usernameForm.textFieldText, rootView.lamaSession.PASSWORD, rootView.lamaSession.EMAIL, onEditUserResult)
                 }
             }
 
             function onEditUserResult()
             {
-                if (status === true)
+                if (status !== 0)
                 {
                     mainModal.message = "Your password has been reset to :\n" + rootView.lamaSession.PASSWORD
                     mainModal.onModalButtonClicked.connect(newPasswordSet_ClickedModal)
