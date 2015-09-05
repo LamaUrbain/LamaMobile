@@ -20,6 +20,7 @@ Window {
     property var lamaSession: UserSession.LAMA_SESSION
     property alias modal: mainModal
     property alias mainView: mainView
+    property QtObject mapView: null
 
     StackView {
         id: mainView
@@ -34,16 +35,10 @@ Window {
     }
 
     function mainViewTo(name, prop) {
-        if (name === undefined)
+        if (name === undefined || name === "Map")
         {
-            mainViewTo("Map")
-            return
-        }
-
-        if (name === "Map") // if we go directly to the map, reset the navstack
-        {
-            mainView.clear()
-            mainView.push("qrc:/Views/Map.qml")
+            // Pops all but the first item (i.e. the map)
+            mainView.pop(null);
         }
         else
         {
@@ -53,7 +48,8 @@ Window {
 
     function mainViewBack()
     {
-        mainView.pop()
+        if (mainView.currentItem != mapView)
+            mainView.pop()
     }
 
     function raiseUserSessionChanged()

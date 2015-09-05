@@ -83,4 +83,8 @@ Components.Marker {
             }
         }
     }
+
+    Component.onCompleted: {
+        rootView.mapView = mapView;
+    }
 }

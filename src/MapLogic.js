@@ -3,29 +3,31 @@ function _formatCoords(waypoint)
     return (waypoint["longitude"] + ", " + waypoint["latitude"])
 }
 
-function displayOnUpdateResult(status, json)
+function displayOnUpdateResult(status, jsonObj)
 {
     if (status !== 0)
     {
         rootView.modal.title = "Error"
-        rootView.modal.text = "We had a hard time updating your itinerary"
+        rootView.modal.message = "We had a hard time updating your itinerary"
         rootView.modal.enableButton = true
         rootView.modal.visible = true
+        rootView.modal.setLoadingState(false)
         return;
     }
 
-    rootView.mainView.get(0, false).mapComponent.displayItinerary(jsonObj["id"]);
+    mapView.mapComponent.displayItinerary(jsonObj["id"]);
     rootView.modal.visible = false;
 }
 
-function updateItinerary(status, json)
+function updateItinerary(status, jsonObj)
 {
     if (status !== 0)
     {
         rootView.modal.title = "Error"
-        rootView.modal.text = "We had a hard time getting your itinerary"
+        rootView.modal.message = "We had a hard time getting your itinerary"
         rootView.modal.enableButton = true
         rootView.modal.visible = true
+        rootView.modal.setLoadingState(false)
         return;
     }
 
@@ -33,12 +35,12 @@ function updateItinerary(status, json)
     var destArray = [];
     for (var idx = 0; idx < currentIt["destinations"].length; ++idx)
         destArray[idx] = _formatCoords(currentIt["destinations"][idx])
-    itineraryServices.overwriteItinerary(parseInt(jsonObj["id"]),
+    itineraryServices.overwriteItinerary(parseInt(currentIt["id"]),
                                          currentIt["name"],
                                          _formatCoords(currentIt["departure"]),
                                          destArray,
                                          currentIt["favorite"] === true ? "true" : "false",
-                                        displayOnUpdateResult);
+                                         displayOnUpdateResult);
 }
 
 function onCreateItineraryWith(statusCode, jsonStr)
@@ -50,12 +52,12 @@ function onCreateItineraryWith(statusCode, jsonStr)
         var ItId = jsonObj["id"]
         console.log("CreateItinerary Response Id : " + ItId);
         rootView.lamaSession.CURRENT_ITINERARY['id'] = ItId;
-        rootView.mainView.get(0, false).mapComponent.displayItinerary(parseInt(rootView.lamaSession.CURRENT_ITINERARY['id']));
+        mapView.mapComponent.displayItinerary(parseInt(rootView.lamaSession.CURRENT_ITINERARY['id']));
         rootView.modal.visible = false;
         return;
     }
     rootView.modal.title = "Error"
-    rootView.modal.message = "Unfortunatly the llama did not find his way"
+    rootView.modal.message = "Unfortunatly the lama did not find his way"
     rootView.modal.enableButton = true
     rootView.modal.setLoadingState(false)
 }
@@ -92,26 +94,29 @@ function resolveCurrentItinerary()
             || !ViewsLogic.isValueAtKeyValid(currentIt, "destinations"))
     {
         mainModal.title = "Error"
-        mainModal.text = "Sadly, an error occured (MAPVIEW_RESOLV_INVALID_OBJ)"
+        mainModal.message = "Sadly, an error occured (MAPVIEW_RESOLV_INVALID_OBJ)"
         mainModal.enableButton = true
         mainModal.visible = true
+        rootView.modal.setLoadingState(false)
         return;
     }
     else if (ViewsLogic.isValueAtKeyValid(currentIt, "id") && currentIt['id'] > 0)
-        itineraryServices.getItinerary(currentIt['id'], function ()
+        itineraryServices.getItinerary(currentIt['id'], function(statusCode, jsonStr)
         {
-            return (function(statusCode, jsonStr)
+            if (statusCode !== 0)
             {
-                if (statusCode !== 0)
-                {
-                    mainModal.title = "Error"
-                    mainModal.text = "Sadly, an error occured (MAPVIEW_RESOLV_EXIST_IT_FAIL)"
-                    mainModal.enableButton = true
-                    mainModal.visible = true
-                }
+                mainModal.title = "Error"
+                mainModal.message = "Sadly, an error occured (MAPVIEW_RESOLV_EXIST_IT_FAIL)"
+                mainModal.enableButton = true
+                mainModal.visible = true
+                rootView.modal.setLoadingState(false)
+            }
+            else
+            {
+                var currentIt = rootView.lamaSession.CURRENT_ITINERARY;
                 itineraryServices.getItinerary(currentIt["id"], updateItinerary)
-            });
-        }());
+            }
+        });
     else
         createItineraryAndDisplay();
 }
