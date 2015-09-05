@@ -2,6 +2,7 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QUrlQuery>
+#include <memory>
 #include "itineraryservices.h"
 #include "userservices.h"
 
@@ -99,6 +100,85 @@ void ItineraryServices::editItinerary(int id, QString name, QString departure, Q
 void ItineraryServices::editItinerary(int id, QString name, QString departure, QString favorite, QJSValue callback)
 {
     editItinerary(id, name, departure, favorite, fromJSCallback(callback));
+}
+
+void ItineraryServices::overwriteItinerary(int id, QString name, QString departure, QStringList destinations, QString favorite, ServicesBase::CallbackType callback)
+{
+    CallbackType cb = [callback, id, name, departure, destinations, favorite, this] (int errorType, QString jsonStr) mutable
+    {
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+
+        if (errorType == 0 && obj.value("id").toInt(-1) == id)
+        {
+            int oldDestinationsCount = obj.value("destinations").toArray().size();
+            std::shared_ptr<int> destinationsCountdown(new int(oldDestinationsCount));
+
+            CallbackType clearCb;
+            clearCb = [callback, id, destinationsCountdown, clearCb, name, departure, destinations, favorite, this] (int errorType, QString jsonStr) mutable
+            {
+                if (destinationsCountdown && errorType == 0)
+                {
+                    --(*destinationsCountdown);
+                    if (*destinationsCountdown <= 0)
+                    {
+                        CallbackType editCb = [callback, id, destinations, this] (int errorType, QString jsonStr) mutable
+                        {
+                            if (errorType == 0)
+                            {
+                                if (destinations.size() > 0)
+                                {
+                                    std::shared_ptr<int> currentPos(new int(0));
+
+                                    CallbackType addDestinationCb;
+                                    addDestinationCb = [callback, id, currentPos, addDestinationCb, destinations, this] (int errorType, QString jsonStr) mutable
+                                    {
+                                        if (currentPos && errorType == 0)
+                                        {
+                                            ++(*currentPos);
+                                            if (*currentPos < destinations.size())
+                                            {
+                                                addDestination(id, destinations.first(), -1, addDestinationCb);
+                                            }
+                                            else
+                                                callback(errorType, jsonStr);
+                                        }
+                                        else
+                                            callback(errorType, jsonStr);
+                                    };
+
+                                    addDestination(id, destinations.first(), -1, addDestinationCb);
+                                }
+                                else
+                                    callback(errorType, jsonStr);
+                            }
+                            else
+                                callback(errorType, jsonStr);
+                        };
+
+                        editItinerary(id, name, departure, favorite, editCb);
+                    }
+                    else
+                        deleteDestination(id, 0, clearCb);
+                }
+                else
+                    callback(errorType, jsonStr);
+            };
+
+            if (oldDestinationsCount > 0)
+                deleteDestination(id, 0, clearCb);
+            else
+                clearCb(errorType, jsonStr);
+        }
+        else
+            callback(errorType, jsonStr);
+    };
+
+    getItinerary(id, cb);
+}
+
+void ItineraryServices::overwriteItinerary(int id, QString name, QString departure, QStringList destinations, QString favorite, QJSValue callback)
+{
+    overwriteItinerary(id, name, departure, destinations, favorite, fromJSCallback(callback));
 }
 
 void ItineraryServices::addDestination(int id, QString destination, int position, ServicesBase::CallbackType callback)
