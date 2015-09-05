@@ -79,7 +79,7 @@ Components.Marker {
             MenuItem {
                 text: "Set Departure"
                 onTriggered: {
-                    ViewsLogic.spawnDeparturePopOver(mapComponent, mapPieMenu.pieCoors, "je suis une popup :3 !");
+                    ViewsLogic.spawnDeparturePopOver(mapComponent, mapPieMenu.pieCoords, "je suis une popup :3 !");
                 }
                 iconSource: Constants.LAMA_DEPARTURE_RESSOURCE
             }
