@@ -17,6 +17,12 @@ Window {
     Component.onCompleted: UserSession.tryLogin(rootView.lamaSession, false)
     signal userSessionChanged()
 
+    signal triggerLogin(bool clearData)
+    onTriggerLogin:
+    {
+        tryLogin(clearData)
+    }
+
     property var lamaSession: UserSession.LAMA_SESSION
     property alias modal: mainModal
     property alias mainView: mainView
@@ -34,7 +40,8 @@ Window {
         Component.onCompleted: rootView.lamaSession.mainModal = mainModal
     }
 
-    function mainViewTo(name, prop) {
+    function mainViewTo(name, prop)
+    {
         if (name === undefined || name === "Map")
         {
             // Pops all but the first item (i.e. the map)
@@ -60,5 +67,10 @@ Window {
     function resolveCurrentItinerary()
     {
         MapLogic.resolveCurrentItinerary()
+    }
+
+    function tryLogin(clear)
+    {
+        UserSession.tryLogin(clear)
     }
 }

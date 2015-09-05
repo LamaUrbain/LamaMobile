@@ -1,7 +1,6 @@
 import QtQuick 2.0
 import "qrc:/Components/" as Components
 import "qrc:/Controls/" as Controls
-import "qrc:/UserSession.js" as UserSession
 import "qrc:/Views/ViewsLogic.js" as ViewsLogic
 
 Components.Background {
@@ -95,7 +94,7 @@ Components.Background {
                     mainModal.enableButton = false
                     mainModal.visible = true;
 
-                    UserSession.trylogin(rootView.lamaSession, true)
+                    rootView.triggerLogin(true)
                 }
                 else
                 {
