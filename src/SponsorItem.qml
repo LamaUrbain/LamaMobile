@@ -6,8 +6,7 @@ import "qrc:/Constants.js" as Constants
 import "qrc:/UserSession.js" as UserSession
 
 RowLayout {
-    property alias sponsorName: sponsorName.text
-    property alias sponsorLogoUrl: sponsorLogo.source
+    property var sponsorToDisplay
 
     signal deleted()
 
@@ -16,11 +15,20 @@ RowLayout {
         deleted()
     }
 
+    MouseArea {
+        anchors.fill: parent
+
+        onClicked: {
+            rootView.mainViewTo("SponsorsDetails", {})
+        }
+    }
+
     Image
     {
         id: sponsorLogo
         anchors.fill: parent
         fillMode: Image.PreserveAspectFit
+        source: sponsorToDisplay.logo
 
         Rectangle {
             anchors.bottom: parent.bottom
@@ -30,7 +38,7 @@ RowLayout {
 
             color: "black"
             opacity: 0.8
-            z: 1
+            z: parent.z + 1
 
             Text
             {
@@ -39,7 +47,8 @@ RowLayout {
                 color: Constants.LAMA_YELLOW
                 font.pointSize: Constants.LAMA_POINTSIZE
                 opacity: 1
-                z:2
+                z: parent.z + 1
+                text: sponsorToDisplay.name
             }
         }
     }

@@ -35,28 +35,32 @@ Components.Background {
             Components.SponsorItem {
                 anchors.fill: parent
 
-                sponsorName: sponsor.name
-                sponsorLogoUrl: sponsor.logo
+                sponsorToDisplay: sponsor
             }
         }
     }
 
-    GridView {
-        id: sponsorGrid
-        anchors.top: header.bottom
+    Item {
+        anchors.top: header.top
         anchors.left: parent.left
         anchors.right: parent.right
+        anchors.bottom: parent.bottom
 
-        anchors.leftMargin: parent.width * 0.005
-        anchors.rightMargin: parent.width * 0.005
-        anchors.topMargin: parent.height* 0.005
-        anchors.bottomMargin: parent.height* 0.005
+        GridView {
+            id: sponsorGrid
 
-        height: parent.height * 0.9
+            anchors.fill: parent
 
-        model: sponsorsModel
-        delegate: sponsorDelegate
-        cellWidth: parent.width * 1/3
-        cellHeight: parent.height * 1/5
+            model: sponsorsModel
+            delegate: sponsorDelegate
+            cellWidth: parent.width / 3
+            cellHeight: parent.height / 5
+
+            snapMode: GridView.SnapToRow
+
+            Component.onCompleted: {
+                console.log(height, parent.height)
+            }
+        }
     }
 }
