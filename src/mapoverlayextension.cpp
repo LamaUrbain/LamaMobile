@@ -316,8 +316,8 @@ bool MapOverlayExtension::mousePressEvent(QMouseEvent *event)
             QPoint pos;
             MapWidgetPrivate *p = getMapPrivate();
 
-            pos.setX(p->getCenterPos().x() * 256 + p->getCenterOffset().x() - p->getScrollOffset().x() - 256 + event->pos().x() - _map->width() / 2);
-            pos.setY(p->getCenterPos().y() * 256 + p->getCenterOffset().y() - p->getScrollOffset().y() - 256 + event->pos().y() - _map->height() / 2);
+            pos.setX(p->getCenterPos().x() * 256 + p->getCenterOffset().x() - p->getScrollOffset().x() - MAP_EXTRA_SIZE_HALF + event->pos().x() - _map->width() / 2);
+            pos.setY(p->getCenterPos().y() * 256 + p->getCenterOffset().y() - p->getScrollOffset().y() - MAP_EXTRA_SIZE_HALF + event->pos().y() - _map->height() / 2);
 
             QPointF newCoords = p->coordsFromPixels(pos);
 

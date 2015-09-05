@@ -6,9 +6,6 @@
 #include "mapextension.h"
 #include "mapoverlayextension.h"
 
-#define MAP_EXTRA_SIZE 1024
-#define MAP_EXTRA_SIZE_HALF MAP_EXTRA_SIZE / 2
-
 struct WhirlLessThan
 {
     QPoint center;
