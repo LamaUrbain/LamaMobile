@@ -67,6 +67,11 @@ Window {
         MapLogic.resolveCurrentItinerary()
     }
 
+    function moveItineraryPoint(itineraryId, point, newCoords)
+    {
+        MapLogic.moveItineraryPoint(itineraryId, point, newCoords);
+    }
+
     function tryLogin(clear)
     {
         UserSession.tryLogin(clear)

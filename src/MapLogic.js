@@ -120,3 +120,33 @@ function resolveCurrentItinerary()
     else
         createItineraryAndDisplay();
 }
+
+function moveItineraryPoint(itineraryId, point, newCoords)
+{
+    if (point == 0)
+    {
+        rootView.lamaSession.CURRENT_ITINERARY["departure"] =
+        {
+            address: "You moved it",
+            latitude: newCoords.x,
+            longitude: newCoords.y
+        }
+        itineraryServices.editItinerary(itineraryId, "", _formatCoords(rootView.lamaSession.CURRENT_ITINERARY["departure"]), "", function(statusCode, jsonStr)
+        {
+            rootView.mapView.mapComponent.itineraryChanged();
+        });
+    }
+    else if (point - 1 < rootView.lamaSession.CURRENT_ITINERARY["destinations"].length)
+    {
+        rootView.lamaSession.CURRENT_ITINERARY["destinations"][point - 1] =
+        {
+            address: "You moved it",
+            latitude: newCoords.x,
+            longitude: newCoords.y
+        }
+        itineraryServices.editDestination(itineraryId, point - 1, -1, _formatCoords(rootView.lamaSession.CURRENT_ITINERARY["destinations"][point - 1]), function(statusCode, jsonStr)
+        {
+            rootView.mapView.mapComponent.itineraryChanged();
+        });
+    }
+}

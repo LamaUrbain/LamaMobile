@@ -69,6 +69,10 @@ Components.Marker {
         {
             ViewsLogic.spawnPopOver(mapComponent, coords, "je suis une popup :3 !")
         }
+        onMapPointMoved:
+        {
+            rootView.moveItineraryPoint(id, point, newCoords);
+        }
 
         Controls.ImageButton {
             anchors.left: parent.left

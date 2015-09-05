@@ -121,7 +121,7 @@ void ItineraryServices::createItineraryWith(QString name, QString departure, QSt
 
 void ItineraryServices::editItinerary(int id, QString name, QString departure, QString favorite, ServicesBase::CallbackType callback)
 {
-    QUrl url(QString("%1/itineraries/%2/").arg(serverAddress).arg(id));
+    QUrl url(QString("%1/itineraries/%2").arg(serverAddress).arg(id));
 
     QUrlQuery query;
     if (!name.isEmpty())
