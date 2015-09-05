@@ -6,22 +6,14 @@ import "qrc:/Components" as Components
 import "qrc:/Controls" as Controls
 import "qrc:/Constants.js" as Constants
 
-MapQuickItem {
+Controls.MapItem {
     id: popover
+    sourceItem: popoverItem
+
     property alias message: popoverMessage.text
-    property Address address
+    property string popOverType
 
-    anchorPoint: Qt.point(popoverItem.width / 2, popoverItem.height)
-
-    property string popOverType: "waypoint"
-
-    function setAddress(addr)
-    {
-        address = addr;
-        popoverMessage.text = "%1, %2".arg(addr.street).arg(addr.district)
-    }
-
-    sourceItem: Column {
+   Column {
         id: popoverItem
 
         width: popoverMessage.paintedWidth + 75
@@ -68,11 +60,6 @@ MapQuickItem {
 
                     onDeleted: {
                         popover.destroy();
-                        mainRouteQuery.removeWaypoint(popover.coordinate);
-                        if (mainRouteQuery.waypoints.length <= 1)
-                            mainRoute.reset();
-                        else
-                            mainRoute.update();
                     }
                 }
             }

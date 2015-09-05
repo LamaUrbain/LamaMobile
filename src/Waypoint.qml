@@ -35,7 +35,7 @@ RowLayout {
         navigationTarget: "Suggestions"
         onNavButtonPressed:
         {
-            UserSession.LAMA_USER_CURRENT_WAYPOINT_ID = linkedWaypointId
+            rootView.lamaSession.CURRENT_WAYPOINT_ID = linkedWaypointId
         }
     }
 

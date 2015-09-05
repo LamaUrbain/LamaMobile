@@ -4,7 +4,7 @@ import QtQuick.Controls 1.3
 import "qrc:/Views" as Views
 import "qrc:/Components" as Components
 import "qrc:/Controls" as Controls
-import "qrc:/APILogic.js" as APILogic
+import "qrc:/MapLogic.js" as MapLogic
 import "qrc:/UserSession.js" as UserSession
 import "qrc:/Views/ViewsLogic.js" as ViewsLogic
 
@@ -14,8 +14,12 @@ Window {
     width: 640
     height: 960
 
-    Component.onCompleted: UserSession.tryLogin(false)
+    Component.onCompleted: UserSession.tryLogin(rootView.lamaSession, false)
     signal userSessionChanged()
+
+    property var lamaSession: UserSession.LAMA_SESSION
+    property alias modal: mainModal
+    property alias mainView: mainView
 
     StackView {
         id: mainView
@@ -26,7 +30,7 @@ Window {
     Views.Modal
     {
         id: mainModal
-        Component.onCompleted: UserSession.mainModal = mainModal
+        Component.onCompleted: rootView.lamaSession.mainModal = mainModal
     }
 
     function mainViewTo(name, prop) {
@@ -47,7 +51,8 @@ Window {
         }
     }
 
-    function mainViewBack() {
+    function mainViewBack()
+    {
         mainView.pop()
     }
 
@@ -58,6 +63,6 @@ Window {
 
     function resolveCurrentItinerary()
     {
-        mainView.get(0, false).resolveCurrentItinerary()
+        MapLogic.resolveCurrentItinerary()
     }
 }

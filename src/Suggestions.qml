@@ -8,8 +8,8 @@ import "qrc:/Views/ViewsLogic.js" as ViewsLogic
 Components.Background {
     id: waypointSuggestions
 
-    property var currentWaypoint: ViewsLogic.getPtFromIndex(UserSession.LAMA_USER_CURRENT_WAYPOINT_ID,
-                                                UserSession.LAMA_USER_CURRENT_ITINERARY)
+    property var currentWaypoint: ViewsLogic.getPtFromIndex(rootView.lamaSession.CURRENT_WAYPOINT_ID,
+                                                rootView.lamaSession.CURRENT_ITINERARY)
     Components.Header
     {
         id: header
@@ -108,7 +108,7 @@ Components.Background {
             centerText: "Validate"
             anchors.fill: parent
             onClicked: {
-                var id = UserSession.LAMA_USER_CURRENT_WAYPOINT_ID
+                var id = rootView.lamaSession.CURRENT_WAYPOINT_ID
                 var longitude = longitudeInput.text
                 var latitude = latitudeInput.text
                 var areCardinalsHere = longitude.length > 0 || latitude.length > 0
@@ -129,31 +129,31 @@ Components.Background {
                     --id;
                     if (areCardinalsHere)
                     {
-                        UserSession.LAMA_USER_CURRENT_ITINERARY[waypointKind][id]["longitude"] = longitude
-                        UserSession.LAMA_USER_CURRENT_ITINERARY[waypointKind][id]["latitude"] = latitude
+                        rootView.lamaSession.CURRENT_ITINERARY[waypointKind][id]["longitude"] = longitude
+                        rootView.lamaSession.CURRENT_ITINERARY[waypointKind][id]["latitude"] = latitude
                     }
-                    UserSession.LAMA_USER_CURRENT_ITINERARY[waypointKind][id]["address"] = addressInput.text
+                    rootView.lamaSession.CURRENT_ITINERARY[waypointKind][id]["address"] = addressInput.text
                 }
                 else
                 {
                     waypointKind = "departure"
                     if (areCardinalsHere)
                     {
-                        UserSession.LAMA_USER_CURRENT_ITINERARY[waypointKind]["longitude"] = longitude
-                        UserSession.LAMA_USER_CURRENT_ITINERARY[waypointKind]["latitude"] = latitude
+                        rootView.lamaSession.CURRENT_ITINERARY[waypointKind]["longitude"] = longitude
+                        rootView.lamaSession.CURRENT_ITINERARY[waypointKind]["latitude"] = latitude
                     }
-                    UserSession.LAMA_USER_CURRENT_ITINERARY[waypointKind]["address"] = addressInput.text
+                    rootView.lamaSession.CURRENT_ITINERARY[waypointKind]["address"] = addressInput.text
                 }
 
                 rootView.raiseUserSessionChanged()
-                var currentRoute = UserSession.LAMA_USER_CURRENT_ITINERARY
+                var currentRoute = rootView.lamaSession.CURRENT_ITINERARY
                 if ("favorite" in currentRoute && currentRoute["favorite"] === true)
                 {
-                    var idx = ViewsLogic.getIndexItineraryKnown(UserSession.LAMA_USER_KNOWN_ITINERARIES, currentRoute)
+                    var idx = ViewsLogic.getIndexItineraryKnown(rootView.lamaSession.KNOWN_ITINERARIES, currentRoute)
                     if (idx >= 0)
                     {
-                        UserSession.LAMA_USER_KNOWN_ITINERARIES[idx] = currentRoute;
-                        UserSession.saveCurrentSessionState()
+                        rootView.lamaSession.KNOWN_ITINERARIES[idx] = currentRoute;
+                        UserSession.saveSessionState(rootView.lamaSession)
                     }
                 }
                 rootView.mainViewBack();

@@ -4,7 +4,6 @@ import "qrc:/Controls/" as Controls
 import "qrc:/Constants.js" as Constants
 import "qrc:/UserSession.js" as UserSession
 import "qrc:/Views/ViewsLogic.js" as ViewsLogic
-import "qrc:/APILogic.js" as APILogic
 
 Components.Background {
 
@@ -84,16 +83,10 @@ Components.Background {
                         password: pass,
                         email: mail
                     }
-                    UserSession.LAMA_USER_IS_LOGGED = false
-                    UserSession.LAMA_USER_TOKEN = ""
-                    UserSession.LAMA_USER_PASSWORD = pass
+                    rootView.lamaSession.IS_LOGGED = false
+                    rootView.lamaSession.TOKEN = ""
+                    rootView.lamaSession.PASSWORD = pass
                     userServices.createUser(nickname, pass, mail, onRegistrationResult)
-                    //if (APILogic.requestAPI("POST", "/users/", jsonParams, onRegistrationResult, null) === false)
-                    //{
-                    //    mainModal.message = "Check your internet connection";
-                    //    mainModal.setLoadingState(false);
-                    //    mainModal.enableButton = true
-                    //}
                 }
                 else
                 {

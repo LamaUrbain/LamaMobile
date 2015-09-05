@@ -20,10 +20,10 @@ function checkPassword(pass, passConfirm)
 function getRandomString(length)
 {
     var text = "";
-    var charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-()[]";
+    var possibleChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-()[]";
 
     for( var i=0; i < length; i++ )
-        text += possible.charAt(Math.floor(Math.random() * charset.length));
+        text += possibleChars.charAt(Math.floor(Math.random() * possibleChars.length));
 
     return (text);
 }
@@ -37,7 +37,6 @@ function _isItineraryValid(itinerary)
 
 function isValueAtKeyValid(obj, key)
 {
-    console.log(obj)
     return (obj !== null
             && key in obj
             && obj[key] !== null)
@@ -74,7 +73,7 @@ function fillSponsors(listModel, knownSponsors)
     listModel.clear();
 
     for (var idx = 0; idx < knownSponsors.length; ++idx)
-            listModel.append({"sponsor": knownSponsors[idx]})
+            listModel.append({sponsor: knownSponsors[idx]})
 }
 
 function fillFavorites(listModel, knownItineraries)
@@ -109,7 +108,7 @@ function fillWaypoints(listModelId, itinerary)
 function getIndexItineraryKnown(knownIts, newIt)
 {
     if (!isValueAtKeyValid(newIt, "id"))
-        newIt['id'] = -(Math.round(Date.now() / 1000) % 100000000)
+        return (-1);
 
     var exists = false;
     for (var idx = 0; idx < knownIts.length; ++idx)
@@ -118,97 +117,45 @@ function getIndexItineraryKnown(knownIts, newIt)
     return (-1);
 }
 
-function spawnDeparturePopOver(mapItem, x, y, message)
+function spawnDeparturePopOver(mapItem, coord, message)
 {
-    spawnPopOver(mapItem, x, y, message, "departure")
+    spawnPopOver(mapItem, coord, message, "departure")
 }
 
-function spawnWaypointPopOver(mapItem, x, y, message)
+function spawnWaypointPopOver(mapItem, coord, message)
 {
-    spawnPopOver(mapItem, x, y, message, "waypoint")
+    spawnPopOver(mapItem, coord, message, "waypoint")
 }
 
-function spawnArrivalPopOver(mapItem, x, y, message)
+function spawnArrivalPopOver(mapItem, coord, message)
 {
-    spawnPopOver(mapItem, x, y, message, "arrival")
+    spawnPopOver(mapItem, coord, message, "arrival")
 }
 
-function spawnPopOver(mapItem, x, y, message, popType)
+function spawnPopOver(mapItem, coord, message, type)
 {
-    var coord = mapItem.toCoordinate(Qt.point(x, y));
-    if (coord.isValid === false)
-        console.log("Error converting points to coordinate");
+    var component = Qt.createComponent( "qrc:/Components/PopOver.qml" );
+    if(component.status !== Component.Ready)
+        console.log("Error:"
+                    + (component.status === Component.Error ? component.errorString() : "Component failure"));
     else
     {
-        var component = Qt.createComponent( "qrc:/Components/PopOver.qml" );
-        if(component.status !== Component.Ready)
-            console.debug("Error:"
-                          + (component.status === Component.Error ? component.errorString() : "Component failure"));
-        else
-        {
-            var pop = component.createObject(mapItem,
-                                             {
-                                                 "message": "loading",
-                                                 "coordinate": coord,
-                                                 "popOverType": popType,
-                                             });
+        var pop = component.createObject(mapItem,
+                                         {
+                                             "message": message,
+                                             "coordinate": coord,
+                                             "popOverType": type
+                                         });
 
-            var geocode = Qt.createQmlObject("import QtLocation 5.3; GeocodeModel {}", pop)
-            geocode.plugin = map.plugin;
-            geocode.query = coord;
-            geocode.update();
-
-            geocode.locationsChanged.connect(
-                        function ()
-                        {
-                            if (geocode.status !== GeocodeModel.Ready)
-                            {
-                                console.log("geomodel error: "+ geocode.errorString);
-                                return null;
-                            }
-                            if (geocode.count < 1)
-                            {
-                                console.log("not enought returned values ?");
-                                return null;
-                            }
-
-                            var loc = geocode.get(0);
-
-                            console.log("geocode model updated, got %1 response".arg(geocode.count));
-                            console.log("geocode: steet: %1".arg(loc.address.text))
-
-                            if (loc.address === null)
-                            {
-                                console.log("geocoding returned null result.");
-                                pop.destroy();
-                                return null;
-                            }
-
-                            console.log("geocoding sucessfull, seting address and add waypoint to query");
-                            pop.setAddress(loc.address);
-                            mainRouteQuery.addWaypoint(pop.coordinate);
-                            mainRoute.update();
-                        });
-
-            if (pop === null)
-                console.log("Error creating object ;)");
-            mapItem.addMapItem(pop);
-            return (pop)
-        }
+        if (pop === null)
+            console.log("Error creating object ;)");
+        return (pop)
     }
-    return (null);
 }
 
 function spawnModal(title, message)
 {
     mainModal.title = title
     mainModal.message = message
-    mainModal.visible = true
-}
-
-function spawnModalWithSource(title, source)
-{
-    mainModal.title = title
-    mainModal.modalSourceComponent = source
     mainModal.visible = true
 }

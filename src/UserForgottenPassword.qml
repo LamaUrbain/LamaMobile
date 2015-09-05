@@ -4,7 +4,6 @@ import "qrc:/Controls/" as Controls
 import "qrc:/Constants.js" as Constants
 import "qrc:/UserSession.js" as UserSession
 import "qrc:/Views/ViewsLogic.js" as ViewsLogic
-import "qrc:/APILogic.js" as APILogic
 
 Components.Background {
 
@@ -30,7 +29,7 @@ Components.Background {
             anchors.right: parent.right
             anchors.top: parent.top
             fieldName: "Username"
-            textFieldText: UserSession.LAMA_USER_USERNAME
+            textFieldText: rootView.lamaSession.USERNAME !== null ? rootView.lamaSession.USERNAME : ''
         }
         Components.FormEntry {
             id: emailForm
@@ -38,7 +37,7 @@ Components.Background {
             anchors.right: parent.right
             anchors.top: usernameForm.bottom
             fieldName: "Email"
-            textFieldText: UserSession.LAMA_USER_EMAIL
+            textFieldText: rootView.lamaSession.EMAIL !== null  ? rootView.lamaSession.EMAIL : ''
         }
 
     }
@@ -61,12 +60,7 @@ Components.Background {
                     mainModal.enableButton = false
                     mainModal.visible = true;
 
-                    if (APILogic.requestAPI("GET", "/users/" + nickname + "/", null, onGetUserResult, null) === false)
-                    {
-                        mainModal.message = "Check your internet connection";
-                        mainModal.setLoadingState(false);
-                        mainModal.enableButton = true
-                    }
+                    userServices.getUser(nickname, onGetUserResult)
                 }
                 else
                 {
@@ -80,35 +74,30 @@ Components.Background {
 
             function onGetUserResult(status, json)
             {
-                if (status === false)
+                if (status !== 0)
                 {
-                    mainModal.message = "Sorry, it seems your informations are incorrect."
+                    mainModal.message = "Sorry, it seems your this nickname does not exists."
                     mainModal.setLoadingState(false);
                     mainModal.enableButton = true;
                     navButton.acceptClick = true
                 }
                 else
                 {
-                    UserSession.LAMA_USER_PASSWORD = getRandomString(Constants.LAMA_PASSWORD_RANDOM_LENGTH)
-                    var params = {
-                        password: UserSession.LAMA_USER_PASSWORD,
-                        username: usernameForm.textFieldText
-                    }
-
-                    APILogic.requestAPI("PATCH", "/users/" + json["username"] + "/", params, onEditUserResult, null)
+                    rootView.lamaSession.PASSWORD = ViewsLogic.getRandomString(Constants.LAMA_PASSWORD_RANDOM_LENGTH)
+                    userServices.editUser(usernameForm.textFieldText, rootView.lamaSession.PASSWORD, rootView.lamaSession.EMAIL, onEditUserResult)
                 }
             }
 
             function onEditUserResult()
             {
-                if (status === true)
+                if (status !== 0)
                 {
-                    mainModal.message = "Your password has been reset to :\n" + UserSession.LAMA_USER_PASSWORD
+                    mainModal.message = "Your password has been reset to :\n" + rootView.lamaSession.PASSWORD
                     mainModal.onModalButtonClicked.connect(newPasswordSet_ClickedModal)
                 }
                 else
                 {
-                    UserSession.LAMA_USER_PASSWORD = ""
+                    rootView.lamaSession.PASSWORD = ""
                     mainModal.message = "Sorry, we could not reset your password."
                 }
                 mainModal.setLoadingState(false);

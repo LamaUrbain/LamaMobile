@@ -1,6 +1,6 @@
 TEMPLATE = app
 
-QT += qml quick network location
+QT += qml quick network location sql
 
 CONFIG += c++11
 
