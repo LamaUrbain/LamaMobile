@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import QtGraphicalEffects 1.0
 import "qrc:/Constants.js" as Constants
 
 Item {
@@ -24,22 +25,18 @@ Item {
     property alias pressed: area.pressed
     property real radius: 20
 
+    property var colorGradient: Gradient {
+        GradientStop { position: 0.0; color: Qt.lighter(root.color, 1.2)}
+        GradientStop { position: 1.0; color: root.color}
+    }
+
     Rectangle {
         anchors.fill: parent
         anchors.margins: 1
         color: Qt.darker(root.color, root.checked ? 1.1 : 1)
         opacity: root.hovered ? 0.5 : root.checked ? 0.9 : 1
         radius: parent.radius
-    }
-
-    Rectangle {
-        anchors.fill: parent
-        anchors.margins: 1
-        color: "transparent"
-        opacity: 1.4
-        border.width: 2
-        border.color: Qt.darker(root.color, root.checked ? 1.4 : 1.2)
-        radius: parent.radius
+        gradient: colorGradient
     }
 
     Image {
