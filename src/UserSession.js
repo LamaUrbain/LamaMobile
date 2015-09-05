@@ -94,7 +94,8 @@ function bootstrap_history(tx) {
     tx.executeSql(""
                   + "CREATE TABLE IF NOT EXISTS HISTORY ("
                       + "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,"
-                      + "history_term TEXT"
+                      + "history_term TEXT,"
+                      + "history_datetime TEXT"
                   + ");")
 }
 

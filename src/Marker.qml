@@ -24,6 +24,7 @@ Item {
     property alias iconSource: image.source
     property alias pressed: area.pressed
     property real radius: 20
+    property alias paintedHeight: label.paintedHeight
 
     property var colorGradient: Gradient {
         GradientStop { position: 0.0; color: Qt.lighter(root.color, 1.2)}

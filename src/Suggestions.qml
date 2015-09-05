@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.3
+import QtQuick.Layouts 1.1
 import "qrc:/Components/" as Components
 import "qrc:/Controls/" as Controls
 import "qrc:/UserSession.js" as UserSession
@@ -16,7 +17,15 @@ Components.Background {
         title: "Suggestions of places"
     }
 
-    Column {
+    ListModel {
+        id: suggestionsModel
+
+        Component.onCompleted: {
+            ViewsLogic.fillHistory(suggestionsModel, 4)
+        }
+    }
+
+    ColumnLayout {
         anchors.top: header.bottom
         anchors.left: parent.left
         anchors.right: parent.right
@@ -31,18 +40,24 @@ Components.Background {
             id: addressInput
             anchors.left: parent.left
             anchors.right: parent.right
-            height: parent.height * 0.1
+            Layout.preferredHeight: parent.height * 0.1
             placeholderText: "Address"
             Component.onCompleted:
             {
                 if (ViewsLogic.isValueAtKeyValid(currentWaypoint, "address") === true)
                     text = currentWaypoint["address"]
             }
+            onTextChanged: {
+                ViewsLogic.fillHistoryFiltered(suggestionsModel, addressInput.text, 4)
+            }
+            onAccepted: {
+                ViewsLogic.addToHistory(addressInput.text)
+            }
         }
 
         Rectangle
         {
-            height: parent.height * 0.1
+            Layout.preferredHeight: parent.height * 0.1
             anchors.left: parent.left
             anchors.right: parent.right
             color: "Transparent"
@@ -79,27 +94,25 @@ Components.Background {
             }
         }
 
-        Column {
-            id: choices
+        Component {
+            id: suggestionDelegate
+
+            Components.Marker {
+                id: suggestion
+                width: suggestionsView.width
+                height: suggestion.paintedHeight * 1.25
+
+                centerText: history_term
+            }
+        }
+
+        ListView {
+            id: suggestionsView
+            model: suggestionsModel
+            delegate: suggestionDelegate
+            Layout.fillHeight: true
             anchors.left: parent.left
             anchors.right: parent.right
-            height: parent.height * 0.55
-
-            Components.Marker {
-                id: sponsors
-                centerText: "Sponsored Interest Points"
-                anchors.left: parent.left
-                anchors.right: parent.right
-                height: parent.height * 0.25
-            }
-
-            Components.Marker {
-                id: history
-                centerText: "History"
-                anchors.left: parent.left
-                anchors.right: parent.right
-                height: parent.height * 0.25
-            }
         }
     }
 
