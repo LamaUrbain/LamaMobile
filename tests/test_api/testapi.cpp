@@ -377,7 +377,7 @@ void TestApi::testNoAuthEditItinerary()
     waiter.waitForDone();
 
     // Add "Porte d'Orléans" between Epitech and "Porte de Versailles"
-    _itineraryServices.addDestination(itineraryId, "48.823040, 2.325578", 1, [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
+    _itineraryServices.addDestination(itineraryId, "48.823040, 2.325578", 0, [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
     {
         QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 

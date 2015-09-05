@@ -103,7 +103,7 @@ void ItineraryServices::editItinerary(int id, QString name, QString departure, Q
 
 void ItineraryServices::addDestination(int id, QString destination, int position, ServicesBase::CallbackType callback)
 {
-    QUrl url(QString("%1/itineraries/destinations/%2").arg(serverAddress).arg(id));
+    QUrl url(QString("%1/itineraries/%2/destinations").arg(serverAddress).arg(id));
 
     QUrlQuery query;
     query.addQueryItem("destination", destination);
@@ -122,7 +122,7 @@ void ItineraryServices::addDestination(int id, QString destination, int position
 
 void ItineraryServices::editDestination(int id, int oldPosition, int newPosition, QString destination, ServicesBase::CallbackType callback)
 {
-    QUrl url(QString("%1/itineraries/destinations/%2/%3/").arg(serverAddress).arg(id).arg(oldPosition));
+    QUrl url(QString("%1/itineraries/%2/destinations/%3").arg(serverAddress).arg(id).arg(oldPosition));
 
     QUrlQuery query;
     if (!destination.isEmpty())
@@ -143,7 +143,7 @@ void ItineraryServices::editDestination(int id, int oldPosition, int newPosition
 
 void ItineraryServices::deleteDestination(int id, int position, ServicesBase::CallbackType callback)
 {
-    QUrl url(QString("%1/itineraries/%2/destinations/%3/").arg(serverAddress).arg(id).arg(position));
+    QUrl url(QString("%1/itineraries/%2/destinations/%3").arg(serverAddress).arg(id).arg(position));
 
     if (!UserServices::getToken().isEmpty())
     {
