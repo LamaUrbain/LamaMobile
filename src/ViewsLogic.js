@@ -1,3 +1,5 @@
+.import "qrc:/UserSession.js" as Session
+.import QtQml 2.2 as Qml
 
 var MinLength = 2 // dont know how to get it from the other JS
 
@@ -134,13 +136,13 @@ function spawnArrivalPopOver(mapItem, coord, message)
 
 function spawnPopOver(mapItem, coord, message, type)
 {
-    var component = Qt.createComponent( "qrc:/Components/PopOver.qml" );
-    if(component.status !== Component.Ready)
+    var cp = Qt.createComponent( "qrc:/Components/PopOver.qml" );
+    if(cp.status !== Qml.Component.Ready)
         console.log("Error:"
-                    + (component.status === Component.Error ? component.errorString() : "Component failure"));
+                    + (cp.status === Qml.Component.Error ? cp.errorString() : "Component failure"));
     else
     {
-        var pop = component.createObject(mapItem,
+        var pop = cp.createObject(mapItem,
                                          {
                                              "message": message,
                                              "coordinate": coord,
