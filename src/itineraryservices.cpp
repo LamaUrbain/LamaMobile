@@ -79,6 +79,46 @@ void ItineraryServices::createItinerary(QString name, QString departure, QString
     createItinerary(name, departure, destination, favorite, fromJSCallback(callback));
 }
 
+void ItineraryServices::createItineraryWith(QString name, QString departure, QStringList destinations, QString favorite, ServicesBase::CallbackType callback)
+{
+    CallbackType cb = [callback, destinations, this] (int errorType, QString jsonStr)
+    {
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        int id = obj.value("id").toInt(-1);
+
+        if (errorType == 0 && id != -1 && destinations.size() > 0)
+        {
+            std::shared_ptr<int> currentPos(new int(0));
+
+            CallbackType addDestinationCb;
+            addDestinationCb = [callback, id, currentPos, addDestinationCb, destinations, this] (int errorType, QString jsonStr) mutable
+            {
+                if (currentPos && errorType == 0)
+                {
+                    ++(*currentPos);
+                    if (*currentPos < destinations.size())
+                        addDestination(id, destinations.at(*currentPos), -1, addDestinationCb);
+                    else
+                        callback(errorType, jsonStr);
+                }
+                else
+                    callback(errorType, jsonStr);
+            };
+
+            addDestination(id, destinations.first(), -1, addDestinationCb);
+        }
+        else
+            callback(errorType, jsonStr);
+    };
+
+    createItinerary(name, departure, "", favorite, cb);
+}
+
+void ItineraryServices::createItineraryWith(QString name, QString departure, QStringList destinations, QString favorite, QJSValue callback)
+{
+    createItineraryWith(name, departure, destinations, favorite, fromJSCallback(callback));
+}
+
 void ItineraryServices::editItinerary(int id, QString name, QString departure, QString favorite, ServicesBase::CallbackType callback)
 {
     QUrl url(QString("%1/itineraries/%2/").arg(serverAddress).arg(id));
@@ -136,9 +176,7 @@ void ItineraryServices::overwriteItinerary(int id, QString name, QString departu
                                         {
                                             ++(*currentPos);
                                             if (*currentPos < destinations.size())
-                                            {
-                                                addDestination(id, destinations.first(), -1, addDestinationCb);
-                                            }
+                                                addDestination(id, destinations.at(*currentPos), -1, addDestinationCb);
                                             else
                                                 callback(errorType, jsonStr);
                                         }
