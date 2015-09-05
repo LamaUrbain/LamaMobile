@@ -65,6 +65,8 @@ private:
     QList<QPoint> *_itineraryTiles[20];
     QList<QPoint> _missing[20];
     int _itineraryId;
+
+    bool _isMoving;
 };
 
 #endif // MAPOVERLAYEXTENSION_H

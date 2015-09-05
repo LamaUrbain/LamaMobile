@@ -16,7 +16,8 @@ MapOverlayExtension::MapOverlayExtension(MapWidget *map)
       _departureIndicator(":/Images/departure.png"),
       _destinationIndicator(":/Images/arrival.png"),
       _selectedPoint(-1),
-      _itineraryId(-1)
+      _itineraryId(-1),
+      _isMoving(false)
 {
     for (int i = 0; i < 20; ++i)
         _itineraryTiles[i] = NULL;
@@ -313,6 +314,30 @@ void MapOverlayExtension::end(QPainter *painter)
 bool MapOverlayExtension::mousePressEvent(QMouseEvent *event)
 {
     if (_selectedPoint != -1)
+        return false;
+
+    _isMoving = false;
+
+    int point = pointAt(event->pos());
+
+    if (point != -1)
+        return true;
+
+    _selectedPoint = -1;
+    return false;
+}
+
+bool MapOverlayExtension::mouseReleaseEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event);
+
+    if (_isMoving)
+    {
+        _isMoving = false;
+        return false;
+    }
+
+    if (_selectedPoint != -1)
     {
         if (_selectedPoint < _points.size())
         {
@@ -341,26 +366,12 @@ bool MapOverlayExtension::mousePressEvent(QMouseEvent *event)
         return true;
     }
 
-    _selectedPoint = -1;
-    return false;
-}
-
-bool MapOverlayExtension::mouseReleaseEvent(QMouseEvent *event)
-{
-    Q_UNUSED(event);
-
-    if (_selectedPoint != -1)
-        return true;
-
     return false;
 }
 
 bool MapOverlayExtension::mouseMoveEvent(QMouseEvent *event)
 {
     Q_UNUSED(event);
-
-    if (_selectedPoint != -1)
-        return true;
-
+    _isMoving = true;
     return false;
 }
