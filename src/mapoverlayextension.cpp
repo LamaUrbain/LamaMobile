@@ -8,13 +8,13 @@
 #include "itineraryservices.h"
 #include "mapgetter.h"
 
-static const int indicatorHalfWidth = 24;
-static const int indicatorHeight = 48;
+static const int indicatorHalfWidth = 18;
+static const int indicatorHeight = 54;
 
 MapOverlayExtension::MapOverlayExtension(MapWidget *map)
     : MapExtension(map),
-      _indicator(":/Images/map_indicator.png"),
-      _selectedIndicator(":/Images/map_indicator_selected.png"),
+      _departureIndicator(":/Images/departure.png"),
+      _destinationIndicator(":/Images/arrival.png"),
       _selectedPoint(-1),
       _itineraryId(-1)
 {
@@ -298,7 +298,10 @@ void MapOverlayExtension::end(QPainter *painter)
     for (QList<PairPoint>::const_iterator it = _pending.constBegin(); it != _pending.constEnd(); ++it)
     {
         const QPoint &pos = (*it).first;
-        painter->drawPixmap(pos, (*it).second == _selectedPoint ? _selectedIndicator : _indicator);
+        painter->save();
+        painter->setOpacity((*it).second == _selectedPoint ? 0.7 : 1);
+        painter->drawPixmap(pos, (*it).second == 0 ? _departureIndicator : _destinationIndicator);
+        painter->restore();
     }
 
     quint8 scale = _map->getMapScale();
