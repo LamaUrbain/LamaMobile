@@ -14,9 +14,7 @@ Window {
     width: 640
     height: 960
 
-    Component.onCompleted: UserSession.tryLogin(rootView.lamaSession, false)
     signal userSessionChanged()
-
     signal triggerLogin(bool clearData)
     onTriggerLogin:
     {
@@ -73,4 +71,6 @@ Window {
     {
         UserSession.tryLogin(clear)
     }
+
+    Component.onCompleted: UserSession.tryLogin(false)
 }
