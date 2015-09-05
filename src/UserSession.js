@@ -78,60 +78,60 @@ var LAMA_SESSION =
 
 var mainModal;
 
-function createDB(db)
+function bootstrap_user(tx) {
+    tx.executeSql(""
+                  + "CREATE TABLE IF NOT EXISTS USER ("
+                      + "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,"
+                      + "user_name TEXT,"
+                      + "user_passwod TEXT,"
+                      + "user_email TEXT,"
+                      + "user_avatar TEXT,"
+                      + "user_knownroutes TEXT"
+                  + ");")
+}
+
+function bootstrap_history(tx) {
+    tx.executeSql(""
+                  + "CREATE TABLE IF NOT EXISTS HISTORY ("
+                      + "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,"
+                      + "history_term TEXT"
+                  + ");")
+}
+
+
+function createDBCallback(db)
 {
     if (db.version === '')
         db.changeVersion("", LAMA_LOCALDB_VERSION);
-    var columns =
-            [
-                {
-                    name: "id",
-                    type: "INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE"
-                },
-                {
-                    name: "user_name",
-                    type: "TEXT"
-                },
-                {
-                    name: "user_password",
-                    type: "TEXT"
-                },
-                {
-                    name: "user_email",
-                    type: "TEXT"
-                },
-                {
-                    name: "user_avatar",
-                    type: "TEXT"
-                },
-                {
-                    name: "user_knownroutes",
-                    type: "TEXT"
-                },
-            ]
 
-    var sqlStr = "CREATE TABLE IF NOT EXISTS " + LAMA_LOCALDB_TABLENAME + "(";
-    for (var idx = 0; idx < columns.length;)
-        sqlStr += columns[idx].name + " " + columns[idx].type + (((++idx) < columns.length) ? ", " : '');
-    sqlStr += ");"
     db.transaction(function (tx)
     {
-        console.log("Table creation...")
-        tx.executeSql(sqlStr)
-        console.log("Table created !")
+        console.log("bootstraping db")
+        var tables = [bootstrap_user, bootstrap_history]
+        for (var i = 0; i < tables.length; ++i)
+        {
+            console.log("[%1/%2]".arg(i + 1).arg(tables.length), tables[i].name)
+            tables[i](tx)
+        }
+        console.log("database bootstraped")
     });
-    console.log("Database created !")
     return (db);
 }
 
+var LAMA_DB_DESCRIPTOR = undefined
+
 function openDb()
 {
-    var db = Sql.LocalStorage.openDatabaseSync(LAMA_LOCALDB_NAME,
-                                         "",//LAMA_LOCALDB_VERSION,
-                                         LAMA_LOCALDB_DESC,
-                                         LAMA_LOCALDB_ESIZE,
-                                         createDB);
-     return (db);
+    if (LAMA_DB_DESCRIPTOR === undefined)
+    {
+        LAMA_DB_DESCRIPTOR =
+                Sql.LocalStorage.openDatabaseSync(LAMA_LOCALDB_NAME,
+                                                  "",//LAMA_LOCALDB_VERSION,
+                                                  LAMA_LOCALDB_DESC,
+                                                  LAMA_LOCALDB_ESIZE,
+                                                  createDBCallback);
+    }
+    return LAMA_DB_DESCRIPTOR;
 }
 
 function checkAndLoadFromSavedData(Session)
@@ -141,7 +141,7 @@ function checkAndLoadFromSavedData(Session)
     db.transaction(
         function(tx)
         {
-            var query = tx.executeSql('SELECT * FROM ' + LAMA_LOCALDB_TABLENAME + ';');
+            var query = tx.executeSql("SELECT * FROM " + LAMA_LOCALDB_TABLENAME + ";");
             if (query.rows.length > 0)
             {
                 var row = query.rows.item(0);
