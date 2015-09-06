@@ -11,9 +11,6 @@ import "qrc:/Constants.js" as Constants
 PieMenu {
     id: pieMenu
 
-    property int mouseX
-    property int mouseY
-
     style: PieMenuStyle {
         backgroundColor: Constants.LAMA_ORANGE
         selectionColor: Constants.LAMA_YELLOW
