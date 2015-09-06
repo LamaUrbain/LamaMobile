@@ -96,25 +96,16 @@ function bootstrap_user(tx) {
                   + ");")
 }
 
-function bootstrap_places(tx) {
+function bootstrap_history(tx) {
     tx.executeSql(""
-                  + "CREATE TABLE IF NOT EXISTS PLACES ("
-                      + "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,"
+                  + "CREATE TABLE IF NOT EXISTS HISTORY ("
+                      + "history_datetime TEXT,"
                       + "place_title TEXT,"
                       + "place_icon BLOB,"
                       + "place_name TEXT,"
                       + "place_latitude REAL,"
-                      + "place_longitude REAL"
-                  + ");")
-}
-
-function bootstrap_history(tx) {
-    tx.executeSql(""
-                  + "CREATE TABLE IF NOT EXISTS HISTORY ("
-                      + "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,"
-                      + "history_datetime TEXT,"
-                      + "history_place INTEGER,"
-                      + "FOREIGN KEY(history_place) REFERENCES PLACES(id)"
+                      + "place_longitude REAL,"
+                      + "PRIMARY KEY (place_longitude, place_latitude)"
                   + ");")
 }
 
@@ -130,7 +121,6 @@ function createDBCallback(db)
         var tables = [
                     bootstrap_pragma,
                     bootstrap_user,
-                    bootstrap_places,
                     bootstrap_history
                 ]
         for (var i = 0; i < tables.length; ++i)

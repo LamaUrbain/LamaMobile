@@ -161,7 +161,8 @@ Components.Background {
                     anchors.left: parent.left
                     anchors.top: parent.top
                     anchors.bottom: parent.bottom
-                    anchors.leftMargin: parent.width * 1/5
+                    anchors.leftMargin: parent.width * 1/8
+                    width: parent.width * 0.05
                     source: place["place_icon"]
                 }
 
@@ -169,8 +170,8 @@ Components.Background {
                 onClicked: {
                     choosenPlace = place
                     longitudeInput.text = choosenPlace["place_longitude"]
-                    latitudeInput.text = choosenPlace["place_latitude"]
-                    addressInput.text = choosenPlace["place_title"]
+                    latitudeInput.text  = choosenPlace["place_latitude"]
+                    addressInput.text   = choosenPlace["place_title"]
                 }
             }
         }

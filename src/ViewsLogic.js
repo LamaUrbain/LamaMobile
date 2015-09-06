@@ -175,7 +175,7 @@ function fillHistory(model, limit)
     var db = Session.openDb()
 
     db.readTransaction(function (tx) {
-        var tr =  "SELECT * from HISTORY INNER JOIN PLACES ON HISTORY.history_place = PLACES.id ORDER BY HISTORY.history_datetime LIMIT ?;"
+        var tr =  "SELECT * from HISTORY ORDER BY HISTORY.history_datetime LIMIT ?;"
         var rq = tx.executeSql(tr, [limit]);
 
         model.clear()
@@ -193,7 +193,7 @@ function fillHistoryFiltered(model, pattern, limit)
     var db = Session.openDb()
 
     db.readTransaction(function (tx) {
-        var tr = "SELECT * from HISTORY INNER JOIN PLACES ON HISTORY.history_place = PLACES.id WHERE PLACES.place_name LIKE ? ORDER BY HISTORY.history_datetime LIMIT ?;"
+        var tr = "SELECT * from HISTORY WHERE HISTORY.place_name LIKE ? ORDER BY HISTORY.history_datetime LIMIT ?;"
         var rq = tx.executeSql(tr, ["%%1%".arg(pattern), limit]);
 
         model.clear()
@@ -211,14 +211,12 @@ function addToHistory(place)
     var db = Session.openDb()
 
     db.transaction(function (tx){
-        var tr = "INSERT OR REPLACE INTO PLACES (place_title, place_icon, place_name, place_latitude, place_longitude) VALUES (?, ?, ?, ?, ?);";
+        var tr = "INSERT OR REPLACE INTO HISTORY (history_datetime, place_title, place_icon, place_name, place_latitude, place_longitude) VALUES (datetime('now'), ?, ?, ?, ?, ?);";
         var res = tx.executeSql(tr, [
                                     place["place_title"],
                                     place["place_icon"],
                                     place["place_name"],
                                     place["place_latitude"],
                                     place["place_longitude"]]);
-        tr = "INSERT OR REPLACE INTO HISTORY (history_datetime, history_place) VALUES (datetime('now'), ?);";
-        tx.executeSql(tr, [res.insertId])
     })
 }
