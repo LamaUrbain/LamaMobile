@@ -120,14 +120,8 @@ function createDBCallback(db)
     return (db);
 }
 
-/*
-    This file HAS to be stateless, dont ask questions, having a DB descriptor is useless since it's not saved
-
-    If you wanna know why is has to be stateless, test the application before commiting/pushing to see if
-    your modifications haven't broken what's already settled up [...]
- */
 function openDb()
-{
+{ // No need for descriptor in this case ;)
     return (Sql.LocalStorage.openDatabaseSync(LAMA_LOCALDB_NAME,
                                       "",//LAMA_LOCALDB_VERSION,
                                       LAMA_LOCALDB_DESC,
