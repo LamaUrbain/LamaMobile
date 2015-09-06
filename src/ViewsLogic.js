@@ -182,8 +182,8 @@ function fillHistory(model, limit)
         for (var i = 0; i < rq.rows.length; ++i)
         {
             var row = rq.rows.item(i)
-            console.debug("[%1/%2] history: ".arg(i + 1).arg(rq.rows.length), row.history_term)
-            model.append(row)
+            //console.debug("[%1/%2] history: ".arg(i + 1).arg(rq.rows.length), row.history_term)
+            model.append({'term': row['history_term']})
         }
     })
 }
@@ -200,8 +200,8 @@ function fillHistoryFiltered(model, pattern, limit)
         for (var i = 0; i < rq.rows.length; ++i)
         {
             var row = rq.rows.item(i)
-            console.debug("[%1/%2] history: ".arg(i + 1).arg(rq.rows.length), row.history_term)
-            model.append(row)
+            //console.debug("[%1/%2] history: ".arg(i + 1).arg(rq.rows.length), row.history_term)
+            model.append({'term': row['history_term']})
         }
     })
 }
