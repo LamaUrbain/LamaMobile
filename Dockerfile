@@ -1,7 +1,7 @@
 FROM ubuntu:precise
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y install python-software-properties
+RUN DEBIAN_FRONTEND=noninteractive apt-get -qq -y update && apt-get -y install python-software-properties
 RUN add-apt-repository --yes ppa:beineri/opt-qt541
-RUN DEBIAN_FRONTEND=noninteractive apt-get -qq -y update && apt-get -qq -y install build-essential qt54base qt54declarative libglu1-mesa-dev
+RUN DEBIAN_FRONTEND=noninteractive apt-get -qq -y update && apt-get -qq -y install build-essential qt54base qt54location qt54declarative libglu1-mesa-dev
 
 
 RUN groupadd lamaurbain && useradd -m lamaurbain -g lamaurbain
