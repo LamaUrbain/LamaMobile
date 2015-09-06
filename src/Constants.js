@@ -3,6 +3,8 @@ var LAMA_ORANGE = "#EA7B3D";
 var LAMA_BACKGROUND = Qt.lighter(LAMA_YELLOW, 1.5);
 var LAMA_POINTSIZE = 20.0;
 
+var LAMA_OSM_USERAGENT = "LamaUrbain"
+
 var LAMA_BUS_RESSOURCE = "qrc:/Assets/Images/6.png";
 var LAMA_TRAIN_RESSOURCE = "qrc:/Assets/Images/22.png";
 var LAMA_CAR_RESSOURCE = "qrc:/Assets/Images/6.png";

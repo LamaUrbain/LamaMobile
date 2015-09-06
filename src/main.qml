@@ -1,12 +1,17 @@
 import QtQuick 2.0
 import QtQuick.Window 2.1
 import QtQuick.Controls 1.3
+
 import "qrc:/Views" as Views
 import "qrc:/Components" as Components
 import "qrc:/Controls" as Controls
+
+import "qrc:/Constants.js" as Constants
 import "qrc:/MapLogic.js" as MapLogic
 import "qrc:/UserSession.js" as UserSession
 import "qrc:/Views/ViewsLogic.js" as ViewsLogic
+
+import QtLocation 5.3
 
 Window {
     id: rootView
@@ -36,6 +41,37 @@ Window {
     {
         id: mainModal
         Component.onCompleted: rootView.lamaSession.mainModal = mainModal
+    }
+
+    // Plugin for geocoding.
+    Plugin {
+        id: geoPlugin
+        name: "osm"
+        PluginParameter { name: "osm.useragent"; value: Constants.LAMA_OSM_USERAGENT }
+        Component.onCompleted: {
+            var features =  [
+                [Plugin.OnlinePlacesFeature, 'Online places is supported.'],
+                [Plugin.OfflinePlacesFeature,	'Offline places is supported.'],
+                [Plugin.SavePlaceFeature,	'Saving categories is supported.'],
+                [Plugin.RemovePlaceFeature,	'Removing or deleting places is supported.'],
+                [Plugin.PlaceRecommendationsFeature,	'Searching for recommended places similar to another place is supported.'],
+                [Plugin.SearchSuggestionsFeature,	'Search suggestions is supported.'],
+                [Plugin.LocalizedPlacesFeature,	'Supports returning localized place data.'],
+                [Plugin.NotificationsFeature,	'Notifications of place and category changes is supported.'],
+                [Plugin.PlaceMatchingFeature,	'Supports matching places from two different geo service providers.'],
+                [Plugin.AnyPlacesFeatures,	'Matches a geo service provider that provides any places features.']
+            ]
+            for (var i = 0; i < features.length; ++i)
+            {
+                var feat = features[i][0]
+                var diag = features[i][1]
+
+                if (geoPlugin.supportsPlaces(feat))
+                {
+                    console.log("%1:".arg(geoPlugin.name), diag);
+                }
+            }
+        }
     }
 
     function mainViewTo(name, prop)
