@@ -24,8 +24,6 @@ IconButton
             anchors.rightMargin: parent.width * 0.005
 
             Components.TextField {
-                id: pouet
-
                 anchors.left: parent.left
                 anchors.right: parent.right
 
@@ -33,10 +31,12 @@ IconButton
                 anchors.rightMargin: parent.width * 0.01
 
                 Layout.preferredHeight: parent.height * 0.1
-                placeholderText:"http://api.lama/share/" + encodeURIComponent(itinerary["owner"]) + "/" + encodeURIComponent(itinerary["name"])
                 readOnly: true
-                Component.onCompleted: {
+                Component.onCompleted:
+                {
                     selectAll()
+                    if (itinerary !== null)
+                        text = "http://api.lama/share/" + encodeURIComponent(itinerary["owner"]) + "/" + encodeURIComponent(itinerary["name"])
                 }
             }
 

@@ -3,7 +3,6 @@ import QtQuick.Layouts 1.1
 import QtQuick.Controls 1.3
 import "qrc:/Controls/"
 import "qrc:/Constants.js" as Constants
-import "qrc:/UserSession.js" as UserSession
 
 RowLayout {
     property alias favoriteDescription: favoriteText.centerText

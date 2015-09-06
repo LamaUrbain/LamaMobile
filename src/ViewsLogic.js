@@ -1,4 +1,3 @@
-.import "qrc:/UserSession.js" as Session
 .import QtQml 2.2 as Qml
 
 var MinLength = 2 // dont know how to get it from the other JS
@@ -95,7 +94,7 @@ function fillWaypoints(listModelId, itinerary)
         listModelId.append({waypointData: itinerary.departure})
     else
     {
-        listModelId.append({waypointData: {address: "Departure"}})
+        listModelId.append({waypointData: {address: "Departure", latitude: null, longitude: null}})
         return;
     }
 
@@ -106,6 +105,19 @@ function fillWaypoints(listModelId, itinerary)
         for (var idx = 0; idx < waypoints.length; ++idx)
             listModelId.append({waypointData: waypoints[idx]})
     }
+}
+
+function getAddressPlaceholder(waypointData)
+{
+    var address = waypointData.address;
+    var latitude = waypointData.latitude;
+    var longitude = waypointData.longitude;
+
+    if (latitude && longitude)
+        return latitude + ", " + longitude;
+    if (address)
+        return address;
+    return "New Waypoint";
 }
 
 function getIndexItineraryKnown(knownIts, newIt)
@@ -137,6 +149,7 @@ function spawnArrivalPopOver(mapItem, coord, message)
 
 function spawnPopOver(mapItem, coord, message, type)
 {
+    console.log("YO")
     var cp = Qt.createComponent( "qrc:/Components/PopOver.qml" );
     if(cp.status !== Qml.Component.Ready)
         console.log("Error:"
@@ -168,55 +181,4 @@ function spawnModalWithSource(title, source)
     mainModal.title = title
     mainModal.modalSourceComponent = source
     mainModal.visible = true
-}
-
-function fillHistory(model, limit)
-{
-    var db = Session.openDb()
-
-    db.readTransaction(function (tx) {
-        var tr =  "SELECT * from HISTORY ORDER BY HISTORY.history_datetime LIMIT ?;"
-        var rq = tx.executeSql(tr, [limit]);
-
-        model.clear()
-        for (var i = 0; i < rq.rows.length; ++i)
-        {
-            var row = rq.rows.item(i)
-            console.debug("[%1/%2] history: ".arg(i + 1).arg(rq.rows.length), row.place_name)
-            model.append({'place': row})
-        }
-    })
-}
-
-function fillHistoryFiltered(model, pattern, limit)
-{
-    var db = Session.openDb()
-
-    db.readTransaction(function (tx) {
-        var tr = "SELECT * from HISTORY WHERE HISTORY.place_name LIKE ? ORDER BY HISTORY.history_datetime LIMIT ?;"
-        var rq = tx.executeSql(tr, ["%%1%".arg(pattern), limit]);
-
-        model.clear()
-        for (var i = 0; i < rq.rows.length; ++i)
-        {
-            var row = rq.rows.item(i)
-            model.append({'place': row})
-        }
-    })
-}
-
-
-function addToHistory(place)
-{
-    var db = Session.openDb()
-
-    db.transaction(function (tx){
-        var tr = "INSERT OR REPLACE INTO HISTORY (history_datetime, place_title, place_icon, place_name, place_latitude, place_longitude) VALUES (datetime('now'), ?, ?, ?, ?, ?);";
-        var res = tx.executeSql(tr, [
-                                    place["place_title"],
-                                    place["place_icon"],
-                                    place["place_name"],
-                                    place["place_latitude"],
-                                    place["place_longitude"]]);
-    })
 }

@@ -3,7 +3,6 @@ import QtQuick.Controls 1.3
 import QtQuick.Layouts 1.1
 import "qrc:/Components/" as Components
 import "qrc:/Controls/" as Controls
-import "qrc:/UserSession.js" as UserSession
 import "qrc:/Views/ViewsLogic.js" as ViewsLogic
 
 Components.Background {

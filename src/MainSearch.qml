@@ -4,7 +4,6 @@ import QtQuick.Layouts 1.1
 import "qrc:/Components/" as Components
 import "qrc:/Controls/" as Controls
 import "qrc:/Constants.js" as Constants
-import "qrc:/UserSession.js" as UserSession
 import "qrc:/Views/ViewsLogic.js" as ViewsLogic
 
 Components.Background {
@@ -73,7 +72,7 @@ Components.Background {
             model: waypointsModel
             delegate: Components.Waypoint {
                 height: search.height * 0.09
-                waypointDescription: waypointData.address === null ? 'Departure' : waypointData.address
+                waypointDescription: ViewsLogic.getAddressPlaceholder(waypointData)
                 linkedWaypointId: index
                 deletable: index == 0 ? false : true
                 onDeleted:
@@ -107,14 +106,14 @@ Components.Background {
             Controls.ShareButton {
                 id: shareButton
                 Layout.fillWidth: true
-                itinerary: UserSession.LAMA_USER_CURRENT_ITINERARY
+                itinerary: rootView.lamaSession.LAMA_USER_CURRENT_ITINERARY
             }
 
             Controls.IconButton {
                 property bool saved: false
 
                 onClicked: {
-                    rootView.lamaSession.CURRENT_ITINERARY["name"] = nameInput.text;
+                    console.log(rootView.lamaSession.KNOWN_ITINERARIES)
 
                     rootView.lamaSession.CURRENT_ITINERARY["favorite"] = !rootView.lamaSession.CURRENT_ITINERARY["favorite"]
                     var isFavorited = rootView.lamaSession.CURRENT_ITINERARY["favorite"]
@@ -137,7 +136,7 @@ Components.Background {
                     }
 
                     rootView.raiseUserSessionChanged()
-                    UserSession.saveSessionState(rootView.lamaSession)
+                    rootView.saveSessionState(rootView.lamaSession)
                     // edit itineraryServices in raiseusersessionchanged
                     //itineraryServices.editItinerary(int id, QString name, QString departure, QString favorite, ServicesBase::CallbackType callback);
                 }

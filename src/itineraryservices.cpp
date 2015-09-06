@@ -2,7 +2,6 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QUrlQuery>
-#include <memory>
 #include "itineraryservices.h"
 #include "userservices.h"
 
@@ -89,23 +88,7 @@ void ItineraryServices::createItineraryWith(QString name, QString departure, QSt
         if (errorType == 0 && id != -1 && destinations.size() > 0)
         {
             std::shared_ptr<int> currentPos(new int(0));
-
-            CallbackType addDestinationCb;
-            addDestinationCb = [callback, id, currentPos, addDestinationCb, destinations, this] (int errorType, QString jsonStr) mutable
-            {
-                if (currentPos && errorType == 0)
-                {
-                    ++(*currentPos);
-                    if (*currentPos < destinations.size())
-                        addDestination(id, destinations.at(*currentPos), -1, addDestinationCb);
-                    else
-                        callback(errorType, jsonStr);
-                }
-                else
-                    callback(errorType, jsonStr);
-            };
-
-            addDestination(id, destinations.first(), -1, addDestinationCb);
+            addDestination(id, destinations.first(), -1, _addDestinationCallback(callback, id, currentPos, destinations));
         }
         else
             callback(errorType, jsonStr);
@@ -152,55 +135,7 @@ void ItineraryServices::overwriteItinerary(int id, QString name, QString departu
         {
             int oldDestinationsCount = obj.value("destinations").toArray().size();
             std::shared_ptr<int> destinationsCountdown(new int(oldDestinationsCount));
-
-            CallbackType clearCb;
-            clearCb = [callback, id, destinationsCountdown, clearCb, name, departure, destinations, favorite, this] (int errorType, QString jsonStr) mutable
-            {
-                if (destinationsCountdown && errorType == 0)
-                {
-                    --(*destinationsCountdown);
-                    if (*destinationsCountdown <= 0)
-                    {
-                        CallbackType editCb = [callback, id, destinations, this] (int errorType, QString jsonStr) mutable
-                        {
-                            if (errorType == 0)
-                            {
-                                if (destinations.size() > 0)
-                                {
-                                    std::shared_ptr<int> currentPos(new int(0));
-
-                                    CallbackType addDestinationCb;
-                                    addDestinationCb = [callback, id, currentPos, addDestinationCb, destinations, this] (int errorType, QString jsonStr) mutable
-                                    {
-                                        if (currentPos && errorType == 0)
-                                        {
-                                            ++(*currentPos);
-                                            if (*currentPos < destinations.size())
-                                                addDestination(id, destinations.at(*currentPos), -1, addDestinationCb);
-                                            else
-                                                callback(errorType, jsonStr);
-                                        }
-                                        else
-                                            callback(errorType, jsonStr);
-                                    };
-
-                                    addDestination(id, destinations.first(), -1, addDestinationCb);
-                                }
-                                else
-                                    callback(errorType, jsonStr);
-                            }
-                            else
-                                callback(errorType, jsonStr);
-                        };
-
-                        editItinerary(id, name, departure, favorite, editCb);
-                    }
-                    else
-                        deleteDestination(id, 0, clearCb);
-                }
-                else
-                    callback(errorType, jsonStr);
-            };
+            CallbackType clearCb = _removeDestinationCallback(callback, id, destinationsCountdown, name, departure, destinations, favorite);
 
             if (oldDestinationsCount > 0)
                 deleteDestination(id, 0, clearCb);
@@ -307,4 +242,63 @@ void ItineraryServices::getItineraryTiles(int id, int zoomLevel, ServicesBase::C
 void ItineraryServices::getItineraryTiles(int id, int zoomLevel, QJSValue callback)
 {
     getItineraryTiles(id, zoomLevel, fromJSCallback(callback));
+}
+
+ServicesBase::CallbackType ItineraryServices::_addDestinationCallback(CallbackType callback, int id, std::shared_ptr<int> currentPos, QStringList destinations)
+{
+    CallbackType cb = [callback, id, currentPos, destinations, this] (int errorType, QString jsonStr) mutable
+    {
+        if (currentPos && errorType == 0)
+        {
+            ++(*currentPos);
+            if (*currentPos < destinations.size())
+            {
+                QString dest = destinations.at(*currentPos);
+                addDestination(id, dest, -1, _addDestinationCallback(callback, id, currentPos, destinations));
+            }
+            else
+                callback(errorType, jsonStr);
+        }
+        else
+            callback(errorType, jsonStr);
+    };
+
+    return cb;
+}
+
+ServicesBase::CallbackType ItineraryServices::_removeDestinationCallback(CallbackType callback, int id, std::shared_ptr<int> destinationsCountdown, QString name, QString departure, QStringList destinations, QString favorite)
+{
+    CallbackType cb = [callback, id, destinationsCountdown, name, departure, destinations, favorite, this] (int errorType, QString jsonStr) mutable
+    {
+        if (destinationsCountdown && errorType == 0)
+        {
+            --(*destinationsCountdown);
+            if (*destinationsCountdown <= 0)
+            {
+                CallbackType editCb = [callback, id, destinations, this] (int errorType, QString jsonStr) mutable
+                {
+                    if (errorType == 0)
+                    {
+                        if (destinations.size() > 0)
+                        {
+                            std::shared_ptr<int> currentPos(new int(0));
+                            addDestination(id, destinations.first(), -1, _addDestinationCallback(callback, id, currentPos, destinations));
+                        }
+                        else
+                            callback(errorType, jsonStr);
+                    }
+                    else
+                        callback(errorType, jsonStr);
+                };
+
+                editItinerary(id, name, departure, favorite, editCb);
+            }
+            else
+                deleteDestination(id, 0, _removeDestinationCallback(callback, id, destinationsCountdown, name, departure, destinations, favorite));
+        }
+        else
+            callback(errorType, jsonStr);
+    };
+
+    return cb;
 }

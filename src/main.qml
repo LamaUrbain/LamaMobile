@@ -2,6 +2,8 @@ import QtQuick 2.0
 import QtQuick.Window 2.1
 import QtQuick.Controls 1.3
 
+import QtPositioning 5.3
+
 import "qrc:/Views" as Views
 import "qrc:/Components" as Components
 import "qrc:/Controls" as Controls
@@ -40,7 +42,10 @@ Window {
     Views.Modal
     {
         id: mainModal
-        Component.onCompleted: rootView.lamaSession.mainModal = mainModal
+        Component.onCompleted:
+        {
+            //testing
+        }
     }
 
     // Plugin for geocoding.
@@ -113,5 +118,28 @@ Window {
         UserSession.tryLogin(rootView, clear)
     }
 
-    Component.onCompleted: tryLogin(false)
+    function saveSessionState()
+    {
+        UserSession.saveSessionState()
+    }
+
+    function fillHistory(model, limit)
+    {
+        UserSession.fillHistory(model, limit)
+    }
+
+    function addToHistory(term)
+    {
+        UserSession.addToHistory(term)
+    }
+
+    function fillHistoryFiltered(model, pattern, limit)
+    {
+        UserSession.fillHistoryFiltered(model, pattern, limit)
+    }
+
+    Component.onCompleted:
+    {
+        UserSession.tryLogin(false)
+    }
 }

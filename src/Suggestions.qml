@@ -7,7 +7,6 @@ import QtLocation 5.3
 
 import "qrc:/Components/" as Components
 import "qrc:/Controls/" as Controls
-import "qrc:/UserSession.js" as UserSession
 import "qrc:/Views/ViewsLogic.js" as ViewsLogic
 
 Components.Background {
@@ -76,7 +75,7 @@ Components.Background {
         id: suggestionsModel
 
         Component.onCompleted: {
-            ViewsLogic.fillHistory(suggestionsModel, 4)
+            rootView.fillHistory(suggestionsModel, 4)
         }
     }
 
@@ -106,7 +105,10 @@ Components.Background {
 
             onTextChanged: {
                 suggestionPlace.searchTerm = addressInput.text
-                ViewsLogic.fillHistoryFiltered(suggestionsModel, addressInput.text, 4)
+
+                latitudeInput.enabled = (text.length === 0)
+                longitudeInput.enabled = latitudeInput.enabled
+                rootView.fillHistoryFiltered(suggestionsModel, addressInput.text, 4)
             }
         }
 
@@ -121,10 +123,15 @@ Components.Background {
             {
                 id: latitudeInput
                 width: parent.width * 0.495
-                anchors.right: parent.right
+                anchors.left: parent.left
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
                 placeholderText: "Latitude"
+                onTextChanged:
+                {
+                    addressInput.enabled = (text.length === 0 && longitudeInput.length === 0)
+                }
+
                 Component.onCompleted:
                 {
                     if (ViewsLogic.isValueAtKeyValid(currentWaypoint, "latitude") === true)
@@ -136,10 +143,14 @@ Components.Background {
             {
                 id: longitudeInput
                 width: parent.width * 0.495
-                anchors.left: parent.left
+                anchors.right: parent.right
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
                 placeholderText: "Longitude"
+                onTextChanged:
+                {
+                    addressInput.enabled = (text.length === 0 && latitudeInput.length === 0)
+                }
                 Component.onCompleted:
                 {
                     if (ViewsLogic.isValueAtKeyValid(currentWaypoint, "longitude") === true)
@@ -191,7 +202,7 @@ Components.Background {
             centerText: "Validate"
             anchors.fill: parent
             onClicked: {
-                ViewsLogic.addToHistory(choosenPlace);
+                rootView.addToHistory(choosenPlace);
 
                 var id = rootView.lamaSession.CURRENT_WAYPOINT_ID
                 var longitude = longitudeInput.text
@@ -238,7 +249,7 @@ Components.Background {
                     if (idx >= 0)
                     {
                         rootView.lamaSession.KNOWN_ITINERARIES[idx] = currentRoute;
-                        UserSession.saveSessionState(rootView.lamaSession)
+                        rootView.saveSessionState(rootView.lamaSession)
                     }
                 }
                 rootView.mainViewBack();

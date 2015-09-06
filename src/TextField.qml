@@ -20,6 +20,10 @@ TextField {
             border.width: 1
             border.color: Constants.LAMA_YELLOW
             opacity: 0.9
+            Component.onCompleted:
+            {
+                textField.enabledChanged.connect(function () { color = textField.enabled ? "#FFF" : "#DDD" });
+            }
         }
     }
 }

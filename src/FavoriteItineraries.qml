@@ -3,7 +3,6 @@ import QtQuick.Controls 1.3
 import QtQuick.Layouts 1.1
 import "qrc:/Components/" as Components
 import "qrc:/Controls/" as Controls
-import "qrc:/UserSession.js" as UserSession
 import "qrc:/Views/ViewsLogic.js" as ViewsLogic
 
 Components.Background {
@@ -58,7 +57,7 @@ Components.Background {
                 onDeleted: {
                     favoriteModel.remove(index)
                     rootView.lamaSession.KNOWN_ITINERARIES[index]["favorite"] = false
-                    UserSession.saveSessionState(rootView.lamaSession)
+                    rootView.saveSessionState(rootView.lamaSession)
                 }
             }
         }

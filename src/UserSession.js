@@ -1,4 +1,3 @@
-.pragma library // Statefull
 .import QtQuick.LocalStorage 2.0 as Sql
 
 var LAMA_LOCALDB_NAME = "LamaLocalDB"
@@ -6,6 +5,12 @@ var LAMA_LOCALDB_TABLENAME = "USER"
 var LAMA_LOCALDB_VERSION = "1.0"
 var LAMA_LOCALDB_DESC = "The llama urbain DB"
 var LAMA_LOCALDB_ESIZE = 1 * 1024 * 1024
+
+var LAMA_USERCOLUMN_USERNAME = "user_name"
+var LAMA_USERCOLUMN_PASSWORD = "user_password"
+var LAMA_USERCOLUMN_EMAIL = "user_email"
+var LAMA_USERCOLUMN_AVATAR = "user_avatar"
+var LAMA_USERCOLUMN_KNOWN_ITINERARIES = "user_knownroutes"
 
 var LAMA_SESSION =
 {
@@ -39,16 +44,16 @@ var LAMA_SESSION =
             favorite: true,
             departure:
             {
-                address: '26 Rue du bailly',
-                latitude: 2.355989,
-                longitude: 48.912903
+                address: null,
+                latitude: 48.912903,
+                longitude: 2.355989
             },
             destinations:
             [
                 {
-                    address: 'ARROW ECS',
-                    latitude: 2.256769,
-                    longitude: 48.893592
+                    address: null,
+                    latitude: 48.893592,
+                    longitude: 2.256769
                 }
             ]
         },
@@ -60,16 +65,16 @@ var LAMA_SESSION =
             favorite: false,
             departure:
             {
-                address: 'Sex Shop',
-                latitude: 2.355989,
-                longitude: 48.912903
+                address: null,
+                latitude: 48.912903,
+                longitude: 2.355989
             },
             destinations:
             [
                 {
-                    address: 'Dildo Playground',
-                    latitude: 2.256769,
-                    longitude: 48.893592
+                    address: null,
+                    latitude: 48.893592,
+                    longitude: 2.256769
                 }
             ]
         }
@@ -85,14 +90,13 @@ function bootstrap_pragma(tx) {
 }
 
 function bootstrap_user(tx) {
-    tx.executeSql(""
-                  + "CREATE TABLE IF NOT EXISTS USER ("
+    tx.executeSql( "CREATE TABLE IF NOT EXISTS USER ("
                       + "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,"
-                      + "user_name TEXT,"
-                      + "user_passwod TEXT,"
-                      + "user_email TEXT,"
-                      + "user_avatar TEXT,"
-                      + "user_knownroutes TEXT"
+                      + LAMA_USERCOLUMN_USERNAME + " TEXT,"
+                      + LAMA_USERCOLUMN_PASSWORD + " TEXT,"
+                      + LAMA_USERCOLUMN_EMAIL + " TEXT,"
+                      + LAMA_USERCOLUMN_AVATAR + " TEXT,"
+                      + LAMA_USERCOLUMN_KNOWN_ITINERARIES + " TEXT"
                   + ");")
 }
 
@@ -133,20 +137,19 @@ function createDBCallback(db)
     return (db);
 }
 
-var LAMA_DB_DESCRIPTOR = undefined
+/*
+    This file HAS to be stateless, dont ask questions, having a DB descriptor is useless since it's not saved
 
+    If you wanna know why is has to be stateless, test the application before commiting/pushing to see if
+    your modifications haven't broken what's already settled up [...]
+ */
 function openDb()
 {
-    if (LAMA_DB_DESCRIPTOR === undefined)
-    {
-        LAMA_DB_DESCRIPTOR =
-                Sql.LocalStorage.openDatabaseSync(LAMA_LOCALDB_NAME,
-                                                  "",//LAMA_LOCALDB_VERSION,
-                                                  LAMA_LOCALDB_DESC,
-                                                  LAMA_LOCALDB_ESIZE,
-                                                  createDBCallback);
-    }
-    return LAMA_DB_DESCRIPTOR;
+    return (Sql.LocalStorage.openDatabaseSync(LAMA_LOCALDB_NAME,
+                                      "",//LAMA_LOCALDB_VERSION,
+                                      LAMA_LOCALDB_DESC,
+                                      LAMA_LOCALDB_ESIZE,
+                                      createDBCallback));
 }
 
 function checkAndLoadFromSavedData()
@@ -160,15 +163,15 @@ function checkAndLoadFromSavedData()
             if (query.rows.length > 0)
             {
                 var row = query.rows.item(0);
-                if (row.user_name.length > 0)
+                if (row[LAMA_USERCOLUMN_USERNAME].length > 0)
                     rootView.lamaSession.USERNAME = row.user_name.replace(/'/g, '"')
-                if (row.user_password.length > 0)
+                if (row[LAMA_USERCOLUMN_PASSWORD].length > 0)
                     rootView.lamaSession.PASSWORD = row.user_password.replace(/'/g, '"')
-                if (row.user_knownroutes.length > 0)
+                if (row[LAMA_USERCOLUMN_EMAIL].length > 0)
                     rootView.lamaSession.KNOWN_ITINERARIES = JSON.parse(row.user_knownroutes.replace(/'/g, '"'))
-                if (row.user_email.length > 0)
+                if (row[LAMA_USERCOLUMN_AVATAR].length > 0)
                     rootView.lamaSession.EMAIL = row.user_email.replace(/'/g, '"')
-                if (row.user_avatar.length > 0)
+                if (row[LAMA_USERCOLUMN_KNOWN_ITINERARIES].length > 0)
                     rootView.lamaSession.AVATAR = row.user_avatar.replace(/'/g, '"')
                 console.log("Offline data loaded !")
             }
@@ -206,28 +209,28 @@ function saveSessionState()
     db.transaction(function (tx)
     {
         var columns =
-                [
-                    {
-                        name: "user_name",
-                        value: rootView.lamaSession.USERNAME
-                    },
-                    {
-                        name: "user_password",
-                        value: rootView.lamaSession.PASSWORD
-                    },
-                    {
-                        name: "user_email",
-                        value: rootView.lamaSession.EMAIL
-                    },
-                    {
-                        name: "user_avatar",
-                        value: rootView.lamaSession.AVATAR
-                    },
-                    {
-                        name: "user_knownroutes",
-                        value: JSON.stringify(rootView.lamaSession.KNOWN_ITINERARIES)
-                    },
-                ]
+        [
+            {
+                name: LAMA_USERCOLUMN_USERNAME,
+                value: rootView.lamaSession.USERNAME
+            },
+            {
+                name: LAMA_USERCOLUMN_PASSWORD,
+                value: rootView.lamaSession.PASSWORD
+            },
+            {
+                name: LAMA_USERCOLUMN_EMAIL,
+                value: rootView.lamaSession.EMAIL
+            },
+            {
+                name: LAMA_USERCOLUMN_AVATAR,
+                value: rootView.lamaSession.AVATAR
+            },
+            {
+                name: LAMA_USERCOLUMN_KNOWN_ITINERARIES,
+                value: JSON.stringify(rootView.lamaSession.KNOWN_ITINERARIES)
+            },
+        ]
         var sqlStr = "INSERT OR REPLACE INTO USER (id, user_name, user_password, user_email, user_avatar, user_knownroutes) VALUES (1, ";
         var idx = 0;
         var val = '';
@@ -247,10 +250,10 @@ function saveSessionState()
         } );
 }
 
-function tryLogin(rootId, clearPreviousData)
+function tryLogin(clearPreviousData)
 {
-    if (rootId.lamaSession.TOKEN !== null &&
-        rootId.lamaSession.TOKEN.length > 0)
+    if (rootView.lamaSession.TOKEN !== null &&
+        rootView.lamaSession.TOKEN.length > 0)
         deleteCurrentToken()
 
     if (clearPreviousData)
@@ -258,36 +261,36 @@ function tryLogin(rootId, clearPreviousData)
     else
         checkAndLoadFromSavedData()
 
-    if (rootId.lamaSession.USERNAME === null ||
-        rootId.lamaSession.PASSWORD === null)
+    if (rootView.lamaSession.USERNAME === null ||
+        rootView.lamaSession.PASSWORD === null)
     {
-        rootId.lamaSession.USERNAME = null // Paranoia
-        rootId.lamaSession.PASSWORD = null // Paranoia
+        rootView.lamaSession.USERNAME = null // Paranoia
+        rootView.lamaSession.PASSWORD = null // Paranoia
         return;
     }
 
-    loginAndCreateToken(rootID);
+    loginAndCreateToken(rootView);
 }
 
-function loginAndCreateToken(rootId, callback)
+function loginAndCreateToken(rootView, callback)
 {
-    userServices.createToken(rootId.lamaSession.USERNAME, rootId.lamaSession.PASSWORD, function (success, userInfos)
+    userServices.createToken(rootView.lamaSession.USERNAME, rootView.lamaSession.PASSWORD, function (success, userInfos)
     {
         if (success === false || userInfos === null)
         {
-            rootId.lamaSession.USERNAME = null
-            rootId.lamaSession.PASSWORD = null
-            mainModal.title = "No internet connexion"
-            mainModal.message = "Please check your connectivity to the internet.\n"
+            rootView.lamaSession.USERNAME = null
+            rootView.lamaSession.PASSWORD = null
+            rootView.modal.title = "No internet connexion"
+            rootView.modal.message = "Please check your connectivity to the internet.\n"
                                 + "once it's done you shall restart the application."
-            mainModal.setLoadingState(false)
-            mainModal.enableButton = true
+            rootView.modal.setLoadingState(false)
+            rootView.modal.enableButton = true
         }
         else
         {
-            rootId.lamaSession.IS_LOGGED = true
-            rootId.lamaSession.TOKEN = userInfos.token
-            rootId.lamaSession.IS_LOGGED = true
+            rootView.lamaSession.IS_LOGGED = true
+            rootView.lamaSession.TOKEN = userInfos.token
+            rootView.lamaSession.IS_LOGGED = true
             loadItineraries()
             getFurtherUserDetails()
         }
@@ -306,23 +309,77 @@ function loadItineraries()
     itineraryServices.getItineraries(null, rootView.lamaSession.USERNAME, "true", "",
                                      function (success, userRoutes)
     {
-        if (success === false || userRoutes === null)
+        if (success !== 0 || userRoutes === null
+            || typeof(userRoutes) !== "object" || !(userRoutes instanceof Array))
         {
-            mainModal.title = "No stable internet connexion"
-            mainModal.message = "Please check your connectivity to the internet.\n"
+            rootView.modal.title = "No stable internet connexion"
+            rootView.modal.message = "Please check your connectivity to the internet.\n"
                                 + "once it's done you shall restart the application.\n\n"
                                 + "We've been able to connect you but not gather your settings."
-            mainModal.setLoadingState(false)
-            mainModal.enableButton = true
+            rootView.modal.setLoadingState(false)
+            rootView.modal.enableButton = true
         }
         else
         {
+
             rootView.lamaSession.KNOWN_ITINERARIES = userRoutes
-            mainModal.message = "You've successfully logged in !"
-            mainModal.setLoadingState(false)
-            mainModal.enableButton = true
+            rootView.modal.message = "You've successfully logged in !"
+            rootView.modal.setLoadingState(false)
+            rootView.modal.enableButton = true
             saveSessionState()
         }
     })
 
+}
+
+function fillHistory(model, limit)
+{
+    var db = openDb()
+
+    db.readTransaction(function (tx) {
+        var tr =  "SELECT * from HISTORY ORDER BY HISTORY.history_datetime LIMIT ?;"
+        var rq = tx.executeSql(tr, [limit]);
+
+        model.clear()
+        for (var i = 0; i < rq.rows.length; ++i)
+        {
+            var row = rq.rows.item(i)
+            console.debug("[%1/%2] history: ".arg(i + 1).arg(rq.rows.length), row.place_name)
+            model.append({'place': row})
+        }
+    })
+
+}
+
+function fillHistoryFiltered(model, pattern, limit)
+{
+    var db = openDb()
+
+    db.readTransaction(function (tx) {
+        var tr = "SELECT * from HISTORY WHERE HISTORY.place_name LIKE ? ORDER BY HISTORY.history_datetime LIMIT ?;"
+        var rq = tx.executeSql(tr, ["%%1%".arg(pattern), limit]);
+
+        model.clear()
+        for (var i = 0; i < rq.rows.length; ++i)
+        {
+            var row = rq.rows.item(i)
+            model.append({'place': row})
+        }
+    })
+}
+
+
+function addToHistory(place)
+{
+    var db = openDb()
+
+    db.transaction(function (tx){
+        var tr = "INSERT OR REPLACE INTO HISTORY (history_datetime, place_title, place_icon, place_name, place_latitude, place_longitude) VALUES (datetime('now'), ?, ?, ?, ?, ?);";
+        var res = tx.executeSql(tr, [
+                                    place["place_title"],
+                                    place["place_icon"],
+                                    place["place_name"],
+                                    place["place_latitude"],
+                                    place["place_longitude"]]);
+    })
 }

@@ -1,9 +1,44 @@
 function _formatCoords(waypoint)
 {
-    return (waypoint["longitude"] + ", " + waypoint["latitude"])
+    return (waypoint["latitude"] + ", " + waypoint["longitude"])
 }
 
-function displayOnUpdateResult(status, jsonObj)
+function getFloatValue(number)
+{
+    return number.toPrecision(8);
+}
+
+function syncItinerary(jsonObj)
+{
+    if (jsonObj && typeof jsonObj.departure !== "undefined" && typeof jsonObj.destinations !== "undefined")
+    {
+        rootView.lamaSession.CURRENT_ITINERARY["departure"] =
+        {
+            address: null,
+            latitude: jsonObj.departure.latitude ? getFloatValue(jsonObj.departure.latitude) : null,
+            longitude: jsonObj.departure.longitude ? getFloatValue(jsonObj.departure.longitude) : null
+        }
+
+        var destinations = jsonObj.destinations;
+        rootView.lamaSession.CURRENT_ITINERARY["destinations"] = new Array;
+
+        for (var i = 0; i < destinations.length; ++i)
+        {
+            var ref = destinations[i];
+            var destination =
+            {
+                address: null,
+                latitude: ref.latitude ? getFloatValue(ref.latitude) : null,
+                longitude: ref.longitude ? getFloatValue(ref.longitude) : null
+            }
+            rootView.lamaSession.CURRENT_ITINERARY["destinations"].push(destination);
+        }
+    }
+    else
+        console.log("Sync error: " + JSON.stringify(jsonObj));
+}
+
+function displayOnUpdateResult(status, jsonStr)
 {
     if (status !== 0)
     {
@@ -12,11 +47,14 @@ function displayOnUpdateResult(status, jsonObj)
         rootView.modal.enableButton = true
         rootView.modal.visible = true
         rootView.modal.setLoadingState(false)
+        console.log(status + " --- " + jsonStr);
         return;
     }
 
+    var jsonObj = JSON.parse(jsonStr);
     mapView.mapComponent.displayItinerary(jsonObj["id"]);
     rootView.modal.visible = false;
+    syncItinerary(jsonObj);
 }
 
 function updateItinerary(status, jsonObj)
@@ -54,6 +92,7 @@ function onCreateItineraryWith(statusCode, jsonStr)
         rootView.lamaSession.CURRENT_ITINERARY['id'] = ItId;
         mapView.mapComponent.displayItinerary(parseInt(rootView.lamaSession.CURRENT_ITINERARY['id']));
         rootView.modal.visible = false;
+        syncItinerary(jsonObj);
         return;
     }
     rootView.modal.title = "Error"
@@ -127,26 +166,36 @@ function moveItineraryPoint(itineraryId, point, newCoords)
     {
         rootView.lamaSession.CURRENT_ITINERARY["departure"] =
         {
-            address: "You moved it",
-            latitude: newCoords.x,
-            longitude: newCoords.y
+            address: null,
+            latitude: newCoords.y,
+            longitude: newCoords.x
         }
         itineraryServices.editItinerary(itineraryId, "", _formatCoords(rootView.lamaSession.CURRENT_ITINERARY["departure"]), "", function(statusCode, jsonStr)
         {
             rootView.mapView.mapComponent.itineraryChanged();
+            if (statusCode == 0)
+            {
+                var jsonObj = JSON.parse(jsonStr);
+                syncItinerary(jsonObj);
+            }
         });
     }
     else if (point - 1 < rootView.lamaSession.CURRENT_ITINERARY["destinations"].length)
     {
         rootView.lamaSession.CURRENT_ITINERARY["destinations"][point - 1] =
         {
-            address: "You moved it",
-            latitude: newCoords.x,
-            longitude: newCoords.y
+            address: null,
+            latitude: newCoords.y,
+            longitude: newCoords.x
         }
         itineraryServices.editDestination(itineraryId, point - 1, -1, _formatCoords(rootView.lamaSession.CURRENT_ITINERARY["destinations"][point - 1]), function(statusCode, jsonStr)
         {
             rootView.mapView.mapComponent.itineraryChanged();
+            if (statusCode == 0)
+            {
+                var jsonObj = JSON.parse(jsonStr);
+                syncItinerary(jsonObj);
+            }
         });
     }
 }
