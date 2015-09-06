@@ -175,15 +175,15 @@ function fillHistory(model, limit)
     var db = Session.openDb()
 
     db.readTransaction(function (tx) {
-        var tr = "SELECT HISTORY.history_term from HISTORY ORDER BY HISTORY.history_datetime DESC LIMIT ?;";
+        var tr =  "SELECT * from HISTORY INNER JOIN PLACES ON HISTORY.history_place = PLACES.id ORDER BY HISTORY.history_datetime LIMIT ?;"
         var rq = tx.executeSql(tr, [limit]);
 
         model.clear()
         for (var i = 0; i < rq.rows.length; ++i)
         {
             var row = rq.rows.item(i)
-            //console.debug("[%1/%2] history: ".arg(i + 1).arg(rq.rows.length), row.history_term)
-            model.append({'term': row['history_term']})
+            console.debug("[%1/%2] history: ".arg(i + 1).arg(rq.rows.length), row.place_name)
+            model.append({'place': row})
         }
     })
 }
@@ -193,26 +193,32 @@ function fillHistoryFiltered(model, pattern, limit)
     var db = Session.openDb()
 
     db.readTransaction(function (tx) {
-        var tr = 'SELECT HISTORY.history_term from HISTORY WHERE HISTORY.history_term LIKE ? ORDER BY HISTORY.history_datetime DESC LIMIT ?;'
+        var tr = "SELECT * from HISTORY INNER JOIN PLACES ON HISTORY.history_place = PLACES.id WHERE PLACES.place_name LIKE ? ORDER BY HISTORY.history_datetime LIMIT ?;"
         var rq = tx.executeSql(tr, ["%%1%".arg(pattern), limit]);
 
         model.clear()
         for (var i = 0; i < rq.rows.length; ++i)
         {
             var row = rq.rows.item(i)
-            //console.debug("[%1/%2] history: ".arg(i + 1).arg(rq.rows.length), row.history_term)
-            model.append({'term': row['history_term']})
+            model.append({'place': row})
         }
     })
 }
 
 
-function addToHistory(term)
+function addToHistory(place)
 {
     var db = Session.openDb()
 
     db.transaction(function (tx){
-        var tr = "INSERT OR REPLACE INTO HISTORY (history_term, history_datetime) VALUES (?, datetime('now'));";
-        tx.executeSql(tr, [term]);
+        var tr = "INSERT OR REPLACE INTO PLACES (place_title, place_icon, place_name, place_latitude, place_longitude) VALUES (?, ?, ?, ?, ?);";
+        var res = tx.executeSql(tr, [
+                                    place["place_title"],
+                                    place["place_icon"],
+                                    place["place_name"],
+                                    place["place_latitude"],
+                                    place["place_longitude"]]);
+        tr = "INSERT OR REPLACE INTO HISTORY (history_datetime, history_place) VALUES (datetime('now'), ?);";
+        tx.executeSql(tr, [res.insertId])
     })
 }

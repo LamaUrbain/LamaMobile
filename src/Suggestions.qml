@@ -15,6 +15,8 @@ Components.Background {
 
     property var currentWaypoint: ViewsLogic.getPtFromIndex(rootView.lamaSession.CURRENT_WAYPOINT_ID,
                                                 rootView.lamaSession.CURRENT_ITINERARY)
+    property var choosenPlace
+
     Components.Header
     {
         id: header
@@ -29,19 +31,34 @@ Components.Background {
 
         onSearchTermChanged: update()
 
-        Component.onCompleted: update()
-
         onStatusChanged: {
             if (status === PlaceSearchModel.Ready)
             {
                 console.debug("Request ready: %1 results".arg(count))
+                if (count > 0)
+                    suggestionsModel.clear()
+
                 for (var i = 0; i < count; ++i)
                 {
-                    var place = data(i, "title");
-                    console.debug("place [%1/%2]".arg(i + 1).arg(count), place)
+                    // skip whatever not a place result.
+                    if (data(i, "type") !== PlaceSearchModel.PlaceResult)
+                        continue;
 
-                    if (place !== "")
-                        suggestionsModel.append({'term': place})
+                    var place = {};
+                    place['place_title'] = data(i, "title");
+                    place['place_icon'] = data(i, "icon").url();
+
+                    var p = data(i, "place")
+                    place['place_name'] = p.name;
+                    place['place_latitude'] = p.location.coordinate.latitude;
+                    place['place_longitude'] = p.location.coordinate.longitude;
+
+                    console.debug("place [%1/%2]".arg(i + 1).arg(count), place['place_title'])
+
+                    if (place['place_title'] !== "")
+                    {
+                        suggestionsModel.append({'place': place})
+                    }
                 }
             }
             else if (suggestionPlace.status === PlaceSearchModel.Error)
@@ -90,10 +107,6 @@ Components.Background {
             onTextChanged: {
                 suggestionPlace.searchTerm = addressInput.text
                 ViewsLogic.fillHistoryFiltered(suggestionsModel, addressInput.text, 4)
-            }
-
-            onAccepted: {
-                ViewsLogic.addToHistory(addressInput.text)
             }
         }
 
@@ -144,9 +157,20 @@ Components.Background {
                 width: suggestionsView.width
                 height: suggestion.paintedHeight * 1.25
 
-                centerText: term
+                Image {
+                    anchors.left: parent.left
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    anchors.leftMargin: parent.width * 1/5
+                    source: place["place_icon"]
+                }
+
+                centerText: place["place_title"]
                 onClicked: {
-                    addressInput.text = term
+                    choosenPlace = place
+                    longitudeInput.text = choosenPlace["place_longitude"]
+                    latitudeInput.text = choosenPlace["place_latitude"]
+                    addressInput.text = choosenPlace["place_title"]
                 }
             }
         }
@@ -166,6 +190,8 @@ Components.Background {
             centerText: "Validate"
             anchors.fill: parent
             onClicked: {
+                ViewsLogic.addToHistory(choosenPlace);
+
                 var id = rootView.lamaSession.CURRENT_WAYPOINT_ID
                 var longitude = longitudeInput.text
                 var latitude = latitudeInput.text

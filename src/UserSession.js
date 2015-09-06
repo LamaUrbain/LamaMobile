@@ -78,6 +78,12 @@ var LAMA_SESSION =
 
 var mainModal;
 
+// This does not work, because sqlite refuse to configure pragmas in a transaction...
+function bootstrap_pragma(tx) {
+    tx.executeSql(""
+                  + "PRAGMA foreign_keys = ON;");
+}
+
 function bootstrap_user(tx) {
     tx.executeSql(""
                   + "CREATE TABLE IF NOT EXISTS USER ("
@@ -90,12 +96,25 @@ function bootstrap_user(tx) {
                   + ");")
 }
 
+function bootstrap_places(tx) {
+    tx.executeSql(""
+                  + "CREATE TABLE IF NOT EXISTS PLACES ("
+                      + "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,"
+                      + "place_title TEXT,"
+                      + "place_icon BLOB,"
+                      + "place_name TEXT,"
+                      + "place_latitude REAL,"
+                      + "place_longitude REAL"
+                  + ");")
+}
+
 function bootstrap_history(tx) {
     tx.executeSql(""
                   + "CREATE TABLE IF NOT EXISTS HISTORY ("
                       + "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,"
-                      + "history_term TEXT,"
-                      + "history_datetime TEXT"
+                      + "history_datetime TEXT,"
+                      + "history_place INTEGER,"
+                      + "FOREIGN KEY(history_place) REFERENCES PLACES(id)"
                   + ");")
 }
 
@@ -108,7 +127,12 @@ function createDBCallback(db)
     db.transaction(function (tx)
     {
         console.log("bootstraping db")
-        var tables = [bootstrap_user, bootstrap_history]
+        var tables = [
+                    bootstrap_pragma,
+                    bootstrap_user,
+                    bootstrap_places,
+                    bootstrap_history
+                ]
         for (var i = 0; i < tables.length; ++i)
         {
             console.log("[%1/%2]".arg(i + 1).arg(tables.length), tables[i].name)
