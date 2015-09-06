@@ -82,5 +82,8 @@ Window {
         UserSession.saveSessionState()
     }
 
-    Component.onCompleted: tryLogin(false)
+    Component.onCompleted:
+    {
+        UserSession.tryLogin(false)
+    }
 }

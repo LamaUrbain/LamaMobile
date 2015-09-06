@@ -115,15 +115,22 @@ Components.Background {
                 property bool saved: false
 
                 onClicked: {
+                    console.log(rootView.lamaSession.KNOWN_ITINERARIES)
+                    console.log("------1-------")
                     rootView.lamaSession.CURRENT_ITINERARY["name"] = nameInput.text;
 
                     rootView.lamaSession.CURRENT_ITINERARY["favorite"] = !rootView.lamaSession.CURRENT_ITINERARY["favorite"]
                     var isFavorited = rootView.lamaSession.CURRENT_ITINERARY["favorite"]
 
+                    console.log(rootView.lamaSession.KNOWN_ITINERARIES)
+                    console.log("------2-------")
+
                     iconSource = isFavorited ? Constants.LAMA_SAVED_RESSOURCE: Constants.LAMA_SAVE_RESSOURCE
 
                     var idxKnown = ViewsLogic.getIndexItineraryKnown(rootView.lamaSession.KNOWN_ITINERARIES, rootView.lamaSession.CURRENT_ITINERARY);
 
+                    console.log(rootView.lamaSession.KNOWN_ITINERARIES)
+                    console.log("------3-------")
                     if (isFavorited && idxKnown < 0)
                     {
                         rootView.lamaSession.CURRENT_ITINERARY['id'] = -(Math.round(Date.now() / 1000) % 100000000)

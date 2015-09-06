@@ -289,7 +289,8 @@ function loadItineraries()
     itineraryServices.getItineraries(null, rootView.lamaSession.USERNAME, "true", "",
                                      function (success, userRoutes)
     {
-        if (success === false || userRoutes === null)
+        if (success !== 0 || userRoutes === null
+            || typeof(userRoutes) !== "object" || !(userRoutes instanceof Array))
         {
             rootView.modal.title = "No stable internet connexion"
             rootView.modal.message = "Please check your connectivity to the internet.\n"
@@ -300,6 +301,7 @@ function loadItineraries()
         }
         else
         {
+
             rootView.lamaSession.KNOWN_ITINERARIES = userRoutes
             rootView.modal.message = "You've successfully logged in !"
             rootView.modal.setLoadingState(false)
