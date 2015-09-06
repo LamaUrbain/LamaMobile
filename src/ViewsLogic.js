@@ -149,6 +149,7 @@ function spawnArrivalPopOver(mapItem, coord, message)
 
 function spawnPopOver(mapItem, coord, message, type)
 {
+    console.log("YO")
     var cp = Qt.createComponent( "qrc:/Components/PopOver.qml" );
     if(cp.status !== Qml.Component.Ready)
         console.log("Error:"
@@ -180,51 +181,4 @@ function spawnModalWithSource(title, source)
     mainModal.title = title
     mainModal.modalSourceComponent = source
     mainModal.visible = true
-}
-
-function fillHistory(model, limit)
-{
-    var db = Session.openDb()
-
-    db.readTransaction(function (tx) {
-        var tr = "SELECT HISTORY.history_term from HISTORY ORDER BY HISTORY.history_datetime DESC LIMIT ?;";
-        var rq = tx.executeSql(tr, [limit]);
-
-        model.clear()
-        for (var i = 0; i < rq.rows.length; ++i)
-        {
-            var row = rq.rows.item(i)
-            console.debug("[%1/%2] history: ".arg(i + 1).arg(rq.rows.length), row.history_term)
-            model.append(row)
-        }
-    })
-}
-
-function fillHistoryFiltered(model, pattern, limit)
-{
-    var db = Session.openDb()
-
-    db.readTransaction(function (tx) {
-        var tr = 'SELECT HISTORY.history_term from HISTORY WHERE HISTORY.history_term LIKE ? ORDER BY HISTORY.history_datetime DESC LIMIT ?;'
-        var rq = tx.executeSql(tr, ["%%1%".arg(pattern), limit]);
-
-        model.clear()
-        for (var i = 0; i < rq.rows.length; ++i)
-        {
-            var row = rq.rows.item(i)
-            console.debug("[%1/%2] history: ".arg(i + 1).arg(rq.rows.length), row.history_term)
-            model.append(row)
-        }
-    })
-}
-
-
-function addToHistory(term)
-{
-    var db = Session.openDb()
-
-    db.transaction(function (tx){
-        var tr = "INSERT OR REPLACE INTO HISTORY (history_term, history_datetime) VALUES (?, datetime('now'));";
-        tx.executeSql(tr, [term]);
-    })
 }

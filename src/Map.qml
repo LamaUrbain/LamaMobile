@@ -38,6 +38,10 @@ Components.Marker {
                 centerText: "Search"
                 navigationTarget: "MainSearch"
                 color: Constants.LAMA_ORANGE
+                onClicked:
+                {
+                    rootView.lamaSession.LAMA_USER_CURRENT_ITINERARY = Constants.LAMA_BASE_ITINERARY_OBJ
+                }
             }
 
             Controls.NavigationButton {

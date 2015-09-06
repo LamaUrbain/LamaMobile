@@ -48,39 +48,53 @@ Rectangle
             height: parent.height * 0.8
             radius: 10
 
-            ColumnLayout {
-                anchors.fill: parent
+            Text
+            {
+                id: modalTitle
+                anchors.top: parent.top
+                anchors.topMargin: parent.height * 0.05
+                anchors.left: parent.left
+                anchors.right: parent.right
 
-                Text
-                {
-                    id: modalTitle
-                    anchors.left: parent.left
-                    anchors.right: parent.right
+                color: Constants.LAMA_YELLOW
+                Layout.minimumHeight: parent.height * 0.1
+                Layout.preferredHeight: parent.height * 0.1
 
-                    color: Constants.LAMA_YELLOW
-                    Layout.minimumHeight: parent.height * 0.1
-                    Layout.preferredHeight: parent.height * 0.1
+                font.pixelSize: Constants.LAMA_POINTSIZE
+                font.weight: Font.Bold
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                text: "Information"
+                wrapMode: Text.WordWrap
+            }
 
-                    font.pixelSize: Constants.LAMA_POINTSIZE
-                    font.weight: Font.Bold
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                    text: "Information"
-                    wrapMode: Text.WordWrap
+            Loader
+            {
+                id: modalContentLoader
+                anchors.left: parent.left
+                anchors.right: parent.right
+                Layout.fillHeight: true
+
+                property string message: "Everything's fine !"
+
+                sourceComponent: modalMessageItem
+
+                Component {
+                    id: modalMessageItem
+
+                    Text
+                    {
+                        id: modalMessage
+                        anchors.fill: parent
+
+                        color: Constants.LAMA_YELLOW
+                        font.pixelSize: Constants.LAMA_POINTSIZE
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        text: message
+                        wrapMode: Text.WordWrap
+                    }
                 }
-
-                Loader
-                {
-                    id: modalContentLoader
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    Layout.fillHeight: true
-
-                    property string message: "Everything's fine !"
-
-                    sourceComponent: modalMessageItem
-                }
-
             }
 
             Components.LoadingRing
@@ -89,23 +103,6 @@ Rectangle
                 anchors.centerIn: parent
                 ringColor: Constants.LAMA_YELLOW
                 visible: false
-            }
-
-            Component {
-                id: modalMessageItem
-
-                Text
-                {
-                    id: modalMessage
-                    anchors.fill: parent
-
-                    color: Constants.LAMA_YELLOW
-                    font.pixelSize: Constants.LAMA_POINTSIZE
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                    text: message
-                    wrapMode: Text.WordWrap
-                }
             }
         }
 
@@ -138,6 +135,7 @@ Rectangle
                     message = "Everything's fine !"
                     buttonText = "Ok"
                     setLoadingState(false)
+                    modalContentLoader.sourceComponent = modalMessageItem
                     enableButton = true
                 }
             }

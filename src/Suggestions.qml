@@ -20,7 +20,7 @@ Components.Background {
         id: suggestionsModel
 
         Component.onCompleted: {
-            ViewsLogic.fillHistory(suggestionsModel, 4)
+            rootView.fillHistory(suggestionsModel, 4)
         }
     }
 
@@ -41,19 +41,20 @@ Components.Background {
             anchors.right: parent.right
             Layout.preferredHeight: parent.height * 0.1
             placeholderText: "Address"
-            onTextChanged:
-            {
-                latitudeInput.enabled = (text.length === 0)
-                longitudeInput.enabled = latitudeInput.enabled
-            }
-
             Component.onCompleted:
             {
                 if (ViewsLogic.isValueAtKeyValid(currentWaypoint, "address") === true)
                     text = currentWaypoint["address"]
             }
+
+            onTextChanged: {
+                latitudeInput.enabled = (text.length === 0)
+                longitudeInput.enabled = latitudeInput.enabled
+                rootView.fillHistoryFiltered(suggestionsModel, addressInput.text, 4)
+            }
+
             onAccepted: {
-                ViewsLogic.addToHistory(addressInput.text)
+                rootView.addToHistory(addressInput.text)
             }
         }
 

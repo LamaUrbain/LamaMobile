@@ -36,7 +36,10 @@ Window {
     Views.Modal
     {
         id: mainModal
-        Component.onCompleted: rootView.lamaSession.mainModal = mainModal
+        Component.onCompleted:
+        {
+            //testing
+        }
     }
 
     function mainViewTo(name, prop)
@@ -81,6 +84,21 @@ Window {
     function saveSessionState()
     {
         UserSession.saveSessionState()
+    }
+
+    function fillHistory(model, limit)
+    {
+        UserSession.fillHistory(model, limit)
+    }
+
+    function addToHistory(term)
+    {
+        UserSession.addToHistory(term)
+    }
+
+    function fillHistoryFiltered(model, pattern, limit)
+    {
+        UserSession.fillHistoryFiltered(model, pattern, limit)
     }
 
     Component.onCompleted:
