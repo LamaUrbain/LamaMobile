@@ -71,7 +71,7 @@ Components.Background {
             {
                 id: latitudeInput
                 width: parent.width * 0.495
-                anchors.right: parent.right
+                anchors.left: parent.left
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
                 placeholderText: "Latitude"
@@ -91,7 +91,7 @@ Components.Background {
             {
                 id: longitudeInput
                 width: parent.width * 0.495
-                anchors.left: parent.left
+                anchors.right: parent.right
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
                 placeholderText: "Longitude"

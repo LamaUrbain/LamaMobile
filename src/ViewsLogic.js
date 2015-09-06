@@ -110,7 +110,7 @@ function fillWaypoints(listModelId, itinerary)
 function getAddressPlaceholder(latitude, longitude)
 {
     if (latitude && longitude)
-        return longitude + ", " + latitude;
+        return latitude + ", " + longitude;
     return "Departure";
 }
 

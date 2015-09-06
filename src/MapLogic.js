@@ -1,6 +1,6 @@
 function _formatCoords(waypoint)
 {
-    return (waypoint["longitude"] + ", " + waypoint["latitude"])
+    return (waypoint["latitude"] + ", " + waypoint["longitude"])
 }
 
 function getFloatValue(number)
@@ -38,7 +38,7 @@ function syncItinerary(jsonObj)
         console.log("Sync error: " + JSON.stringify(jsonObj));
 }
 
-function displayOnUpdateResult(status, jsonObj)
+function displayOnUpdateResult(status, jsonStr)
 {
     if (status !== 0)
     {
@@ -47,9 +47,11 @@ function displayOnUpdateResult(status, jsonObj)
         rootView.modal.enableButton = true
         rootView.modal.visible = true
         rootView.modal.setLoadingState(false)
+        console.log(status + " --- " + jsonStr);
         return;
     }
 
+    var jsonObj = JSON.parse(jsonStr);
     mapView.mapComponent.displayItinerary(jsonObj["id"]);
     rootView.modal.visible = false;
     syncItinerary(jsonObj);
@@ -165,8 +167,8 @@ function moveItineraryPoint(itineraryId, point, newCoords)
         rootView.lamaSession.CURRENT_ITINERARY["departure"] =
         {
             address: "You moved it",
-            latitude: newCoords.x,
-            longitude: newCoords.y
+            latitude: newCoords.y,
+            longitude: newCoords.x
         }
         itineraryServices.editItinerary(itineraryId, "", _formatCoords(rootView.lamaSession.CURRENT_ITINERARY["departure"]), "", function(statusCode, jsonStr)
         {
@@ -183,8 +185,8 @@ function moveItineraryPoint(itineraryId, point, newCoords)
         rootView.lamaSession.CURRENT_ITINERARY["destinations"][point - 1] =
         {
             address: "You moved it",
-            latitude: newCoords.x,
-            longitude: newCoords.y
+            latitude: newCoords.y,
+            longitude: newCoords.x
         }
         itineraryServices.editDestination(itineraryId, point - 1, -1, _formatCoords(rootView.lamaSession.CURRENT_ITINERARY["destinations"][point - 1]), function(statusCode, jsonStr)
         {

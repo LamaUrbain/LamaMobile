@@ -2,6 +2,7 @@
 #define ITINERARYSERVICES_H
 
 #include <QObject>
+#include <memory>
 #include "servicesbase.h"
 
 class ItineraryServices : public ServicesBase
@@ -37,6 +38,10 @@ public slots:
     void deleteDestination(int id, int position, QJSValue callback);
     void deleteItinerary(int id, QJSValue callback);
     void getItineraryTiles(int id, int zoomLevel, QJSValue callback);
+
+private:
+    CallbackType _addDestinationCallback(CallbackType callback, int id, std::shared_ptr<int> currentPos, QStringList destinations);
+    CallbackType _removeDestinationCallback(CallbackType callback, int id, std::shared_ptr<int> destinationsCountdown, QString name, QString departure, QStringList destinations, QString favorite);
 
 private:
     static ItineraryServices *_instance;

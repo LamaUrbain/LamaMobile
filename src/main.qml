@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Window 2.1
 import QtQuick.Controls 1.3
+import QtPositioning 5.3
 import "qrc:/Views" as Views
 import "qrc:/Components" as Components
 import "qrc:/Controls" as Controls
