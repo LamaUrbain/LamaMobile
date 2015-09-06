@@ -52,9 +52,6 @@ Components.Background {
                 if (ViewsLogic.isValueAtKeyValid(currentWaypoint, "address") === true)
                     text = currentWaypoint["address"]
             }
-            onTextChanged: {
-                ViewsLogic.fillHistoryFiltered(suggestionsModel, addressInput.text, 4)
-            }
             onAccepted: {
                 ViewsLogic.addToHistory(addressInput.text)
             }

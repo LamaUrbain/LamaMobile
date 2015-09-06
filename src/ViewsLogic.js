@@ -107,11 +107,17 @@ function fillWaypoints(listModelId, itinerary)
     }
 }
 
-function getAddressPlaceholder(latitude, longitude)
+function getAddressPlaceholder(waypointData)
 {
+    var address = waypointData.address;
+    var latitude = waypointData.latitude;
+    var longitude = waypointData.longitude;
+
     if (latitude && longitude)
         return latitude + ", " + longitude;
-    return "Departure";
+    if (address)
+        return address;
+    return "New Waypoint";
 }
 
 function getIndexItineraryKnown(knownIts, newIt)

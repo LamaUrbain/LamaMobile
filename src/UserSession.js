@@ -38,14 +38,14 @@ var LAMA_SESSION =
             favorite: true,
             departure:
             {
-                address: '26 Rue du bailly',
+                address: null,
                 latitude: 48.912903,
                 longitude: 2.355989
             },
             destinations:
             [
                 {
-                    address: 'ARROW ECS',
+                    address: null,
                     latitude: 48.893592,
                     longitude: 2.256769
                 }
@@ -59,14 +59,14 @@ var LAMA_SESSION =
             favorite: false,
             departure:
             {
-                address: 'Sex Shop',
+                address: null,
                 latitude: 48.912903,
                 longitude: 2.355989
             },
             destinations:
             [
                 {
-                    address: 'Dildo Playground',
+                    address: null,
                     latitude: 48.893592,
                     longitude: 2.256769
                 }

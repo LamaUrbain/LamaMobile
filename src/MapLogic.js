@@ -14,7 +14,7 @@ function syncItinerary(jsonObj)
     {
         rootView.lamaSession.CURRENT_ITINERARY["departure"] =
         {
-            address: jsonObj.departure.address ? jsonObj.departure.address : null,
+            address: null,
             latitude: jsonObj.departure.latitude ? getFloatValue(jsonObj.departure.latitude) : null,
             longitude: jsonObj.departure.longitude ? getFloatValue(jsonObj.departure.longitude) : null
         }
@@ -27,7 +27,7 @@ function syncItinerary(jsonObj)
             var ref = destinations[i];
             var destination =
             {
-                address: ref.address ? ref.address : null,
+                address: null,
                 latitude: ref.latitude ? getFloatValue(ref.latitude) : null,
                 longitude: ref.longitude ? getFloatValue(ref.longitude) : null
             }
@@ -166,7 +166,7 @@ function moveItineraryPoint(itineraryId, point, newCoords)
     {
         rootView.lamaSession.CURRENT_ITINERARY["departure"] =
         {
-            address: "You moved it",
+            address: null,
             latitude: newCoords.y,
             longitude: newCoords.x
         }
@@ -184,7 +184,7 @@ function moveItineraryPoint(itineraryId, point, newCoords)
     {
         rootView.lamaSession.CURRENT_ITINERARY["destinations"][point - 1] =
         {
-            address: "You moved it",
+            address: null,
             latitude: newCoords.y,
             longitude: newCoords.x
         }
