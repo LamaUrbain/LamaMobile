@@ -3,7 +3,6 @@ import QtQuick.Controls 1.3
 import QtQuick.Layouts 1.1
 import "qrc:/Components/" as Components
 import "qrc:/Controls/" as Controls
-import "qrc:/UserSession.js" as UserSession
 import "qrc:/Views/ViewsLogic.js" as ViewsLogic
 
 Components.Background {
@@ -42,6 +41,12 @@ Components.Background {
             anchors.right: parent.right
             Layout.preferredHeight: parent.height * 0.1
             placeholderText: "Address"
+            onTextChanged:
+            {
+                latitudeInput.enabled = (text.length === 0)
+                longitudeInput.enabled = latitudeInput.enabled
+            }
+
             Component.onCompleted:
             {
                 if (ViewsLogic.isValueAtKeyValid(currentWaypoint, "address") === true)
@@ -70,6 +75,11 @@ Components.Background {
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
                 placeholderText: "Latitude"
+                onTextChanged:
+                {
+                    addressInput.enabled = (text.length === 0 && longitudeInput.length === 0)
+                }
+
                 Component.onCompleted:
                 {
                     if (ViewsLogic.isValueAtKeyValid(currentWaypoint, "latitude") === true)
@@ -85,6 +95,10 @@ Components.Background {
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
                 placeholderText: "Longitude"
+                onTextChanged:
+                {
+                    addressInput.enabled = (text.length === 0 && latitudeInput.length === 0)
+                }
                 Component.onCompleted:
                 {
                     if (ViewsLogic.isValueAtKeyValid(currentWaypoint, "longitude") === true)
@@ -166,7 +180,7 @@ Components.Background {
                     if (idx >= 0)
                     {
                         rootView.lamaSession.KNOWN_ITINERARIES[idx] = currentRoute;
-                        UserSession.saveSessionState(rootView.lamaSession)
+                        rootView.saveSessionState(rootView.lamaSession)
                     }
                 }
                 rootView.mainViewBack();

@@ -77,5 +77,13 @@ Window {
         UserSession.tryLogin(rootView, clear)
     }
 
-    Component.onCompleted: tryLogin(false)
+    function saveSessionState()
+    {
+        UserSession.saveSessionState()
+    }
+
+    Component.onCompleted:
+    {
+        UserSession.tryLogin(false)
+    }
 }
