@@ -1,6 +1,10 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.3
 import QtQuick.Layouts 1.1
+
+import QtPositioning 5.3
+import QtLocation 5.3
+
 import "qrc:/Components/" as Components
 import "qrc:/Controls/" as Controls
 import "qrc:/UserSession.js" as UserSession
@@ -14,7 +18,41 @@ Components.Background {
     Components.Header
     {
         id: header
-        title: "Suggestions of places"
+    }
+
+    PlaceSearchModel {
+        id: suggestionPlace
+        plugin: geoPlugin
+        limit: 4
+
+        searchArea: QtPositioning.circle(QtPositioning.coordinate(48.8555, 2.35039), 1000)
+
+        onSearchTermChanged: update()
+
+        Component.onCompleted: update()
+
+        onStatusChanged: {
+            if (status === PlaceSearchModel.Ready)
+            {
+                console.debug("Request ready: %1 results".arg(count))
+                for (var i = 0; i < count; ++i)
+                {
+                    var place = data(i, "title");
+                    console.debug("place [%1/%2]".arg(i + 1).arg(count), place)
+
+                    if (place !== "")
+                        suggestionsModel.append({'term': place})
+                }
+            }
+            else if (suggestionPlace.status === PlaceSearchModel.Error)
+            {
+                console.log("error:", errorString())
+            }
+            else if (status == PlaceSearchModel.Loading)
+            {
+                console.debug("loading", searchTerm)
+            }
+        }
     }
 
     ListModel {
@@ -42,14 +80,18 @@ Components.Background {
             anchors.right: parent.right
             Layout.preferredHeight: parent.height * 0.1
             placeholderText: "Address"
+
             Component.onCompleted:
             {
                 if (ViewsLogic.isValueAtKeyValid(currentWaypoint, "address") === true)
                     text = currentWaypoint["address"]
             }
+
             onTextChanged: {
+                suggestionPlace.searchTerm = addressInput.text
                 ViewsLogic.fillHistoryFiltered(suggestionsModel, addressInput.text, 4)
             }
+
             onAccepted: {
                 ViewsLogic.addToHistory(addressInput.text)
             }
@@ -102,7 +144,10 @@ Components.Background {
                 width: suggestionsView.width
                 height: suggestion.paintedHeight * 1.25
 
-                centerText: history_term
+                centerText: term
+                onClicked: {
+                    addressInput.text = term
+                }
             }
         }
 
