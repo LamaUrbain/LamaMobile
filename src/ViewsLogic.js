@@ -95,7 +95,7 @@ function fillWaypoints(listModelId, itinerary)
         listModelId.append({waypointData: itinerary.departure})
     else
     {
-        listModelId.append({waypointData: {address: "Departure"}})
+        listModelId.append({waypointData: {address: "Departure", latitude: null, longitude: null}})
         return;
     }
 
@@ -106,6 +106,13 @@ function fillWaypoints(listModelId, itinerary)
         for (var idx = 0; idx < waypoints.length; ++idx)
             listModelId.append({waypointData: waypoints[idx]})
     }
+}
+
+function getAddressPlaceholder(latitude, longitude)
+{
+    if (latitude && longitude)
+        return longitude + ", " + latitude;
+    return "Departure";
 }
 
 function getIndexItineraryKnown(knownIts, newIt)

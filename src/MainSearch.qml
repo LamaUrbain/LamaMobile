@@ -73,7 +73,9 @@ Components.Background {
             model: waypointsModel
             delegate: Components.Waypoint {
                 height: search.height * 0.09
-                waypointDescription: waypointData.address === null ? 'Departure' : waypointData.address
+                waypointDescription: waypointData.address === null
+                                     ? ViewsLogic.getAddressPlaceholder(waypointData.latitude, waypointData.longitude)
+                                     : waypointData.address
                 linkedWaypointId: index
                 deletable: index == 0 ? false : true
                 onDeleted:
