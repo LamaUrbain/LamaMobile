@@ -74,8 +74,8 @@ Window {
 
     function tryLogin(clear)
     {
-        UserSession.tryLogin(clear)
+        UserSession.tryLogin(rootView, clear)
     }
 
-    Component.onCompleted: UserSession.tryLogin(false)
+    Component.onCompleted: tryLogin(false)
 }

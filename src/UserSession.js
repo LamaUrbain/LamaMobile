@@ -233,9 +233,10 @@ function saveSessionState()
         } );
 }
 
-function tryLogin(clearPreviousData)
+function tryLogin(rootId, clearPreviousData)
 {
-    if (rootView.lamaSession.TOKEN !== null && rootView.lamaSession.TOKEN.length > 0)
+    if (rootId.lamaSession.TOKEN !== null &&
+        rootId.lamaSession.TOKEN.length > 0)
         deleteCurrentToken()
 
     if (clearPreviousData)
@@ -243,25 +244,25 @@ function tryLogin(clearPreviousData)
     else
         checkAndLoadFromSavedData()
 
-    if (rootView.lamaSession.USERNAME === null ||
-        rootView.lamaSession.PASSWORD === null)
+    if (rootId.lamaSession.USERNAME === null ||
+        rootId.lamaSession.PASSWORD === null)
     {
-        rootView.lamaSession.USERNAME = null // Paranoia
-        rootView.lamaSession.PASSWORD = null // Paranoia
+        rootId.lamaSession.USERNAME = null // Paranoia
+        rootId.lamaSession.PASSWORD = null // Paranoia
         return;
     }
 
-    loginAndCreateToken();
+    loginAndCreateToken(rootID);
 }
 
-function loginAndCreateToken(callback)
+function loginAndCreateToken(rootId, callback)
 {
-    userServices.createToken(rootView.lamaSession.USERNAME, rootView.lamaSession.PASSWORD, function (success, userInfos)
+    userServices.createToken(rootId.lamaSession.USERNAME, rootId.lamaSession.PASSWORD, function (success, userInfos)
     {
         if (success === false || userInfos === null)
         {
-            rootView.lamaSession.USERNAME = null
-            rootView.lamaSession.PASSWORD = null
+            rootId.lamaSession.USERNAME = null
+            rootId.lamaSession.PASSWORD = null
             mainModal.title = "No internet connexion"
             mainModal.message = "Please check your connectivity to the internet.\n"
                                 + "once it's done you shall restart the application."
@@ -270,9 +271,9 @@ function loginAndCreateToken(callback)
         }
         else
         {
-            rootView.lamaSession.IS_LOGGED = true
-            rootView.lamaSession.TOKEN = userInfos.token
-            rootView.lamaSession.IS_LOGGED = true
+            rootId.lamaSession.IS_LOGGED = true
+            rootId.lamaSession.TOKEN = userInfos.token
+            rootId.lamaSession.IS_LOGGED = true
             loadItineraries()
             getFurtherUserDetails()
         }
