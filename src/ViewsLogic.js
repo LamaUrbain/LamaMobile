@@ -1,4 +1,3 @@
-.import "qrc:/UserSession.js" as Session
 .import QtQml 2.2 as Qml
 
 var MinLength = 2 // dont know how to get it from the other JS

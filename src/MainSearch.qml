@@ -4,7 +4,6 @@ import QtQuick.Layouts 1.1
 import "qrc:/Components/" as Components
 import "qrc:/Controls/" as Controls
 import "qrc:/Constants.js" as Constants
-import "qrc:/UserSession.js" as UserSession
 import "qrc:/Views/ViewsLogic.js" as ViewsLogic
 
 Components.Background {
@@ -109,7 +108,7 @@ Components.Background {
             Controls.ShareButton {
                 id: shareButton
                 Layout.fillWidth: true
-                itinerary: UserSession.LAMA_USER_CURRENT_ITINERARY
+                itinerary: rootView.lamaSession.LAMA_USER_CURRENT_ITINERARY
             }
 
             Controls.IconButton {
@@ -139,7 +138,7 @@ Components.Background {
                     }
 
                     rootView.raiseUserSessionChanged()
-                    UserSession.saveSessionState(rootView.lamaSession)
+                    rootView.saveSessionState(rootView.lamaSession)
                     // edit itineraryServices in raiseusersessionchanged
                     //itineraryServices.editItinerary(int id, QString name, QString departure, QString favorite, ServicesBase::CallbackType callback);
                 }

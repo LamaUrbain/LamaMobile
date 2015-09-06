@@ -1,4 +1,3 @@
-.pragma library // Statefull
 .import QtQuick.LocalStorage 2.0 as Sql
 
 var LAMA_LOCALDB_NAME = "LamaLocalDB"
@@ -75,8 +74,6 @@ var LAMA_SESSION =
         }
     ]
 }
-
-var mainModal;
 
 function bootstrap_user(tx) {
     tx.executeSql(""
@@ -233,10 +230,10 @@ function saveSessionState()
         } );
 }
 
-function tryLogin(rootId, clearPreviousData)
+function tryLogin(clearPreviousData)
 {
-    if (rootId.lamaSession.TOKEN !== null &&
-        rootId.lamaSession.TOKEN.length > 0)
+    if (rootView.lamaSession.TOKEN !== null &&
+        rootView.lamaSession.TOKEN.length > 0)
         deleteCurrentToken()
 
     if (clearPreviousData)
@@ -244,36 +241,36 @@ function tryLogin(rootId, clearPreviousData)
     else
         checkAndLoadFromSavedData()
 
-    if (rootId.lamaSession.USERNAME === null ||
-        rootId.lamaSession.PASSWORD === null)
+    if (rootView.lamaSession.USERNAME === null ||
+        rootView.lamaSession.PASSWORD === null)
     {
-        rootId.lamaSession.USERNAME = null // Paranoia
-        rootId.lamaSession.PASSWORD = null // Paranoia
+        rootView.lamaSession.USERNAME = null // Paranoia
+        rootView.lamaSession.PASSWORD = null // Paranoia
         return;
     }
 
-    loginAndCreateToken(rootID);
+    loginAndCreateToken(rootView);
 }
 
-function loginAndCreateToken(rootId, callback)
+function loginAndCreateToken(rootView, callback)
 {
-    userServices.createToken(rootId.lamaSession.USERNAME, rootId.lamaSession.PASSWORD, function (success, userInfos)
+    userServices.createToken(rootView.lamaSession.USERNAME, rootView.lamaSession.PASSWORD, function (success, userInfos)
     {
         if (success === false || userInfos === null)
         {
-            rootId.lamaSession.USERNAME = null
-            rootId.lamaSession.PASSWORD = null
-            mainModal.title = "No internet connexion"
-            mainModal.message = "Please check your connectivity to the internet.\n"
+            rootView.lamaSession.USERNAME = null
+            rootView.lamaSession.PASSWORD = null
+            rootView.modal.title = "No internet connexion"
+            rootView.modal.message = "Please check your connectivity to the internet.\n"
                                 + "once it's done you shall restart the application."
-            mainModal.setLoadingState(false)
-            mainModal.enableButton = true
+            rootView.modal.setLoadingState(false)
+            rootView.modal.enableButton = true
         }
         else
         {
-            rootId.lamaSession.IS_LOGGED = true
-            rootId.lamaSession.TOKEN = userInfos.token
-            rootId.lamaSession.IS_LOGGED = true
+            rootView.lamaSession.IS_LOGGED = true
+            rootView.lamaSession.TOKEN = userInfos.token
+            rootView.lamaSession.IS_LOGGED = true
             loadItineraries()
             getFurtherUserDetails()
         }
@@ -294,19 +291,19 @@ function loadItineraries()
     {
         if (success === false || userRoutes === null)
         {
-            mainModal.title = "No stable internet connexion"
-            mainModal.message = "Please check your connectivity to the internet.\n"
+            rootView.modal.title = "No stable internet connexion"
+            rootView.modal.message = "Please check your connectivity to the internet.\n"
                                 + "once it's done you shall restart the application.\n\n"
                                 + "We've been able to connect you but not gather your settings."
-            mainModal.setLoadingState(false)
-            mainModal.enableButton = true
+            rootView.modal.setLoadingState(false)
+            rootView.modal.enableButton = true
         }
         else
         {
             rootView.lamaSession.KNOWN_ITINERARIES = userRoutes
-            mainModal.message = "You've successfully logged in !"
-            mainModal.setLoadingState(false)
-            mainModal.enableButton = true
+            rootView.modal.message = "You've successfully logged in !"
+            rootView.modal.setLoadingState(false)
+            rootView.modal.enableButton = true
             saveSessionState()
         }
     })
