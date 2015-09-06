@@ -8,6 +8,13 @@
 #define M_PI    (3.14159265359)
 #endif
 
+#ifndef MAP_EXTRA_SIZE
+#define MAP_EXTRA_SIZE 1024
+#endif
+#ifndef MAP_EXTRA_SIZE_HALF
+#define MAP_EXTRA_SIZE_HALF MAP_EXTRA_SIZE / 2
+#endif
+
 class MapWidgetPrivate;
 class MapExtension;
 

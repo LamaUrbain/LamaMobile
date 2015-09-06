@@ -8,15 +8,16 @@
 #include "itineraryservices.h"
 #include "mapgetter.h"
 
-static const int indicatorHalfWidth = 24;
-static const int indicatorHeight = 48;
+static const int indicatorHalfWidth = 18;
+static const int indicatorHeight = 54;
 
 MapOverlayExtension::MapOverlayExtension(MapWidget *map)
     : MapExtension(map),
-      _indicator(":/Images/map_indicator.png"),
-      _selectedIndicator(":/Images/map_indicator_selected.png"),
+      _departureIndicator(":/Images/departure.png"),
+      _destinationIndicator(":/Images/arrival.png"),
       _selectedPoint(-1),
-      _itineraryId(-1)
+      _itineraryId(-1),
+      _isMoving(false)
 {
     for (int i = 0; i < 20; ++i)
         _itineraryTiles[i] = NULL;
@@ -298,7 +299,10 @@ void MapOverlayExtension::end(QPainter *painter)
     for (QList<PairPoint>::const_iterator it = _pending.constBegin(); it != _pending.constEnd(); ++it)
     {
         const QPoint &pos = (*it).first;
-        painter->drawPixmap(pos, (*it).second == _selectedPoint ? _selectedIndicator : _indicator);
+        painter->save();
+        painter->setOpacity((*it).second == _selectedPoint ? 0.7 : 1);
+        painter->drawPixmap(pos, (*it).second == 0 ? _departureIndicator : _destinationIndicator);
+        painter->restore();
     }
 
     quint8 scale = _map->getMapScale();
@@ -310,14 +314,38 @@ void MapOverlayExtension::end(QPainter *painter)
 bool MapOverlayExtension::mousePressEvent(QMouseEvent *event)
 {
     if (_selectedPoint != -1)
+        return false;
+
+    _isMoving = false;
+
+    int point = pointAt(event->pos());
+
+    if (point != -1)
+        return true;
+
+    _selectedPoint = -1;
+    return false;
+}
+
+bool MapOverlayExtension::mouseReleaseEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event);
+
+    if (_isMoving)
+    {
+        _isMoving = false;
+        return false;
+    }
+
+    if (_selectedPoint != -1)
     {
         if (_selectedPoint < _points.size())
         {
             QPoint pos;
             MapWidgetPrivate *p = getMapPrivate();
 
-            pos.setX(p->getCenterPos().x() * 256 + p->getCenterOffset().x() - p->getScrollOffset().x() - 256 + event->pos().x() - _map->width() / 2);
-            pos.setY(p->getCenterPos().y() * 256 + p->getCenterOffset().y() - p->getScrollOffset().y() - 256 + event->pos().y() - _map->height() / 2);
+            pos.setX(p->getCenterPos().x() * 256 + p->getCenterOffset().x() - p->getScrollOffset().x() - MAP_EXTRA_SIZE_HALF + event->pos().x() - _map->width() / 2);
+            pos.setY(p->getCenterPos().y() * 256 + p->getCenterOffset().y() - p->getScrollOffset().y() - MAP_EXTRA_SIZE_HALF + event->pos().y() - _map->height() / 2);
 
             QPointF newCoords = p->coordsFromPixels(pos);
 
@@ -338,26 +366,12 @@ bool MapOverlayExtension::mousePressEvent(QMouseEvent *event)
         return true;
     }
 
-    _selectedPoint = -1;
-    return false;
-}
-
-bool MapOverlayExtension::mouseReleaseEvent(QMouseEvent *event)
-{
-    Q_UNUSED(event);
-
-    if (_selectedPoint != -1)
-        return true;
-
     return false;
 }
 
 bool MapOverlayExtension::mouseMoveEvent(QMouseEvent *event)
 {
     Q_UNUSED(event);
-
-    if (_selectedPoint != -1)
-        return true;
-
+    _isMoving = true;
     return false;
 }

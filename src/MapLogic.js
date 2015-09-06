@@ -1,93 +1,84 @@
-
-function proceedToAddWayPoints(wayPointsArray)
+function _formatCoords(waypoint)
 {
-    var wayPointCount = wayPointsArray.length; // Fucking flies because of dereferencement
-
-    if (wayPointCount === 0)
-    {
-        rootView.mainView.get(0, false).mapComponent.displayItinerary(parseInt(rootView.lamaSession.CURRENT_ITINERARY['id']));
-        rootView.modal.visible = false;
-    }
-    else
-    {
-        for (var idx = 0; idx < wayPointCount; ++idx)
-        {
-            itineraryServices.addDestination(itineraryId, wayPointsArray[idx], idx,
-                                             function (idx)
-            {
-                return (function(statusCode, jsonStr)
-                {
-                    if (statusCode !== 0)
-                    {
-                        rootView.modal.title = "Error"
-                        rootView.modal.text = "Sadly, an error occured (MAPVIEW_RESOLV_DEST_ADD_FAIL)"
-                        rootView.modal.enableButton = true
-                        rootView.modal.visible = true
-                    }
-
-                    if (idx + 1 === wayPointCount)
-                    {
-                        rootView.mainView.get(0, false).mapComponent.displayItinerary(parseInt(jsonObj["id"]));
-                        rootView.modal.visible = false;
-                    }
-                });
-            }(idx));
-        }
-    }
+    return (waypoint["longitude"] + ", " + waypoint["latitude"])
 }
 
-function updateItineraryAndDisplay()
+function displayOnUpdateResult(status, jsonObj)
 {
-    console.log("TODO updateItinerary")
+    if (status !== 0)
+    {
+        rootView.modal.title = "Error"
+        rootView.modal.message = "We had a hard time updating your itinerary"
+        rootView.modal.enableButton = true
+        rootView.modal.visible = true
+        rootView.modal.setLoadingState(false)
+        return;
+    }
 
-    rootView.mainView.get(0, false).mapComponent.displayItinerary(jsonObj["id"]);
+    mapView.mapComponent.displayItinerary(jsonObj["id"]);
     rootView.modal.visible = false;
+}
+
+function updateItinerary(status, jsonObj)
+{
+    if (status !== 0)
+    {
+        rootView.modal.title = "Error"
+        rootView.modal.message = "We had a hard time getting your itinerary"
+        rootView.modal.enableButton = true
+        rootView.modal.visible = true
+        rootView.modal.setLoadingState(false)
+        return;
+    }
+
+    var currentIt = rootView.lamaSession.CURRENT_ITINERARY;
+    var destArray = [];
+    for (var idx = 0; idx < currentIt["destinations"].length; ++idx)
+        destArray[idx] = _formatCoords(currentIt["destinations"][idx])
+    itineraryServices.overwriteItinerary(parseInt(currentIt["id"]),
+                                         currentIt["name"],
+                                         _formatCoords(currentIt["departure"]),
+                                         destArray,
+                                         currentIt["favorite"] === true ? "true" : "false",
+                                         displayOnUpdateResult);
+}
+
+function onCreateItineraryWith(statusCode, jsonStr)
+{
+    console.log("CreateItinerary Response Status : " + statusCode);
+    if (statusCode === 0)
+    {
+        var jsonObj = JSON.parse(jsonStr)
+        var ItId = jsonObj["id"]
+        console.log("CreateItinerary Response Id : " + ItId);
+        rootView.lamaSession.CURRENT_ITINERARY['id'] = ItId;
+        mapView.mapComponent.displayItinerary(parseInt(rootView.lamaSession.CURRENT_ITINERARY['id']));
+        rootView.modal.visible = false;
+        return;
+    }
+    rootView.modal.title = "Error"
+    rootView.modal.message = "Unfortunatly the lama did not find his way"
+    rootView.modal.enableButton = true
+    rootView.modal.setLoadingState(false)
 }
 
 function createItineraryAndDisplay()
 {
     var currentIt = rootView.lamaSession.CURRENT_ITINERARY
-    var startPoint = currentIt["departure"]
-    var lastId = currentIt["destinations"].length - 1
-    var arrivalPoint = currentIt["destinations"][lastId]
-    var requestDeparture = startPoint["longitude"] + ', ' + startPoint["latitude"]
-    var requestArrival = arrivalPoint["longitude"] + ', ' + arrivalPoint["latitude"]
-
-    var waypointArray = [];
-    if (lastId !== 0)
-        for (var idx = 0; idx < lastId; ++idx)
-        {
-            var currentPoint = currentIt["destinations"][idx]
-            waypointArray.push(currentPoint["longitude"] + ', ' + currentPoint["latitude"])
-        }
 
     if (currentIt['name'] === null || currentIt['name'] === '')
         currentIt['name'] = "tmp_itinerary_" + ViewsLogic.getRandomString(8);
 
     //itineraryServices.abortPendingRequests()
-    itineraryServices.createItinerary(currentIt['name'], requestDeparture, requestArrival, currentIt["favorite"] ? "true" : "false",
-                    function(waypointArray)
-    {
-        return (function(statusCode, jsonStr)
-        {
-            console.log("CreateItinerary Response Status : " + statusCode);
-            if (statusCode === 0)
-            {
-                var jsonObj = JSON.parse(jsonStr)
-                var ItId = jsonObj["id"]
-                console.log("CreateItinerary Response Id : " + ItId);
-                rootView.lamaSession.CURRENT_ITINERARY['id'] = ItId;
-                proceedToAddWayPoints(waypointArray)
-            }
-            else
-            {
-                rootView.Modal.title = "Error"
-                rootView.Modal.message = "Unfortunatly the llama did not find his way"
-                rootView.Modal.enableButton = true
-                rootView.Modal.setLoadingState(false)
-            }
-        });
-    }(waypointArray));
+
+    var destArray = [];
+    for (var idx = 0; idx < currentIt["destinations"].length; ++idx)
+        destArray[idx] = _formatCoords(currentIt["destinations"][idx])
+    itineraryServices.createItineraryWith(currentIt["name"],
+                                         _formatCoords(currentIt["departure"]),
+                                         destArray,
+                                         currentIt["favorite"] === true ? "true" : "false",
+                                         onCreateItineraryWith);
 }
 
 function resolveCurrentItinerary()
@@ -106,23 +97,56 @@ function resolveCurrentItinerary()
         mainModal.message = "Sadly, an error occured (MAPVIEW_RESOLV_INVALID_OBJ)"
         mainModal.enableButton = true
         mainModal.visible = true
+        rootView.modal.setLoadingState(false)
         return;
     }
     else if (ViewsLogic.isValueAtKeyValid(currentIt, "id") && currentIt['id'] > 0)
-        itineraryServices.getItinerary(currentIt['id'], function ()
+        itineraryServices.getItinerary(currentIt['id'], function(statusCode, jsonStr)
         {
-            return (function(statusCode, jsonStr)
+            if (statusCode !== 0)
             {
-                if (statusCode !== 0)
-                {
-                    mainModal.title = "Error"
-                    mainModal.message = "Sadly, an error occured (MAPVIEW_RESOLV_EXIST_IT_FAIL)"
-                    mainModal.enableButton = true
-                    mainModal.visible = true
-                }
-                updateItineraryAndDisplay()
-            });
-        }());
+                mainModal.title = "Error"
+                mainModal.message = "Sadly, an error occured (MAPVIEW_RESOLV_EXIST_IT_FAIL)"
+                mainModal.enableButton = true
+                mainModal.visible = true
+                rootView.modal.setLoadingState(false)
+            }
+            else
+            {
+                var currentIt = rootView.lamaSession.CURRENT_ITINERARY;
+                itineraryServices.getItinerary(currentIt["id"], updateItinerary)
+            }
+        });
     else
         createItineraryAndDisplay();
+}
+
+function moveItineraryPoint(itineraryId, point, newCoords)
+{
+    if (point == 0)
+    {
+        rootView.lamaSession.CURRENT_ITINERARY["departure"] =
+        {
+            address: "You moved it",
+            latitude: newCoords.x,
+            longitude: newCoords.y
+        }
+        itineraryServices.editItinerary(itineraryId, "", _formatCoords(rootView.lamaSession.CURRENT_ITINERARY["departure"]), "", function(statusCode, jsonStr)
+        {
+            rootView.mapView.mapComponent.itineraryChanged();
+        });
+    }
+    else if (point - 1 < rootView.lamaSession.CURRENT_ITINERARY["destinations"].length)
+    {
+        rootView.lamaSession.CURRENT_ITINERARY["destinations"][point - 1] =
+        {
+            address: "You moved it",
+            latitude: newCoords.x,
+            longitude: newCoords.y
+        }
+        itineraryServices.editDestination(itineraryId, point - 1, -1, _formatCoords(rootView.lamaSession.CURRENT_ITINERARY["destinations"][point - 1]), function(statusCode, jsonStr)
+        {
+            rootView.mapView.mapComponent.itineraryChanged();
+        });
+    }
 }

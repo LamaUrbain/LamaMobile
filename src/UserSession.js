@@ -135,7 +135,7 @@ function openDb()
     return LAMA_DB_DESCRIPTOR;
 }
 
-function checkAndLoadFromSavedData(Session)
+function checkAndLoadFromSavedData()
 {
     var db = openDb()
 
@@ -147,15 +147,15 @@ function checkAndLoadFromSavedData(Session)
             {
                 var row = query.rows.item(0);
                 if (row.user_name.length > 0)
-                    Session.USERNAME = row.user_name.replace(/'/g, '"')
+                    rootView.lamaSession.USERNAME = row.user_name.replace(/'/g, '"')
                 if (row.user_password.length > 0)
-                    Session.PASSWORD = row.user_password.replace(/'/g, '"')
+                    rootView.lamaSession.PASSWORD = row.user_password.replace(/'/g, '"')
                 if (row.user_knownroutes.length > 0)
-                    Session.KNOWN_ITINERARIES = JSON.parse(row.user_knownroutes.replace(/'/g, '"'))
+                    rootView.lamaSession.KNOWN_ITINERARIES = JSON.parse(row.user_knownroutes.replace(/'/g, '"'))
                 if (row.user_email.length > 0)
-                    Session.EMAIL = row.user_email.replace(/'/g, '"')
+                    rootView.lamaSession.EMAIL = row.user_email.replace(/'/g, '"')
                 if (row.user_avatar.length > 0)
-                    Session.AVATAR = row.user_avatar.replace(/'/g, '"')
+                    rootView.lamaSession.AVATAR = row.user_avatar.replace(/'/g, '"')
                 console.log("Offline data loaded !")
             }
             else
@@ -164,21 +164,21 @@ function checkAndLoadFromSavedData(Session)
     )
 }
 
-function deleteCurrentToken(Session)
+function deleteCurrentToken()
 {
-    userServices.deleteToken(Session.TOKEN)
-    Session.TOKEN = ""
-    Session.IS_LOGGED = false
+    userServices.deleteToken(null)
+    rootView.lamaSession.TOKEN = ""
+    rootView.lamaSession.IS_LOGGED = false
 }
 
-function deleteSavedData(Session)
+function deleteSavedData()
 {
-    Session.EMAIL = ""
-    Session.AVATAR = ""
-    Session.CURRENT_ITINERARY = {}
-    Session.CURRENT_WAYPOINT_ID = -1
-    Session.CURRENT_WAYPOINT = {}
-    Session.KNOWN_ITINERARIES = []
+    rootView.lamaSession.EMAIL = ""
+    rootView.lamaSession.AVATAR = ""
+    rootView.lamaSession.CURRENT_ITINERARY = {}
+    rootView.lamaSession.CURRENT_WAYPOINT_ID = -1
+    rootView.lamaSession.CURRENT_WAYPOINT = {}
+    rootView.lamaSession.KNOWN_ITINERARIES = []
 
     var db = openDb()
 
@@ -186,10 +186,8 @@ function deleteSavedData(Session)
     { tx.executeSql("DELETE FROM " + LAMA_LOCALDB_TABLENAME); } )
 }
 
-function saveSessionState(Session)
+function saveSessionState()
 {
-    if (Session === null || typeof(Session) === "undefined")
-        throw ("What the fuck man");
     var db = openDb()
     db.transaction(function (tx)
     {
@@ -197,23 +195,23 @@ function saveSessionState(Session)
                 [
                     {
                         name: "user_name",
-                        value: Session.USERNAME
+                        value: rootView.lamaSession.USERNAME
                     },
                     {
                         name: "user_password",
-                        value: Session.PASSWORD
+                        value: rootView.lamaSession.PASSWORD
                     },
                     {
                         name: "user_email",
-                        value: Session.EMAIL
+                        value: rootView.lamaSession.EMAIL
                     },
                     {
                         name: "user_avatar",
-                        value: Session.AVATAR
+                        value: rootView.lamaSession.AVATAR
                     },
                     {
                         name: "user_knownroutes",
-                        value: JSON.stringify(Session.KNOWN_ITINERARIES)
+                        value: JSON.stringify(rootView.lamaSession.KNOWN_ITINERARIES)
                     },
                 ]
         var sqlStr = "INSERT OR REPLACE INTO USER (id, user_name, user_password, user_email, user_avatar, user_knownroutes) VALUES (1, ";
@@ -235,35 +233,35 @@ function saveSessionState(Session)
         } );
 }
 
-function tryLogin(Session, clearPreviousData)
+function tryLogin(clearPreviousData)
 {
-    if (Session.TOKEN !== null && Session.TOKEN.length > 0)
-        deleteCurrentToken(Session)
+    if (rootView.lamaSession.TOKEN !== null && rootView.lamaSession.TOKEN.length > 0)
+        deleteCurrentToken()
 
     if (clearPreviousData)
-        deleteSavedData(Session)
+        deleteSavedData()
     else
-        checkAndLoadFromSavedData(Session)
+        checkAndLoadFromSavedData()
 
-    if (Session.USERNAME === null ||
-        Session.PASSWORD === null)
+    if (rootView.lamaSession.USERNAME === null ||
+        rootView.lamaSession.PASSWORD === null)
     {
-        Session.USERNAME = null // Paranoia
-        Session.PASSWORD = null // Paranoia
+        rootView.lamaSession.USERNAME = null // Paranoia
+        rootView.lamaSession.PASSWORD = null // Paranoia
         return;
     }
 
     loginAndCreateToken();
 }
 
-function loginAndCreateToken(Session, callback)
+function loginAndCreateToken(callback)
 {
-    userServices.createToken(Session.USERNAME, Session.PASSWORD, function (success, userInfos)
+    userServices.createToken(rootView.lamaSession.USERNAME, rootView.lamaSession.PASSWORD, function (success, userInfos)
     {
         if (success === false || userInfos === null)
         {
-            Session.USERNAME = null
-            Session.PASSWORD = null
+            rootView.lamaSession.USERNAME = null
+            rootView.lamaSession.PASSWORD = null
             mainModal.title = "No internet connexion"
             mainModal.message = "Please check your connectivity to the internet.\n"
                                 + "once it's done you shall restart the application."
@@ -272,25 +270,26 @@ function loginAndCreateToken(Session, callback)
         }
         else
         {
-            Session.IS_LOGGED = true
-            Session.TOKEN = userInfos.token
-            Session.IS_LOGGED = true
-            loadItineraries(Session)
-            getFurtherUserDetails(Session)
+            rootView.lamaSession.IS_LOGGED = true
+            rootView.lamaSession.TOKEN = userInfos.token
+            rootView.lamaSession.IS_LOGGED = true
+            loadItineraries()
+            getFurtherUserDetails()
         }
     })
 }
 
-function getFurtherUserDetails(Session)
+function getFurtherUserDetails()
 {
     //EMAIL = userInfos.email
     //AVATAR = userInfos.avatar
     //saveSessionState()
 }
 
-function loadItineraries(Session)
+function loadItineraries()
 {
-    itineraryServices.getItineraries(null, Session.USERNAME, true, null, function (success, userRoutes)
+    itineraryServices.getItineraries(null, rootView.lamaSession.USERNAME, "true", "",
+                                     function (success, userRoutes)
     {
         if (success === false || userRoutes === null)
         {
@@ -303,12 +302,12 @@ function loadItineraries(Session)
         }
         else
         {
-            Session.KNOWN_ITINERARIES = userRoutes
+            rootView.lamaSession.KNOWN_ITINERARIES = userRoutes
             mainModal.message = "You've successfully logged in !"
             mainModal.setLoadingState(false)
             mainModal.enableButton = true
             saveSessionState()
         }
-    }, null)
+    })
 
 }

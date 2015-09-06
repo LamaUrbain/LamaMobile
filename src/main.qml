@@ -14,12 +14,17 @@ Window {
     width: 640
     height: 960
 
-    Component.onCompleted: UserSession.tryLogin(rootView.lamaSession, false)
     signal userSessionChanged()
+    signal triggerLogin(bool clearData)
+    onTriggerLogin:
+    {
+        tryLogin(clearData)
+    }
 
     property var lamaSession: UserSession.LAMA_SESSION
     property alias modal: mainModal
     property alias mainView: mainView
+    property QtObject mapView: null
 
     StackView {
         id: mainView
@@ -33,17 +38,12 @@ Window {
         Component.onCompleted: rootView.lamaSession.mainModal = mainModal
     }
 
-    function mainViewTo(name, prop) {
-        if (name === undefined)
+    function mainViewTo(name, prop)
+    {
+        if (name === undefined || name === "Map")
         {
-            mainViewTo("Map")
-            return
-        }
-
-        if (name === "Map") // if we go directly to the map, reset the navstack
-        {
-            mainView.clear()
-            mainView.push("qrc:/Views/Map.qml")
+            // Pops all but the first item (i.e. the map)
+            mainView.pop(null);
         }
         else
         {
@@ -53,7 +53,8 @@ Window {
 
     function mainViewBack()
     {
-        mainView.pop()
+        if (mainView.currentItem != mapView)
+            mainView.pop()
     }
 
     function raiseUserSessionChanged()
@@ -65,4 +66,16 @@ Window {
     {
         MapLogic.resolveCurrentItinerary()
     }
+
+    function moveItineraryPoint(itineraryId, point, newCoords)
+    {
+        MapLogic.moveItineraryPoint(itineraryId, point, newCoords);
+    }
+
+    function tryLogin(clear)
+    {
+        UserSession.tryLogin(clear)
+    }
+
+    Component.onCompleted: UserSession.tryLogin(false)
 }

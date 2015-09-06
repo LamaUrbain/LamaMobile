@@ -69,9 +69,18 @@ Components.Marker {
         anchors.leftMargin: parent.width * 0.005
         anchors.rightMargin: parent.width * 0.005
 
+        onMapPointClicked:
+        {
+            mapPieMenu.pieCoords = coords;
+            mapPieMenu.popup(pos.x, pos.y);
+        }
+        onMapPointMoved:
+        {
+            rootView.moveItineraryPoint(id, point, newCoords);
+        }
+
         Components.MapPieMenu {
             id: mapPieMenu
-
             property point pieCoords
 
             scale: 1.2
@@ -98,12 +107,9 @@ Components.Marker {
                 iconSource: Constants.LAMA_ARRIVAL_RESSOURCE
             }
         }
+    }
 
-
-        onMapPointClicked:
-        {
-            mapPieMenu.pieCoords = coords;
-            mapPieMenu.popup(pos.x, pos.y);
-        }
+    Component.onCompleted: {
+        rootView.mapView = mapView;
     }
 }

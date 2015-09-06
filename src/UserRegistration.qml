@@ -78,13 +78,8 @@ Components.Background {
                     mainModal.setLoadingState(true);
                     mainModal.enableButton = false
                     mainModal.visible = true;
-                    var jsonParams = {
-                        username: nickname,
-                        password: pass,
-                        email: mail
-                    }
                     rootView.lamaSession.IS_LOGGED = false
-                    rootView.lamaSession.TOKEN = ""
+                    rootView.lamaSession.USERNAME = nickname
                     rootView.lamaSession.PASSWORD = pass
                     userServices.createUser(nickname, pass, mail, onRegistrationResult)
                 }
@@ -108,10 +103,12 @@ Components.Background {
 
             function onRegistrationResult(status, json)
             {
-                if (status === true)
+                console.log("Registration result :" + status)
+                if (status === 0)
                 {
                     mainModal.message = "You have successfully registratered to the \nLamaUrbain community !"
-                            + "You may now proceed to log in\n\n"
+                            + "\nYou may now proceed to log in\n\n"
+
                     mainModal.onModalButtonClicked.connect(registrationComplete_ClickedModal)
                 }
                 else

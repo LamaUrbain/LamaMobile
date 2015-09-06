@@ -58,13 +58,15 @@ private:
     QMultiHash<QPoint, PairPointF> _tilePoints[20];
     QList<QPointF> _points;
     QList<PairPoint> _pending;
-    QPixmap _indicator;
-    QPixmap _selectedIndicator;
+    QPixmap _departureIndicator;
+    QPixmap _destinationIndicator;
     int _selectedPoint;
 
     QList<QPoint> *_itineraryTiles[20];
     QList<QPoint> _missing[20];
     int _itineraryId;
+
+    bool _isMoving;
 };
 
 #endif // MAPOVERLAYEXTENSION_H

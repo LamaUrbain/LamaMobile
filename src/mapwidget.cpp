@@ -34,7 +34,7 @@ MapWidgetPrivate::MapWidgetPrivate(MapWidget *ptr)
     : q_ptr(ptr),
       _center(2.3358000, 48.8534100),
       _scale(12),
-      _scrollOffset(-256, -256),
+      _scrollOffset(-MAP_EXTRA_SIZE_HALF, -MAP_EXTRA_SIZE_HALF),
       _scrollValueSet(false),
       _wheeling(false),
       _changed(true),
@@ -161,18 +161,18 @@ void MapWidgetPrivate::mouseMove(const QPoint &pos)
         _scrollOffset.ry() -= yDiff;
         _scrollLastPos = pos;
 
-        if (_centerPos.x() * 256 + _centerOffset.x() - _scrollOffset.x() - 256 < 0)
-            _scrollOffset.setX(_centerPos.x() * 256 + _centerOffset.x() - 256);
-        else if (_centerPos.x() * 256 + _centerOffset.x() - _scrollOffset.x() - 256 > _tilesNumber * 256)
-            _scrollOffset.setX(_centerPos.x() * 256 + _centerOffset.x() - 256 - _tilesNumber * 256);
+        if (_centerPos.x() * 256 + _centerOffset.x() - _scrollOffset.x() - MAP_EXTRA_SIZE_HALF < 0)
+            _scrollOffset.setX(_centerPos.x() * 256 + _centerOffset.x() - MAP_EXTRA_SIZE_HALF);
+        else if (_centerPos.x() * 256 + _centerOffset.x() - _scrollOffset.x() - MAP_EXTRA_SIZE_HALF > _tilesNumber * 256)
+            _scrollOffset.setX(_centerPos.x() * 256 + _centerOffset.x() - MAP_EXTRA_SIZE_HALF - _tilesNumber * 256);
 
-        if (_centerPos.y() * 256 + _centerOffset.y() - _scrollOffset.y() - 256 < 0)
-            _scrollOffset.setY(_centerPos.y() * 256 + _centerOffset.y() - 256);
-        else if (_centerPos.y() * 256 + _centerOffset.y() - _scrollOffset.y() - 256 > _tilesNumber * 256)
-            _scrollOffset.setY(_centerPos.y() * 256 + _centerOffset.y() - 256 - _tilesNumber * 256);
+        if (_centerPos.y() * 256 + _centerOffset.y() - _scrollOffset.y() - MAP_EXTRA_SIZE_HALF < 0)
+            _scrollOffset.setY(_centerPos.y() * 256 + _centerOffset.y() - MAP_EXTRA_SIZE_HALF);
+        else if (_centerPos.y() * 256 + _centerOffset.y() - _scrollOffset.y() - MAP_EXTRA_SIZE_HALF > _tilesNumber * 256)
+            _scrollOffset.setY(_centerPos.y() * 256 + _centerOffset.y() - MAP_EXTRA_SIZE_HALF - _tilesNumber * 256);
 
-        if (_scrollOffset.x() <= -512 || _scrollOffset.x() >= 0
-            || _scrollOffset.y() <= -512 || _scrollOffset.y() >= 0)
+        if (_scrollOffset.x() <= -MAP_EXTRA_SIZE || _scrollOffset.x() >= 0
+            || _scrollOffset.y() <= -MAP_EXTRA_SIZE || _scrollOffset.y() >= 0)
         {
             updateCenter();
         }
@@ -229,8 +229,8 @@ void MapWidgetPrivate::mouseReleaseEvent(QMouseEvent *event)
         Q_Q(MapWidget);
         QPoint pos;
 
-        pos.setX(getCenterPos().x() * 256 + getCenterOffset().x() - getScrollOffset().x() - 256 + event->pos().x() - q->width() / 2);
-        pos.setY(getCenterPos().y() * 256 + getCenterOffset().y() - getScrollOffset().y() - 256 + event->pos().y() - q->height() / 2);
+        pos.setX(getCenterPos().x() * 256 + getCenterOffset().x() - getScrollOffset().x() - MAP_EXTRA_SIZE_HALF + event->pos().x() - q->width() / 2);
+        pos.setY(getCenterPos().y() * 256 + getCenterOffset().y() - getScrollOffset().y() - MAP_EXTRA_SIZE_HALF + event->pos().y() - q->height() / 2);
 
         emit q->mapPointClicked(event->pos(), coordsFromPixels(pos));
     }
@@ -356,8 +356,8 @@ void MapWidgetPrivate::updateCenterValues()
 
 void MapWidgetPrivate::updateCenter()
 {
-    int xOffset = _scrollOffset.x() + 256;
-    int yOffset = _scrollOffset.y() + 256;
+    int xOffset = _scrollOffset.x() + MAP_EXTRA_SIZE_HALF;
+    int yOffset = _scrollOffset.y() + MAP_EXTRA_SIZE_HALF;
 
     if (xOffset != 0 && yOffset != 0)
     {
@@ -369,7 +369,7 @@ void MapWidgetPrivate::updateCenter()
         setMapCenter(coordsFromPixels(pos));
     }
 
-    _scrollOffset = QPoint(-256, -256);
+    _scrollOffset = QPoint(-MAP_EXTRA_SIZE_HALF, -MAP_EXTRA_SIZE_HALF);
 
     Q_Q(MapWidget);
     q->offsetXChanged();
@@ -382,7 +382,7 @@ void MapWidgetPrivate::generateCache()
 
     _missing.clear();
 
-    QSize size(q->width() + 512, q->height() + 512);
+    QSize size(q->width() + MAP_EXTRA_SIZE, q->height() + MAP_EXTRA_SIZE);
     QPoint centerPix(size.width() / 2, size.height() / 2);
 
     if (_cache.size() != size)
@@ -414,7 +414,7 @@ void MapWidgetPrivate::generateCache()
                 ext->drawTile(&painter, pos, tilePos);
         }
         else
-            painter.fillRect(tilePos.x(), tilePos.y(), 256, 256, Qt::white);
+            painter.fillRect(tilePos.x(), tilePos.y(), MAP_EXTRA_SIZE_HALF, MAP_EXTRA_SIZE_HALF, Qt::white);
     }
 
     foreach (MapExtension *ext, _extensions)
@@ -728,7 +728,7 @@ QPoint MapWidget::toPosition(QPointF coord) const
     const QPoint &centerOffset = d->getCenterOffset();
     QPointF pos = d->posFromCoords(coord);
 
-    QSize size(width() + 512, height() + 512);
+    QSize size(width() + MAP_EXTRA_SIZE, height() + MAP_EXTRA_SIZE);
     QPoint centerPix(size.width() / 2, size.height() / 2);
 
     QPoint tilePos;

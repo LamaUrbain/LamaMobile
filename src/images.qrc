@@ -2,5 +2,7 @@
     <qresource prefix="/">
         <file>Images/map_indicator.png</file>
         <file>Images/map_indicator_selected.png</file>
+        <file>Images/arrival.png</file>
+        <file>Images/departure.png</file>
     </qresource>
 </RCC>
