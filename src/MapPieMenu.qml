@@ -17,6 +17,7 @@ PieMenu {
     style: PieMenuStyle {
         backgroundColor: Constants.LAMA_ORANGE
         selectionColor: Constants.LAMA_YELLOW
+        shadowRadius: 0
         title: Text {
             font.pixelSize: Constants.LAMA_POINTSIZE
             color: Constants.LAMA_ORANGE
