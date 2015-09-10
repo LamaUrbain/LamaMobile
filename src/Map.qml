@@ -57,7 +57,7 @@ Components.Marker {
                 Layout.fillWidth: true
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
-                centerText: "User Auth"
+                centerText: "Your account"
                 navigationTarget: "UserAuth"
                 color: Constants.LAMA_ORANGE
             }
@@ -131,8 +131,7 @@ Components.Marker {
             MenuItem {
                 text: "New itinerary"
                 onTriggered: {
-                    console.log("New itinerary !")
-                    rootView.lamaSession.CURRENT_ITINERARY  = Constants.LAMA_BASE_ITINERARY_OBJ
+                    rootView.checkCurrentIt()
                     rootView.mainViewTo("MainSearch", null)
                 }
                 iconSource: Constants.LAMA_ARRIVAL_RESSOURCE

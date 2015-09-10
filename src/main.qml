@@ -159,6 +159,23 @@ Window {
         UserSession.fillHistoryFiltered(model, pattern, limit)
     }
 
+    function logOut()
+    {
+        UserSession.deleteCurrentToken()
+    }
+
+    function checkCurrentIt()
+    {
+        var cIt = rootView.lamaSession.CURRENT_ITINERARY;
+        if (cIt == null || typeof(cIt) == "undefined"
+            || !("id" in cIt))
+        {
+            console.log("New itinerary !")
+            lamaSession.CURRENT_ITINERARY = Constants.LAMA_BASE_ITINERARY_OBJ
+            mapView.mapComponent.displayItinerary(-1);
+        }
+    }
+
     Component.onCompleted:
     {
         UserSession.tryLogin(false)

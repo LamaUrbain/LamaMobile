@@ -75,9 +75,23 @@ Components.Background {
 
 
     Components.BottomAction {
+        Components.Marker {
+            id: logOut
+            anchors.fill: parent
+            anchors.rightMargin: parent.width * 0.45
+            centerText: "Log out"
+            onClicked:
+            {
+                rootView.logOut()
+                rootView.mainViewBack()
+            }
+            visible: rootView.lamaSession.IS_LOGGED
+        }
+
         Controls.NavigationButton {
             id: navButton
             anchors.fill: parent
+            anchors.leftMargin: parent.width * (0.45 * (rootView.lamaSession.IS_LOGGED ? 1 : 0))
             centerText: "Connect"
             navigationTarget: "Map"
             onNavButtonPressed:

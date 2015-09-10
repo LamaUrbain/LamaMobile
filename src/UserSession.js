@@ -157,6 +157,8 @@ function deleteCurrentToken()
     userServices.deleteToken(null)
     rootView.lamaSession.TOKEN = ""
     rootView.lamaSession.IS_LOGGED = false
+    saveSessionState()
+    raiseUserSessionChanged()
 }
 
 function deleteSavedData()
