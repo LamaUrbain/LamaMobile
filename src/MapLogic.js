@@ -307,6 +307,7 @@ function addDestination(coord)
         }
 
         rootView.lamaSession.CURRENT_ITINERARY["destinations"].push(waypoint);
+        rootView.lamaSession.CURRENT_WAYPOINT_ID = rootView.lamaSession.CURRENT_ITINERARY["destinations"].count - 1;
 
         if (isItineraryMine())
         {
@@ -317,6 +318,11 @@ function addDestination(coord)
                 {
                     var jsonObj = JSON.parse(jsonStr);
                     syncItinerary(jsonObj);
+                }
+                else
+                {
+                    var id = rootView.lamaSession.CURRENT_WAYPOINT_ID
+                    rootView.lamaSession.CURRENT_ITINERARY["destinations"].splice(id, 1)
                 }
             });
         }

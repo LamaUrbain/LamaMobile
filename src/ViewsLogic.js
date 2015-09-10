@@ -85,6 +85,7 @@ function fillFavorites(listModel, knownItineraries)
     for (var idx = 0; idx < knownItineraries.length; ++idx)
         if (knownItineraries[idx]["favorite"] === true)
             listModel.append({itinerary: knownItineraries[idx]})
+    return (listModel.count);
 }
 
 function fillWaypoints(listModelId, itinerary)
@@ -149,7 +150,6 @@ function spawnArrivalPopOver(mapItem, coord, message)
 
 function spawnPopOver(mapItem, coord, message, type)
 {
-    console.log("YO")
     var cp = Qt.createComponent( "qrc:/Components/PopOver.qml" );
     if(cp.status !== Qml.Component.Ready)
         console.log("Error:"

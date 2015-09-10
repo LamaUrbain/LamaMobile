@@ -34,54 +34,31 @@ var LAMA_SESSION =
             logo: "http://www.pocketnews.com.my/wp-content/uploads/2014/10/KFC_logo.jpg",
         }
     ],
-    KNOWN_ITINERARIES:
-    [
-        {
-            id: -1,
-            owner: 'sw3g b0y',
-            name: 'From home to work',
-            creation: '2015-03-31T08:00:00Z',
-            favorite: true,
-            departure:
-            {
-                address: null,
-                latitude: 48.912903,
-                longitude: 2.355989
-            },
-            destinations:
-            [
-                {
-                    address: null,
-                    latitude: 48.893592,
-                    longitude: 2.256769
-                }
-            ]
-        },
-        {
-            id: 1336,
-            owner: 'sw3g b0y',
-            name: 'Wrong itinerary',
-            creation: '2015-03-31T08:00:00Z',
-            favorite: false,
-            departure:
-            {
-                address: null,
-                latitude: 48.912903,
-                longitude: 2.355989
-            },
-            destinations:
-            [
-                {
-                    address: null,
-                    latitude: 48.893592,
-                    longitude: 2.256769
-                }
-            ]
-        }
-    ]
+    KNOWN_ITINERARIES: []
+    //[
+    //    {
+    //        id: -1,
+    //        owner: 'sw3g b0y',
+    //        name: 'From home to work',
+    //        creation: '2015-03-31T08:00:00Z',
+    //        favorite: true,
+    //        departure:
+    //        {
+    //            address: null,
+    //            latitude: 48.912903,
+    //            longitude: 2.355989
+    //        },
+    //        destinations:
+    //        [
+    //            {
+    //                address: null,
+    //                latitude: 48.893592,
+    //                longitude: 2.256769
+    //            }
+    //        ]
+    //    }
+    //]
 }
-
-var mainModal;
 
 // This does not work, because sqlite refuse to configure pragmas in a transaction...
 function bootstrap_pragma(tx) {
@@ -94,9 +71,9 @@ function bootstrap_user(tx) {
                       + "id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,"
                       + LAMA_USERCOLUMN_USERNAME + " TEXT,"
                       + LAMA_USERCOLUMN_PASSWORD + " TEXT,"
-                      + LAMA_USERCOLUMN_EMAIL + " TEXT,"
-                      + LAMA_USERCOLUMN_AVATAR + " TEXT,"
-                      + LAMA_USERCOLUMN_KNOWN_ITINERARIES + " TEXT"
+                      //+ LAMA_USERCOLUMN_KNOWN_ITINERARIES + " TEXT,"
+                      //+ LAMA_USERCOLUMN_AVATAR + " TEXT,"
+                      + LAMA_USERCOLUMN_EMAIL + " TEXT"
                   + ");")
 }
 
@@ -161,12 +138,12 @@ function checkAndLoadFromSavedData()
                     rootView.lamaSession.USERNAME = row.user_name.replace(/'/g, '"')
                 if (row[LAMA_USERCOLUMN_PASSWORD].length > 0)
                     rootView.lamaSession.PASSWORD = row.user_password.replace(/'/g, '"')
+                //if (row[LAMA_USERCOLUMN_KNOWN_ITINERARIES].length > 0)
+                //    rootView.lamaSession.KNOWN_ITINERARIES = JSON.parse(row.user_knownroutes.replace(/'/g, '"'))
+                //if (row[LAMA_USERCOLUMN_AVATAR].length > 0)
+                //    rootView.lamaSession.AVATAR = row.user_avatar.replace(/'/g, '"')
                 if (row[LAMA_USERCOLUMN_EMAIL].length > 0)
-                    rootView.lamaSession.KNOWN_ITINERARIES = JSON.parse(row.user_knownroutes.replace(/'/g, '"'))
-                if (row[LAMA_USERCOLUMN_AVATAR].length > 0)
                     rootView.lamaSession.EMAIL = row.user_email.replace(/'/g, '"')
-                if (row[LAMA_USERCOLUMN_KNOWN_ITINERARIES].length > 0)
-                    rootView.lamaSession.AVATAR = row.user_avatar.replace(/'/g, '"')
                 console.log("Offline data loaded !")
             }
             else
@@ -246,15 +223,28 @@ function saveSessionState()
 
 function tryLogin(clearPreviousData)
 {
+    console.log("Logging in user named \"" + rootView.lamaSession.USERNAME + "\"")
+    console.log("\twith password : \"" + rootView.lamaSession.PASSWORD + "\"")
+
     if (rootView.lamaSession.TOKEN !== null &&
+        typeof(rootView.lamaSession.TOKEN) !== "undefined" &&
         rootView.lamaSession.TOKEN.length > 0)
         deleteCurrentToken()
 
+    console.log("Logging in user named \"" + rootView.lamaSession.USERNAME + "\"")
+    console.log("\twith password : \"" + rootView.lamaSession.PASSWORD + "\"")
     if (clearPreviousData)
         deleteSavedData()
     else
-        checkAndLoadFromSavedData()
+    {
+        console.log("Logging in user named \"" + rootView.lamaSession.USERNAME + "\"")
+        console.log("\twith password : \"" + rootView.lamaSession.PASSWORD + "\"")
 
+        checkAndLoadFromSavedData()
+    }
+
+    console.log("Logging in user named \"" + rootView.lamaSession.USERNAME + "\"")
+    console.log("\twith password : \"" + rootView.lamaSession.PASSWORD + "\"")
     if (rootView.lamaSession.USERNAME === null ||
         rootView.lamaSession.PASSWORD === null)
     {
@@ -262,32 +252,37 @@ function tryLogin(clearPreviousData)
         rootView.lamaSession.PASSWORD = null // Paranoia
         return;
     }
+    console.log("Logging in user named \"" + rootView.lamaSession.USERNAME + "\"")
+    console.log("\twith password : \"" + rootView.lamaSession.PASSWORD + "\"")
 
     loginAndCreateToken(rootView);
 }
 
 function loginAndCreateToken(rootView, callback)
 {
-    userServices.createToken(rootView.lamaSession.USERNAME, rootView.lamaSession.PASSWORD, function (success, userInfos)
+    userServices.createToken(rootView.lamaSession.USERNAME, rootView.lamaSession.PASSWORD,
+                             function (statusCode, jsonStr)
     {
-        if (success === false || userInfos === null)
+        if (statusCode == 0
+            && typeof(jsonStr) == "string"
+            && jsonStr.length > 2)
         {
-            rootView.lamaSession.USERNAME = null
-            rootView.lamaSession.PASSWORD = null
-            rootView.modal.title = "No internet connexion"
-            rootView.modal.message = "Please check your connectivity to the internet.\n"
-                                + "once it's done you shall restart the application."
-            rootView.modal.setLoadingState(false)
-            rootView.modal.enableButton = true
+            rootView.lamaSession.IS_LOGGED = true
+            rootView.lamaSession.TOKEN = JSON.parse(jsonStr).token
+            rootView.lamaSession.IS_LOGGED = true
+            loadItineraries()
+            saveSessionState()
         }
         else
         {
-            rootView.lamaSession.IS_LOGGED = true
-            rootView.lamaSession.TOKEN = userInfos.token
-            rootView.lamaSession.IS_LOGGED = true
-            loadItineraries()
-            getFurtherUserDetails()
-        }
+            rootView.lamaSession.USERNAME = null
+            rootView.lamaSession.PASSWORD = null
+            rootView.modal.title = "Authentification error"
+            rootView.modal.message = "Please make sure you have registered.\n"
+                                + "Then please double check if you haven't misstyped your name and password."
+            rootView.modal.setLoadingState(false)
+            rootView.modal.enableButton = true
+        }        
     })
 }
 
@@ -301,10 +296,20 @@ function getFurtherUserDetails()
 function loadItineraries()
 {
     itineraryServices.getItineraries(null, rootView.lamaSession.USERNAME, "true", "",
-                                     function (success, userRoutes)
+                                     function (statusCode, jsonStr)
     {
-        if (success !== 0 || userRoutes === null
-            || typeof(userRoutes) !== "object" || !(userRoutes instanceof Array))
+        var userRoutes = JSON.parse(jsonStr)
+        if (statusCode == 0
+            && typeof(userRoutes) == "object"
+            && userRoutes instanceof Array)
+        {
+            rootView.lamaSession.KNOWN_ITINERARIES = userRoutes
+            rootView.modal.message = "You've successfully logged in !"
+            rootView.modal.setLoadingState(false)
+            rootView.modal.enableButton = true
+            saveSessionState()
+        }
+        else
         {
             rootView.modal.title = "No stable internet connexion"
             rootView.modal.message = "Please check your connectivity to the internet.\n"
@@ -312,16 +317,7 @@ function loadItineraries()
                                 + "We've been able to connect you but not gather your settings."
             rootView.modal.setLoadingState(false)
             rootView.modal.enableButton = true
-        }
-        else
-        {
-
-            rootView.lamaSession.KNOWN_ITINERARIES = userRoutes
-            rootView.modal.message = "You've successfully logged in !"
-            rootView.modal.setLoadingState(false)
-            rootView.modal.enableButton = true
-            saveSessionState()
-        }
+        }        
     })
 
 }

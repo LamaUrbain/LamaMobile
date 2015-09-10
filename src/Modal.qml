@@ -73,6 +73,8 @@ Rectangle
                 id: modalContentLoader
                 anchors.left: parent.left
                 anchors.right: parent.right
+                anchors.top: modalTitle.bottom
+                anchors.bottom: parent.bottom
                 Layout.fillHeight: true
 
                 property string message: "Everything's fine !"

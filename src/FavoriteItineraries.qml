@@ -3,6 +3,7 @@ import QtQuick.Controls 1.3
 import QtQuick.Layouts 1.1
 import "qrc:/Components/" as Components
 import "qrc:/Controls/" as Controls
+import "qrc:/Constants.js" as Constants
 import "qrc:/Views/ViewsLogic.js" as ViewsLogic
 
 Components.Background {
@@ -14,7 +15,8 @@ Components.Background {
 
     function refreshFavorites()
     {
-        ViewsLogic.fillFavorites(favoriteModel, rootView.lamaSession.KNOWN_ITINERARIES);
+        var routesCount = ViewsLogic.fillFavorites(favoriteModel, rootView.lamaSession.KNOWN_ITINERARIES);
+        noFavContainer.visible = routesCount === 0;
     }
 
     ListModel {
@@ -22,7 +24,7 @@ Components.Background {
 
         Component.onCompleted:
         {
-            ViewsLogic.fillFavorites(this, rootView.lamaSession.KNOWN_ITINERARIES)
+            refreshFavorites()
             rootView.userSessionChanged.connect(refreshFavorites);
         }
         Component.onDestruction:
@@ -32,7 +34,8 @@ Components.Background {
     }
 
 
-    ScrollView {
+    ScrollView
+    {
         id: favorites
         anchors.top: header.bottom
         anchors.left: parent.left
@@ -60,6 +63,37 @@ Components.Background {
                     rootView.saveSessionState(rootView.lamaSession)
                 }
             }
+        }
+    }
+
+    Rectangle
+    {
+        id: noFavContainer
+        anchors.fill: parent
+        anchors.top: header.bottom
+
+        visible: false
+        color: "#00000000"
+
+        Text
+        {
+            text: rootView.lamaSession.IS_LOGGED ? "You have no favorites :(" : "You must first login in order\nto list your favorites routes"
+            wrapMode: Text.WordWrap
+            horizontalAlignment: Text.AlignHCenter
+            font.pointSize: Constants.LAMA_POINTSIZE
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            //anchors.verticalCenterOffset: -(parent.height * 0.25)
+        }
+
+        Controls.NavigationButton {
+            id: account
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: parent.height * 0.3
+            centerText: "Log in"
+            navigationTarget: "UserAuth"
+            visible: !(rootView.lamaSession.IS_LOGGED)
         }
     }
 }
