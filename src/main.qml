@@ -81,6 +81,9 @@ Window {
 
     function mainViewTo(name, prop)
     {
+        if (mainView.busy)
+            return;
+
         if (name === undefined || name === "Map")
         {
             // Pops all but the first item (i.e. the map)
@@ -94,6 +97,9 @@ Window {
 
     function mainViewBack()
     {
+        if (mainView.busy)
+            return;
+
         if (mainView.currentItem != mapView)
             mainView.pop()
     }
