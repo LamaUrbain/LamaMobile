@@ -527,11 +527,14 @@ void MapWidgetPrivate::displayItinerary(int id)
     qDeleteAll(_extensions);
     _extensions.clear();
 
-    MapOverlayExtension *ext = new MapOverlayExtension(q);
-    ext->setItinerary(id);
-    q->addExtension(ext);
+    if (id >= 0)
+    {
+        MapOverlayExtension *ext = new MapOverlayExtension(q);
+        ext->setItinerary(id);
+        q->addExtension(ext);
 
-    QObject::connect(ext, SIGNAL(pointMoved(int, int, QPointF)), q, SIGNAL(mapPointMoved(int, int, QPointF)));
+        QObject::connect(ext, SIGNAL(pointMoved(int, int, QPointF)), q, SIGNAL(mapPointMoved(int, int, QPointF)));
+    }
 }
 
 void MapWidgetPrivate::itineraryChanged()
