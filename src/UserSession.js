@@ -202,7 +202,7 @@ function saveSessionState()
                 value: JSON.stringify(rootView.lamaSession.KNOWN_ITINERARIES)
             },
         ]
-        var sqlStr = "INSERT OR REPLACE INTO USER (id, user_name, user_password, user_email, user_avatar, user_knownroutes) VALUES (1, ";
+        var sqlStr = "INSERT OR REPLACE INTO USER (id, user_name, user_password, user_email) VALUES (1, ";
         var idx = 0;
         var val = '';
         while (idx < columns.length)

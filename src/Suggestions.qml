@@ -202,7 +202,8 @@ Components.Background {
             centerText: "Validate"
             anchors.fill: parent
             onClicked: {
-                rootView.addToHistory(choosenPlace);
+                if (choosenPlace !== null)
+                    rootView.addToHistory(choosenPlace);
 
                 var id = rootView.lamaSession.CURRENT_WAYPOINT_ID
                 var longitude = longitudeInput.text
