@@ -224,27 +224,17 @@ function saveSessionState()
 function tryLogin(clearPreviousData)
 {
     console.log("Logging in user named \"" + rootView.lamaSession.USERNAME + "\"")
-    console.log("\twith password : \"" + rootView.lamaSession.PASSWORD + "\"")
 
     if (rootView.lamaSession.TOKEN !== null &&
         typeof(rootView.lamaSession.TOKEN) !== "undefined" &&
         rootView.lamaSession.TOKEN.length > 0)
         deleteCurrentToken()
 
-    console.log("Logging in user named \"" + rootView.lamaSession.USERNAME + "\"")
-    console.log("\twith password : \"" + rootView.lamaSession.PASSWORD + "\"")
     if (clearPreviousData)
         deleteSavedData()
     else
-    {
-        console.log("Logging in user named \"" + rootView.lamaSession.USERNAME + "\"")
-        console.log("\twith password : \"" + rootView.lamaSession.PASSWORD + "\"")
-
         checkAndLoadFromSavedData()
-    }
 
-    console.log("Logging in user named \"" + rootView.lamaSession.USERNAME + "\"")
-    console.log("\twith password : \"" + rootView.lamaSession.PASSWORD + "\"")
     if (rootView.lamaSession.USERNAME === null ||
         rootView.lamaSession.PASSWORD === null)
     {
@@ -252,8 +242,6 @@ function tryLogin(clearPreviousData)
         rootView.lamaSession.PASSWORD = null // Paranoia
         return;
     }
-    console.log("Logging in user named \"" + rootView.lamaSession.USERNAME + "\"")
-    console.log("\twith password : \"" + rootView.lamaSession.PASSWORD + "\"")
 
     loginAndCreateToken(rootView);
 }
@@ -307,6 +295,7 @@ function loadItineraries()
             rootView.modal.message = "You've successfully logged in !"
             rootView.modal.setLoadingState(false)
             rootView.modal.enableButton = true
+            rootView.raiseUserSessionChanged();
             saveSessionState()
         }
         else

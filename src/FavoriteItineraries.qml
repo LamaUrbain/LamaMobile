@@ -74,10 +74,15 @@ Components.Background {
 
         visible: false
         color: "#00000000"
+        onVisibleChanged:
+        {
+            noFavTxt.text = rootView.lamaSession.IS_LOGGED ? "You have no favorites :(" : "You must first login in order\nto list your favorites routes";
+            noFavLoginBtn.visible = !(rootView.lamaSession.IS_LOGGED)
+        }
 
         Text
         {
-            text: rootView.lamaSession.IS_LOGGED ? "You have no favorites :(" : "You must first login in order\nto list your favorites routes"
+            id: noFavTxt
             wrapMode: Text.WordWrap
             horizontalAlignment: Text.AlignHCenter
             font.pointSize: Constants.LAMA_POINTSIZE
@@ -87,13 +92,12 @@ Components.Background {
         }
 
         Controls.NavigationButton {
-            id: account
+            id: noFavLoginBtn
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: parent.height * 0.3
             centerText: "Log in"
             navigationTarget: "UserAuth"
-            visible: !(rootView.lamaSession.IS_LOGGED)
         }
     }
 }

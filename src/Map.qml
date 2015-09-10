@@ -74,13 +74,21 @@ Components.Marker {
 
         onMapPointClicked:
         {
-            if (rootView.lamaSession.CURRENT_ITINERARY != undefined
-                && rootView.lamaSession.CURRENT_ITINERARY.departure != undefined)
-            {
-                mapPieMenu.pieCoords = coords;
-                mapPieMenu.popup(pos.x, pos.y);
-            }
+            mapPieMenu.pieCoords = coords;
+            mapPieMenu.popup(pos.x, pos.y);
+
+            var showAllButtons = isItineraryValid();
+            menuSetDep.visible = showAllButtons
+            menuAdd.visible = showAllButtons
+            menuSetDest.visible = showAllButtons
         }
+
+        function isItineraryValid()
+        {
+            return (rootView.lamaSession.CURRENT_ITINERARY != undefined
+                    && rootView.lamaSession.CURRENT_ITINERARY.departure != undefined)
+        }
+
         onMapPointMoved:
         {
             rootView.moveItineraryPoint(id, point, newCoords);
@@ -94,6 +102,7 @@ Components.Marker {
             height: 250
 
             MenuItem {
+                id: menuSetDep
                 text: "Set Departure"
                 onTriggered: {
                     rootView.setDeparture(mapPieMenu.pieCoords);
@@ -102,6 +111,7 @@ Components.Marker {
                 iconSource: Constants.LAMA_DEPARTURE_RESSOURCE
             }
             MenuItem {
+                id: menuAdd
                 text: "Add Waypoint"
                 onTriggered: {
                     rootView.addWaypoint(mapPieMenu.pieCoords);
@@ -110,10 +120,19 @@ Components.Marker {
                 iconSource: Constants.LAMA_INDICATOR_RESSOURCE
             }
             MenuItem {
+                id: menuSetDest
                 text: "Set Destination"
                 onTriggered: {
                     rootView.setDestination(mapPieMenu.pieCoords);
                     //ViewsLogic.spawnArrivalPopOver(mapComponent, mapPieMenu.pieCoords, "je suis une popup :3 !");
+                }
+                iconSource: Constants.LAMA_ARRIVAL_RESSOURCE
+            }
+            MenuItem {
+                text: "New itinerary"
+                onTriggered: {
+                    rootView.lamaSession.LAMA_USER_CURRENT_ITINERARY = Constants.LAMA_BASE_ITINERARY_OBJ
+                    rootView.mainViewTo("MainSearch", null)
                 }
                 iconSource: Constants.LAMA_ARRIVAL_RESSOURCE
             }
