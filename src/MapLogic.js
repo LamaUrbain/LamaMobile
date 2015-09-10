@@ -16,7 +16,7 @@ function isItineraryValid()
 
 function isItineraryMine()
 {
-    return !rootView.lamaSession.CURRENT_ITINERARY.owner
+    return rootView.lamaSession.CURRENT_ITINERARY.owner == ''
             || (rootView.lamaSession.IS_LOGGED
                 && rootView.lamaSession.USERNAME
                 && rootView.lamaSession.CURRENT_ITINERARY.owner == rootView.lamaSession.USERNAME);
@@ -26,6 +26,8 @@ function syncItinerary(jsonObj)
 {
     if (jsonObj && typeof jsonObj.departure !== "undefined" && typeof jsonObj.destinations !== "undefined")
     {
+        rootView.lamaSession.CURRENT_ITINERARY["owner"] = jsonObj.owner ? jsonObj.owner : '';
+
         rootView.lamaSession.CURRENT_ITINERARY["departure"] =
         {
             address: null,
@@ -189,7 +191,7 @@ function moveItineraryPoint(itineraryId, point, newCoords)
 {
     if (point == 0)
     {
-        rootView.lamaSession.CURRENT_ITINERARY["departure"] =
+        var departure =
         {
             address: null,
             latitude: newCoords.y,
@@ -198,7 +200,7 @@ function moveItineraryPoint(itineraryId, point, newCoords)
 
         if (isItineraryMine())
         {
-            itineraryServices.editItinerary(itineraryId, "", _formatCoords(rootView.lamaSession.CURRENT_ITINERARY["departure"]), "", function(statusCode, jsonStr)
+            itineraryServices.editItinerary(itineraryId, "", _formatCoords(departure), "", function(statusCode, jsonStr)
             {
                 rootView.mapView.mapComponent.itineraryChanged();
                 if (statusCode == 0)
@@ -209,11 +211,14 @@ function moveItineraryPoint(itineraryId, point, newCoords)
             });
         }
         else
+        {
+            rootView.lamaSession.CURRENT_ITINERARY["departure"] = departure;
             createItineraryAndDisplay();
+        }
     }
     else if (point - 1 < rootView.lamaSession.CURRENT_ITINERARY["destinations"].length)
     {
-        rootView.lamaSession.CURRENT_ITINERARY["destinations"][point - 1] =
+        var waypoint =
         {
             address: null,
             latitude: newCoords.y,
@@ -222,7 +227,7 @@ function moveItineraryPoint(itineraryId, point, newCoords)
 
         if (isItineraryMine())
         {
-            itineraryServices.editDestination(itineraryId, point - 1, -1, _formatCoords(rootView.lamaSession.CURRENT_ITINERARY["destinations"][point - 1]), function(statusCode, jsonStr)
+            itineraryServices.editDestination(itineraryId, point - 1, -1, _formatCoords(waypoint), function(statusCode, jsonStr)
             {
                 rootView.mapView.mapComponent.itineraryChanged();
                 if (statusCode == 0)
@@ -233,70 +238,20 @@ function moveItineraryPoint(itineraryId, point, newCoords)
             });
         }
         else
+        {
+            rootView.lamaSession.CURRENT_ITINERARY["destinations"][point - 1] = waypoint;
             createItineraryAndDisplay();
+        }
     }
 }
 
-function addDeparture(coord)
+function setDeparture(coord)
 {
     if (isItineraryValid())
-    {
-        if (rootView.lamaSession.CURRENT_ITINERARY["destinations"] !== undefined)
-        {
-            var departure = {
-                address: rootView.lamaSession.CURRENT_ITINERARY["departure"].address,
-                latitude: rootView.lamaSession.CURRENT_ITINERARY["departure"].latitude,
-                longitude: rootView.lamaSession.CURRENT_ITINERARY["departure"].longitude
-            }
-
-            rootView.lamaSession.CURRENT_ITINERARY["destinations"].unshift(departure);
-        }
-
-        rootView.lamaSession.CURRENT_ITINERARY["departure"] =
-        {
-            address: null,
-            latitude: coord.y,
-            longitude: coord.x
-        }
-
-        if (isItineraryMine())
-            updateItinerary();
-        else
-            createItineraryAndDisplay();
-    }
+        moveItineraryPoint(rootView.lamaSession.CURRENT_ITINERARY["id"], 0, coord);
 }
 
 function addWaypoint(coord)
-{
-    if (isItineraryValid())
-    {
-        if (rootView.lamaSession.CURRENT_ITINERARY["destinations"] !== undefined)
-        {
-            var len = rootView.lamaSession.CURRENT_ITINERARY["destinations"].length;
-
-            if (len == 0)
-            {
-                addDestination(coord);
-                return;
-            }
-
-            var waypoint = {
-                address: null,
-                latitude: coord.y,
-                longitude: coord.x
-            }
-
-            rootView.lamaSession.CURRENT_ITINERARY["destinations"].splice(len - 1, 0, waypoint);
-        }
-
-        if (isItineraryMine())
-            updateItinerary();
-        else
-            createItineraryAndDisplay();
-    }
-}
-
-function addDestination(coord)
 {
     if (isItineraryValid())
     {
@@ -306,27 +261,37 @@ function addDestination(coord)
             longitude: coord.x
         }
 
-        rootView.lamaSession.CURRENT_ITINERARY["destinations"].push(waypoint);
-        rootView.lamaSession.CURRENT_WAYPOINT_ID = rootView.lamaSession.CURRENT_ITINERARY["destinations"].count - 1;
-
         if (isItineraryMine())
         {
-            itineraryServices.addDestination(rootView.lamaSession.CURRENT_ITINERARY["id"], _formatCoords(waypoint), -1, function(statusCode, jsonStr)
-            {
-                rootView.mapView.mapComponent.itineraryChanged();
-                if (statusCode == 0)
-                {
-                    var jsonObj = JSON.parse(jsonStr);
-                    syncItinerary(jsonObj);
-                }
-                else
-                {
-                    var id = rootView.lamaSession.CURRENT_WAYPOINT_ID
-                    rootView.lamaSession.CURRENT_ITINERARY["destinations"].splice(id, 1)
-                }
-            });
+            itineraryServices.addDestination(
+                        rootView.lamaSession.CURRENT_ITINERARY["id"],
+                        _formatCoords(waypoint),
+                        Math.max(0, rootView.lamaSession.CURRENT_ITINERARY["destinations"].length - 1),
+                        function(statusCode, jsonStr)
+                        {
+                            rootView.mapView.mapComponent.itineraryChanged();
+                            if (statusCode == 0)
+                            {
+                                var jsonObj = JSON.parse(jsonStr);
+                                syncItinerary(jsonObj);
+                            }
+                        });
+
         }
         else
+        {
+            rootView.lamaSession.CURRENT_ITINERARY["destinations"].splice(len - 1, 0, waypoint);
             createItineraryAndDisplay();
+        }
+    }
+}
+
+function setDestination(coord)
+{
+    if (isItineraryValid())
+    {
+        moveItineraryPoint(rootView.lamaSession.CURRENT_ITINERARY["id"],
+                           rootView.lamaSession.CURRENT_ITINERARY["destinations"].length,
+                           coord);
     }
 }

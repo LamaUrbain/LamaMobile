@@ -96,7 +96,7 @@ Components.Marker {
             MenuItem {
                 text: "Set Departure"
                 onTriggered: {
-                    rootView.addDeparture(mapPieMenu.pieCoords);
+                    rootView.setDeparture(mapPieMenu.pieCoords);
                     //ViewsLogic.spawnDeparturePopOver(mapComponent, mapPieMenu.pieCoords, "je suis une popup :3 !");
                 }
                 iconSource: Constants.LAMA_DEPARTURE_RESSOURCE
@@ -112,7 +112,7 @@ Components.Marker {
             MenuItem {
                 text: "Set Destination"
                 onTriggered: {
-                    rootView.addDestination(mapPieMenu.pieCoords);
+                    rootView.setDestination(mapPieMenu.pieCoords);
                     //ViewsLogic.spawnArrivalPopOver(mapComponent, mapPieMenu.pieCoords, "je suis une popup :3 !");
                 }
                 iconSource: Constants.LAMA_ARRIVAL_RESSOURCE
