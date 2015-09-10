@@ -131,7 +131,8 @@ Components.Marker {
             MenuItem {
                 text: "New itinerary"
                 onTriggered: {
-                    rootView.lamaSession.LAMA_USER_CURRENT_ITINERARY = Constants.LAMA_BASE_ITINERARY_OBJ
+                    console.log("New itinerary !")
+                    rootView.lamaSession.CURRENT_ITINERARY  = Constants.LAMA_BASE_ITINERARY_OBJ
                     rootView.mainViewTo("MainSearch", null)
                 }
                 iconSource: Constants.LAMA_ARRIVAL_RESSOURCE

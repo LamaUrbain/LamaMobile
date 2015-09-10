@@ -202,7 +202,7 @@ Components.Background {
             centerText: "Validate"
             anchors.fill: parent
             onClicked: {
-                if (choosenPlace !== null)
+                if (typeof(choosenPlace) !== "undefined")
                     rootView.addToHistory(choosenPlace);
 
                 var id = rootView.lamaSession.CURRENT_WAYPOINT_ID

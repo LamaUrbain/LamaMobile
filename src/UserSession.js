@@ -193,14 +193,14 @@ function saveSessionState()
                 name: LAMA_USERCOLUMN_EMAIL,
                 value: rootView.lamaSession.EMAIL
             },
-            {
-                name: LAMA_USERCOLUMN_AVATAR,
-                value: rootView.lamaSession.AVATAR
-            },
-            {
-                name: LAMA_USERCOLUMN_KNOWN_ITINERARIES,
-                value: JSON.stringify(rootView.lamaSession.KNOWN_ITINERARIES)
-            },
+            //{
+            //    name: LAMA_USERCOLUMN_AVATAR,
+            //    value: rootView.lamaSession.AVATAR
+            //},
+            //{
+            //    name: LAMA_USERCOLUMN_KNOWN_ITINERARIES,
+            //    value: JSON.stringify(rootView.lamaSession.KNOWN_ITINERARIES)
+            //},
         ]
         var sqlStr = "INSERT OR REPLACE INTO USER (id, user_name, user_password, user_email) VALUES (1, ";
         var idx = 0;

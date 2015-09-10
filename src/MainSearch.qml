@@ -13,7 +13,17 @@ Components.Background {
         ViewsLogic.fillWaypoints(waypointsModel, rootView.lamaSession.CURRENT_ITINERARY)
     }
 
-    Component.onCompleted: rootView.onUserSessionChanged.connect(refreshModel)
+    Component.onCompleted:
+    {
+        var cIt = rootView.lamaSession.CURRENT_ITINERARY;
+        if (cIt == null || typeof(cIt) == "undefined"
+            || !("id" in cIt))
+        {
+            console.log("New itinerary !")
+            rootView.lamaSession.CURRENT_ITINERARY = Constants.LAMA_BASE_ITINERARY_OBJ
+        }
+        rootView.onUserSessionChanged.connect(refreshModel)
+    }
     Component.onDestruction: rootView.onUserSessionChanged.disconnect(refreshModel)
 
     Components.Header {
