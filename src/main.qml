@@ -103,6 +103,11 @@ Window {
         userSessionChanged()
     }
 
+    function isItineraryValid()
+    {
+        MapLogic.isItineraryValid();
+    }
+
     function resolveCurrentItinerary()
     {
         MapLogic.resolveCurrentItinerary()
@@ -111,6 +116,21 @@ Window {
     function moveItineraryPoint(itineraryId, point, newCoords)
     {
         MapLogic.moveItineraryPoint(itineraryId, point, newCoords);
+    }
+
+    function addDeparture(coord)
+    {
+        MapLogic.addDeparture(coord);
+    }
+
+    function addWaypoint(coord)
+    {
+        MapLogic.addWaypoint(coord);
+    }
+
+    function addDestination(coord)
+    {
+        MapLogic.addDestination(coord);
     }
 
     function tryLogin(clear)

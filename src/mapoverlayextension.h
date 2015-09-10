@@ -59,6 +59,7 @@ private:
     QList<QPointF> _points;
     QList<PairPoint> _pending;
     QPixmap _departureIndicator;
+    QPixmap _waypointIndicator;
     QPixmap _destinationIndicator;
     int _selectedPoint;
 

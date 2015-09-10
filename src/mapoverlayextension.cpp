@@ -14,6 +14,7 @@ static const int indicatorHeight = 54;
 MapOverlayExtension::MapOverlayExtension(MapWidget *map)
     : MapExtension(map),
       _departureIndicator(":/Images/departure.png"),
+      _waypointIndicator(":/Images/map_indicator.png"),
       _destinationIndicator(":/Images/arrival.png"),
       _selectedPoint(-1),
       _itineraryId(-1),
@@ -296,16 +297,20 @@ void MapOverlayExtension::drawTile(QPainter *painter, const QPoint &pos, const Q
 
 void MapOverlayExtension::end(QPainter *painter)
 {
+    quint8 scale = _map->getMapScale();
+
     for (QList<PairPoint>::const_iterator it = _pending.constBegin(); it != _pending.constEnd(); ++it)
     {
         const QPoint &pos = (*it).first;
         painter->save();
         painter->setOpacity((*it).second == _selectedPoint ? 0.7 : 1);
-        painter->drawPixmap(pos, (*it).second == 0 ? _departureIndicator : _destinationIndicator);
+        painter->drawPixmap(pos, (*it).second == 0
+                            ? _departureIndicator
+                            : (*it).second + 1 == _points.size()
+                              ? _destinationIndicator
+                              : _waypointIndicator);
         painter->restore();
     }
-
-    quint8 scale = _map->getMapScale();
 
     if (!_missing[scale].isEmpty())
         emit tilesRequired();

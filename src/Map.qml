@@ -74,8 +74,12 @@ Components.Marker {
 
         onMapPointClicked:
         {
-            mapPieMenu.pieCoords = coords;
-            mapPieMenu.popup(pos.x, pos.y);
+            if (rootView.lamaSession.CURRENT_ITINERARY != undefined
+                && rootView.lamaSession.CURRENT_ITINERARY.departure != undefined)
+            {
+                mapPieMenu.pieCoords = coords;
+                mapPieMenu.popup(pos.x, pos.y);
+            }
         }
         onMapPointMoved:
         {
@@ -86,26 +90,30 @@ Components.Marker {
             id: mapPieMenu
             property point pieCoords
 
-            scale: 1.2
+            width: 250
+            height: 250
 
             MenuItem {
                 text: "Set Departure"
                 onTriggered: {
-                    ViewsLogic.spawnDeparturePopOver(mapComponent, mapPieMenu.pieCoords, "je suis une popup :3 !");
+                    rootView.addDeparture(mapPieMenu.pieCoords);
+                    //ViewsLogic.spawnDeparturePopOver(mapComponent, mapPieMenu.pieCoords, "je suis une popup :3 !");
                 }
                 iconSource: Constants.LAMA_DEPARTURE_RESSOURCE
             }
             MenuItem {
                 text: "Add Waypoint"
                 onTriggered: {
-                    ViewsLogic.spawnWaypointPopOver(mapComponent, mapPieMenu.pieCoords, "je suis une popup :3 !");
+                    rootView.addWaypoint(mapPieMenu.pieCoords);
+                    //ViewsLogic.spawnWaypointPopOver(mapComponent, mapPieMenu.pieCoords, "je suis une popup :3 !");
                 }
                 iconSource: Constants.LAMA_INDICATOR_RESSOURCE
             }
             MenuItem {
                 text: "Set Destination"
                 onTriggered: {
-                    ViewsLogic.spawnArrivalPopOver(mapComponent, mapPieMenu.pieCoords, "je suis une popup :3 !");
+                    rootView.addDestination(mapPieMenu.pieCoords);
+                    //ViewsLogic.spawnArrivalPopOver(mapComponent, mapPieMenu.pieCoords, "je suis une popup :3 !");
                 }
                 iconSource: Constants.LAMA_ARRIVAL_RESSOURCE
             }

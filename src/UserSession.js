@@ -362,7 +362,6 @@ function fillHistoryFiltered(model, pattern, limit)
     })
 }
 
-
 function addToHistory(place)
 {
     var db = openDb()
