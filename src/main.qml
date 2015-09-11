@@ -171,6 +171,14 @@ Window {
         }
     }
 
+    function resetPassword(passwordTxtOld, passwordTxt)
+    {
+        userServices.editUser(rootView.lamaSession.USERNAME,
+                              passwordTxt,
+                              rootView.lamaSession.EMAIL,
+                              UserSession.onEditUserResult)
+    }
+
     Component.onCompleted:
     {
         UserSession.tryLogin(false)

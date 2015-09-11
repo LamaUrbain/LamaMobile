@@ -58,8 +58,8 @@ Components.Background {
                 favoriteDescription: itinerary.name
                 linkedItinerary: itinerary
                 onDeleted: {
-                    favoriteModel.remove(index)
                     rootView.lamaSession.KNOWN_ITINERARIES[index]["favorite"] = false
+                    favoriteModel.remove(index)
                     rootView.saveSessionState(rootView.lamaSession)
                 }
             }

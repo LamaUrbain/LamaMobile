@@ -352,3 +352,13 @@ function addToHistory(place)
                                     place["place_longitude"]]);
     })
 }
+
+function onEditUserResult(status, jsonStr)
+{
+    if (status === 0)
+        rootView.modal.message = "Your new password is now in effect"
+    else
+        rootView.modal.message = "It seems we can't reset your password"
+    rootView.modal.setLoadingState(false)
+    rootView.modal.enableButton = true
+}

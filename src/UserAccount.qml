@@ -28,16 +28,16 @@ Components.Background {
             centerText: rootView.lamaSession.USERNAME
             anchors.top: parent.top
             anchors.bottom: parent.bottom
-            width: parent.width * 0.75
+            width: parent.width //* 0.75
         }
 
-        Components.Marker {
-            id: avatar
-            centerText: rootView.lamaSession.AVATAR
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            width: parent.width * 0.25
-        }
+        //Components.Marker {
+        //    id: avatar
+        //    centerText: rootView.lamaSession.AVATAR
+        //    anchors.top: parent.top
+        //    anchors.bottom: parent.bottom
+        //    width: parent.width * 0.25
+        //}
     }
 
     Column {
@@ -74,6 +74,7 @@ Components.Background {
             anchors.bottomMargin: parent.height * 0.005
 
             Components.TextField {
+                id: passwordTxtOld
                 height: parent.height * 0.1
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -81,6 +82,7 @@ Components.Background {
             }
 
             Components.TextField {
+                id: passwordTxt
                 height: parent.height * 0.1
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -88,6 +90,7 @@ Components.Background {
             }
 
             Components.TextField {
+                id: passwordTxtConfirm
                 height: parent.height * 0.1
                 anchors.left: parent.left
                 anchors.right: parent.right
@@ -100,6 +103,20 @@ Components.Background {
         Controls.Button  {
             anchors.fill: parent
             centerText: "Save settings"
+            onClicked:
+            {
+                mainModal.title = "Resetting password"
+                if (passwordTxtOld.text != rootView.lamaSession.PASSWORD
+                    || passwordTxt.text != passwordTxtConfirm.text)
+                    mainModal.message = "It seems you have mistyped your password."
+                else
+                {
+                    mainModal.setLoadingState(true);
+                    mainModal.enableButton = false
+                    rootView.resetPassword(passwordTxtOld, passwordTxt, passwordTxtConfirm)
+                }
+                mainModal.visible = true;
+            }
         }
     }
 }
