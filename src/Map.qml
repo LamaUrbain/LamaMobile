@@ -57,7 +57,7 @@ Components.Marker {
                 Layout.fillWidth: true
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
-                centerText: "Your account"
+                centerText: "Account"
                 navigationTarget: "UserAuth"
                 color: Constants.LAMA_ORANGE
             }
