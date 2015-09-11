@@ -154,7 +154,7 @@ void MapOverlayExtension::refreshItinerary()
         if (errorType == 0)
         {
             QJsonParseError error;
-            QJsonDocument document = QJsonDocument::fromJson(jsonStr.toLatin1(), &error);
+            QJsonDocument document = QJsonDocument::fromJson(jsonStr.toUtf8(), &error);
 
             if (error.error != QJsonParseError::NoError)
                 qDebug() << jsonStr << ":" << error.errorString() << "at pos" << error.offset;
@@ -214,7 +214,7 @@ void MapOverlayExtension::updateTiles()
                 _itineraryTiles[currentScale] = new QList<QPoint>();
 
                 QJsonParseError error;
-                QJsonDocument document = QJsonDocument::fromJson(jsonStr.toLatin1(), &error);
+                QJsonDocument document = QJsonDocument::fromJson(jsonStr.toUtf8(), &error);
 
                 if (error.error != QJsonParseError::NoError)
                     qDebug() << jsonStr << ":" << error.errorString() << "at pos" << error.offset;

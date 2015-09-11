@@ -178,10 +178,7 @@ function resolveCurrentItinerary()
                 rootView.modal.setLoadingState(false)
             }
             else
-            {
-                var currentIt = rootView.lamaSession.CURRENT_ITINERARY;
-                itineraryServices.getItinerary(currentIt["id"], updateItineraryWith)
-            }
+                updateItineraryWith(statusCode, jsonStr);
         });
     else
         createItineraryAndDisplay();
