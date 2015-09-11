@@ -152,30 +152,6 @@ function checkAndLoadFromSavedData()
     )
 }
 
-function deleteCurrentToken()
-{
-    userServices.deleteToken(null)
-    rootView.lamaSession.TOKEN = ""
-    rootView.lamaSession.IS_LOGGED = false
-    saveSessionState()
-    raiseUserSessionChanged()
-}
-
-function deleteSavedData()
-{
-    rootView.lamaSession.EMAIL = ""
-    rootView.lamaSession.AVATAR = ""
-    rootView.lamaSession.CURRENT_ITINERARY = {}
-    rootView.lamaSession.CURRENT_WAYPOINT_ID = -1
-    rootView.lamaSession.CURRENT_WAYPOINT = {}
-    rootView.lamaSession.KNOWN_ITINERARIES = []
-
-    var db = openDb()
-
-    db.transaction(function (tx)
-    { tx.executeSql("DELETE FROM " + LAMA_LOCALDB_TABLENAME); } )
-}
-
 function saveSessionState()
 {
     var db = openDb()
@@ -223,18 +199,32 @@ function saveSessionState()
         } );
 }
 
-function tryLogin(clearPreviousData)
+
+function deleteSavedData(isReloging)
+{
+    userServices.deleteToken(null)
+    var db = openDb()
+    db.transaction(function (tx)
+    { tx.executeSql("DELETE FROM " + LAMA_LOCALDB_TABLENAME); } )
+
+    rootView.lamaSession.USERNAME = null
+    rootView.lamaSession.PASSWORD = null
+    rootView.lamaSession.EMAIL = ""
+    rootView.lamaSession.TOKEN = ""
+    rootView.lamaSession.IS_LOGGED = false
+    rootView.lamaSession.KNOWN_ITINERARIES = []
+
+    saveSessionState()
+    raiseUserSessionChanged()
+}
+
+function tryLogin(isReloging)
 {
     console.log("Logging in user named \"" + rootView.lamaSession.USERNAME + "\"")
 
-    if (rootView.lamaSession.TOKEN !== null &&
-        typeof(rootView.lamaSession.TOKEN) !== "undefined" &&
-        rootView.lamaSession.TOKEN.length > 0)
-        deleteCurrentToken()
+    rootView.lamaSession.IS_LOGGED = false
 
-    if (clearPreviousData)
-        deleteSavedData()
-    else
+    if (!isReloging)
         checkAndLoadFromSavedData()
 
     if (rootView.lamaSession.USERNAME === null ||
@@ -242,7 +232,7 @@ function tryLogin(clearPreviousData)
     {
         rootView.lamaSession.USERNAME = null // Paranoia
         rootView.lamaSession.PASSWORD = null // Paranoia
-        return;
+        return
     }
 
     loginAndCreateToken(rootView);
@@ -259,7 +249,6 @@ function loginAndCreateToken(rootView, callback)
         {
             rootView.lamaSession.IS_LOGGED = true
             rootView.lamaSession.TOKEN = JSON.parse(jsonStr).token
-            rootView.lamaSession.IS_LOGGED = true
             loadItineraries()
             saveSessionState()
         }

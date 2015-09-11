@@ -77,7 +77,10 @@ Components.Background {
     Components.BottomAction {
         Components.Marker {
             id: logOut
-            anchors.fill: parent
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            anchors.right: parent.right
             anchors.rightMargin: parent.width * 0.45
             centerText: "Log out"
             onClicked:
@@ -90,7 +93,10 @@ Components.Background {
 
         Controls.NavigationButton {
             id: navButton
-            anchors.fill: parent
+            anchors.right: parent.right
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
             anchors.leftMargin: parent.width * (0.45 * (rootView.lamaSession.IS_LOGGED ? 1 : 0))
             centerText: "Connect"
             navigationTarget: "Map"
@@ -108,7 +114,8 @@ Components.Background {
                     mainModal.enableButton = false
                     mainModal.visible = true;
 
-                    rootView.triggerLogin(true)
+                    rootView.tryLogin(true)
+                    rootView.mainViewBack()
                 }
                 else
                 {
@@ -118,6 +125,7 @@ Components.Background {
                 }
                 this.acceptClick = false
             }
+
         }
     }
 }

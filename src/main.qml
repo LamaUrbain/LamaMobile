@@ -22,11 +22,6 @@ Window {
     height: 960
 
     signal userSessionChanged()
-    signal triggerLogin(bool clearData)
-    onTriggerLogin:
-    {
-        tryLogin(clearData)
-    }
 
     property var lamaSession: UserSession.LAMA_SESSION
     property alias modal: mainModal
@@ -161,7 +156,7 @@ Window {
 
     function logOut()
     {
-        UserSession.deleteCurrentToken()
+        UserSession.deleteSavedData()
     }
 
     function checkCurrentIt()
