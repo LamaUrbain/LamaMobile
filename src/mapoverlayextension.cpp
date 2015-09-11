@@ -274,7 +274,7 @@ void MapOverlayExtension::drawTile(QPainter *painter, const QPoint &pos, const Q
     QHash<QPoint, MapTile>::const_iterator it = _tiles[scale].constFind(pos);
     QMultiHash<QPoint, PairPointF>::const_iterator pit = _tilePoints[scale].constFind(pos);
 
-    if (it != _tiles[scale].end())
+    if (it != _tiles[scale].constEnd())
     {
         const MapTile &tile = it.value();
         painter->drawPixmap(tilePos, tile.pixmap);
