@@ -58,6 +58,7 @@
         <file>PopOver.qml</file>
         <file>Triangle.qml</file>
         <file>MapPieMenu.qml</file>
+        <file>MapCircle.qml</file>
     </qresource>
     <qresource prefix="/Controls">
         <file>BackButton.qml</file>

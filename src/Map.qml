@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.1
 import QtQuick.Window 2.1
+import QtPositioning 5.3
 import MapControls 1.0
 import "qrc:/Components/" as Components
 import "qrc:/Controls/" as Controls
@@ -64,6 +65,31 @@ Components.Marker {
         }
     }
 
+    PositionSource {
+        id: positionSource
+        updateInterval: 1000
+        active: true
+
+        onUpdateTimeout: {
+            console.log("Coordinate error:", positionSource.sourceError)
+        }
+
+        Component.onCompleted: {
+            if (positionSource.valid)
+                console.log("PositionSource is valid, coordinate will be available")
+            else
+                console.log("PositionSource is NOT valid, coordinate won't be available")
+        }
+
+        onPositionChanged: {
+            var coord = positionSource.position.coordinate
+            console.log("Coordinate:", coord.longitude, coord.latitude);
+            mapCircle.coordinate.x = coord.longitude
+            mapCircle.coordinate.y = coord.latitude
+            mapCircle.visible = true
+        }
+    }
+
     MapWidget
     {
         id: mapComponent
@@ -92,6 +118,13 @@ Components.Marker {
         onMapPointMoved:
         {
             rootView.moveItineraryPoint(id, point, newCoords);
+        }
+
+        Components.MapCircle {
+            id: mapCircle
+            visible: false
+            color: Constants.LAMA_ORANGE
+            radius: 20
         }
 
         Components.MapPieMenu {
