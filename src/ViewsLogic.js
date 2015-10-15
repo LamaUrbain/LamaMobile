@@ -114,10 +114,10 @@ function getAddressPlaceholder(waypointData)
     var latitude = waypointData.latitude;
     var longitude = waypointData.longitude;
 
-    if (latitude && longitude)
-        return latitude + ", " + longitude;
     if (address)
         return address;
+    if (latitude && longitude)
+        return latitude + ", " + longitude;
     return "New Waypoint";
 }
 
