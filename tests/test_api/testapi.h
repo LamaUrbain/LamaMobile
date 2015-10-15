@@ -63,6 +63,11 @@ private slots:
     void testAuthEditItinerary();
     void testAuthDestinations();
 
+    // Sponsors
+    void testCreateSponsor();
+    void testGetSponsors();
+    void testSponsorsItineraries();
+
 private:
     UserServices _userServices;
     ItineraryServices _itineraryServices;

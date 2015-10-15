@@ -26,21 +26,23 @@ const QString &UserServices::getToken()
     return getInstance()->_token;
 }
 
-void UserServices::getUsers(QString search, ServicesBase::CallbackType callback)
+void UserServices::getUsers(QString search, QString sponsored, ServicesBase::CallbackType callback)
 {
     QUrl url(QString("%1/users/").arg(serverAddress));
 
     QUrlQuery query;
     if (!search.isEmpty())
         query.addQueryItem("search", search);
+    if (!sponsored.isEmpty())
+        query.addQueryItem("sponsored", sponsored == "true" ? "true" : "false");
     url.setQuery(query.query());
 
     getRequest(url, callback);
 }
 
-void UserServices::getUsers(QString search, QJSValue callback)
+void UserServices::getUsers(QString search, QString sponsored, QJSValue callback)
 {
-    getUsers(search, fromJSCallback(callback));
+    getUsers(search, sponsored, fromJSCallback(callback));
 }
 
 void UserServices::getUser(QString username, ServicesBase::CallbackType callback)
@@ -54,7 +56,7 @@ void UserServices::getUser(QString username, QJSValue callback)
     getUser(username, fromJSCallback(callback));
 }
 
-void UserServices::createUser(QString username, QString password, QString email, ServicesBase::CallbackType callback)
+void UserServices::createUser(QString username, QString password, QString email, bool sponsor, ServicesBase::CallbackType callback)
 {
     QUrl url(QString("%1/users/").arg(serverAddress));
 
@@ -62,13 +64,14 @@ void UserServices::createUser(QString username, QString password, QString email,
     query.addQueryItem("username", username);
     query.addQueryItem("password", password);
     query.addQueryItem("email", email);
+    query.addQueryItem("sponsor", sponsor ? "true" : "false");
 
     postRequest(url, query.query().toLocal8Bit(), callback);
 }
 
-void UserServices::createUser(QString username, QString password, QString email, QJSValue callback)
+void UserServices::createUser(QString username, QString password, QString email, bool sponsor, QJSValue callback)
 {
-    createUser(username, password, email, fromJSCallback(callback));
+    createUser(username, password, email, sponsor, fromJSCallback(callback));
 }
 
 void UserServices::editUser(QString username, QString password, QString email, ServicesBase::CallbackType callback)

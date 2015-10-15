@@ -80,7 +80,7 @@ Components.Background {
                     rootView.lamaSession.IS_LOGGED = false
                     rootView.lamaSession.USERNAME = nickname
                     rootView.lamaSession.PASSWORD = pass
-                    userServices.createUser(nickname, pass, mail, onRegistrationResult)
+                    userServices.createUser(nickname, pass, mail, false, onRegistrationResult)
                 }
                 else
                 {

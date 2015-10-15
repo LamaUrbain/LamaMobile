@@ -5,7 +5,7 @@
 UserSession::UserSession(TestWaiter &waiter, UserServices &userServices)
     : _waiter(waiter), _userServices(userServices)
 {
-    _userServices.createUser("testUser", "testPassword", "test@test.fr", [this] (int errorType, QString jsonStr) mutable
+    _userServices.createUser("testUser", "testPassword", "test@test.fr", false, [this] (int errorType, QString jsonStr) mutable
     {
         QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
@@ -82,7 +82,7 @@ void TestApi::testCreateUser()
 {
     TestWaiter waiter;
 
-    _userServices.createUser("testUser", "testPassword", "test@test.fr", [&waiter] (int errorType, QString jsonStr) mutable
+    _userServices.createUser("testUser", "testPassword", "test@test.fr", false, [&waiter] (int errorType, QString jsonStr) mutable
     {
         QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
@@ -746,6 +746,280 @@ void TestApi::testAuthEditItinerary()
 
 void TestApi::testAuthDestinations()
 {
+}
+
+void TestApi::testCreateSponsor()
+{
+    TestWaiter waiter;
+
+    _userServices.createUser("testUser", "testPassword", "test@test.fr", true, [&waiter] (int errorType, QString jsonStr) mutable
+    {
+        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+
+        QVERIFY2(obj.value("username").toString() == "testUser", qPrintable(jsonStr));
+        QVERIFY2(obj.value("email").toString() == "test@test.fr", qPrintable(jsonStr));
+        QVERIFY2(obj.value("sponsor").toString() == "true", qPrintable(jsonStr));
+
+        waiter.emitDone();
+    });
+
+    waiter.waitForDone();
+
+    _userServices.createToken("testUser", "testPassword", [&waiter] (int errorType, QString jsonStr) mutable
+    {
+        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+
+        QVERIFY2(obj.value("owner").toString() == "testUser", qPrintable(jsonStr));
+        QVERIFY2(obj.value("token").toString().size() == 32, qPrintable(jsonStr));
+
+        waiter.emitDone();
+    });
+
+    waiter.waitForDone();
+
+    _userServices.deleteUser("testUser", [&waiter] (int errorType, QString jsonStr) mutable
+    {
+        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        waiter.emitDone();
+    });
+
+    waiter.waitForDone();
+
+    _userServices.deleteToken([&waiter] (int errorType, QString jsonStr) mutable
+    {
+        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        waiter.emitDone();
+    });
+
+    waiter.waitForDone();
+}
+
+void TestApi::testGetSponsors()
+{
+    TestWaiter waiter;
+
+    _userServices.createUser("testUser1", "testPassword", "test@test.fr", true, [&waiter] (int errorType, QString jsonStr) mutable
+    {
+        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+
+        QVERIFY2(obj.value("username").toString() == "testUser1", qPrintable(jsonStr));
+        QVERIFY2(obj.value("email").toString() == "test@test.fr", qPrintable(jsonStr));
+        QVERIFY2(obj.value("sponsor").toString() == "true", qPrintable(jsonStr));
+
+        waiter.emitDone();
+    });
+
+    waiter.waitForDone();
+
+    _userServices.createUser("testUser2", "testPassword", "test@test.fr", true, [&waiter] (int errorType, QString jsonStr) mutable
+    {
+        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+
+        QVERIFY2(obj.value("username").toString() == "testUser2", qPrintable(jsonStr));
+        QVERIFY2(obj.value("email").toString() == "test@test.fr", qPrintable(jsonStr));
+        QVERIFY2(obj.value("sponsor").toString() == "true", qPrintable(jsonStr));
+
+        waiter.emitDone();
+    });
+
+    waiter.waitForDone();
+
+    _userServices.getUsers("", "true", [&waiter] (int errorType, QString jsonStr) mutable
+    {
+        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+
+        QJsonArray array = QJsonDocument::fromJson(jsonStr.toLatin1()).array();
+
+        bool user1Found = false;
+        bool user2Found = false;
+
+        for (QJsonArray::const_iterator it = array.constBegin(); it != array.constEnd(); ++it)
+        {
+            QJsonObject obj = (*it).toObject();
+
+            if (obj.value("username").toString() == "testUser1")
+                user1Found = true;
+            else if (obj.value("username").toString() == "testUser2")
+                user2Found = true;
+
+            if (user1Found && user2Found)
+                break;
+        }
+
+        QVERIFY2(user1Found, qPrintable(jsonStr));
+        QVERIFY2(user2Found, qPrintable(jsonStr));
+
+        waiter.emitDone();
+    });
+
+    waiter.waitForDone();
+
+    _userServices.createToken("testUser1", "testPassword", [&waiter] (int errorType, QString jsonStr) mutable
+    {
+        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+
+        QVERIFY2(obj.value("owner").toString() == "testUser1", qPrintable(jsonStr));
+        QVERIFY2(obj.value("token").toString().size() == 32, qPrintable(jsonStr));
+
+        waiter.emitDone();
+    });
+
+    waiter.waitForDone();
+
+    _userServices.deleteUser("testUser1", [&waiter] (int errorType, QString jsonStr) mutable
+    {
+        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        waiter.emitDone();
+    });
+
+    waiter.waitForDone();
+
+    _userServices.deleteToken([&waiter] (int errorType, QString jsonStr) mutable
+    {
+        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        waiter.emitDone();
+    });
+
+    waiter.waitForDone();
+
+    _userServices.createToken("testUser2", "testPassword", [&waiter] (int errorType, QString jsonStr) mutable
+    {
+        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+
+        QVERIFY2(obj.value("owner").toString() == "testUser2", qPrintable(jsonStr));
+        QVERIFY2(obj.value("token").toString().size() == 32, qPrintable(jsonStr));
+
+        waiter.emitDone();
+    });
+
+    waiter.waitForDone();
+
+    _userServices.deleteUser("testUser2", [&waiter] (int errorType, QString jsonStr) mutable
+    {
+        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        waiter.emitDone();
+    });
+
+    waiter.waitForDone();
+
+    _userServices.deleteToken([&waiter] (int errorType, QString jsonStr) mutable
+    {
+        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        waiter.emitDone();
+    });
+
+    waiter.waitForDone();
+}
+
+void TestApi::testSponsorsItineraries()
+{
+    int itineraryId = -1;
+    TestWaiter waiter;
+
+    _userServices.createUser("testUser", "testPassword", "test@test.fr", true, [&waiter] (int errorType, QString jsonStr) mutable
+    {
+        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+
+        QVERIFY2(obj.value("username").toString() == "testUser", qPrintable(jsonStr));
+        QVERIFY2(obj.value("email").toString() == "test@test.fr", qPrintable(jsonStr));
+        QVERIFY2(obj.value("sponsor").toString() == "true", qPrintable(jsonStr));
+
+        waiter.emitDone();
+    });
+
+    waiter.waitForDone();
+
+    _userServices.createToken("testUser", "testPassword", [&waiter] (int errorType, QString jsonStr) mutable
+    {
+        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+
+        QVERIFY2(obj.value("owner").toString() == "testUser", qPrintable(jsonStr));
+        QVERIFY2(obj.value("token").toString().size() == 32, qPrintable(jsonStr));
+
+        waiter.emitDone();
+    });
+
+    waiter.waitForDone();
+
+    _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
+    {
+        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+
+        itineraryId = obj.value("id").toInt(-1);
+
+        QVERIFY2(itineraryId >= 0, qPrintable(jsonStr));
+        QVERIFY2(obj.value("departure").isObject(), qPrintable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("latitude").toDouble(), 48.815346), qPrintable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("longitude").toDouble(), 2.363165), qPrintable(jsonStr));
+
+        waiter.emitDone();
+    });
+
+    waiter.waitForDone();
+
+    if (itineraryId < 0)
+        QFAIL("Could not create a valid itinerary.");
+
+    _itineraryServices.getItineraries("testItinerary", "", "false", "name", [&waiter] (int errorType, QString jsonStr) mutable
+    {
+        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+
+        QJsonArray array = QJsonDocument::fromJson(jsonStr.toLatin1()).array();
+
+        QVERIFY2(array.size() > 0, qPrintable(QString("%1 : [%2]").arg(array.size()).arg(jsonStr)));
+
+        if (array.size() > 0)
+        {
+            QJsonObject obj = array.first().toObject();
+            QVERIFY2(obj.value("name").toString() == "testItinerary", qPrintable(jsonStr));
+        }
+
+        waiter.emitDone();
+    });
+
+    waiter.waitForDone();
+
+    _itineraryServices.deleteItinerary(itineraryId, [&waiter] (int errorType, QString jsonStr) mutable
+    {
+        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        waiter.emitDone();
+    });
+
+    waiter.waitForDone();
+
+    _userServices.deleteUser("testUser", [&waiter] (int errorType, QString jsonStr) mutable
+    {
+        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        waiter.emitDone();
+    });
+
+    waiter.waitForDone();
+
+    _userServices.deleteToken([&waiter] (int errorType, QString jsonStr) mutable
+    {
+        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        waiter.emitDone();
+    });
+
+    waiter.waitForDone();
 }
 
 QTEST_MAIN(TestApi)
