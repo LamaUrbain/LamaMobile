@@ -1,7 +1,7 @@
 install:
-  - sudo add-apt-repository --yes ppa:beineri/opt-qt551
+  - sudo add-apt-repository --yes ppa:beineri/opt-qt542
   - sudo apt-get update -qq
-  - sudo apt-get install -qq qt55base qt55declarative qt55location
+  - sudo apt-get install -qq qt54base qt54declarative qt54location
 script:
   - source /opt/qt54/bin/qt54-env.sh
   - qmake projects.pro
