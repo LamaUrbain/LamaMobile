@@ -760,7 +760,6 @@ void TestApi::testCreateSponsor()
 
         QVERIFY2(obj.value("username").toString() == "testUser", qPrintable(jsonStr));
         QVERIFY2(obj.value("email").toString() == "test@test.fr", qPrintable(jsonStr));
-        QVERIFY2(obj.value("sponsor").toString() == "true", qPrintable(jsonStr));
 
         waiter.emitDone();
     });
@@ -810,7 +809,6 @@ void TestApi::testGetSponsors()
 
         QVERIFY2(obj.value("username").toString() == "testUser1", qPrintable(jsonStr));
         QVERIFY2(obj.value("email").toString() == "test@test.fr", qPrintable(jsonStr));
-        QVERIFY2(obj.value("sponsor").toString() == "true", qPrintable(jsonStr));
 
         waiter.emitDone();
     });
@@ -825,7 +823,6 @@ void TestApi::testGetSponsors()
 
         QVERIFY2(obj.value("username").toString() == "testUser2", qPrintable(jsonStr));
         QVERIFY2(obj.value("email").toString() == "test@test.fr", qPrintable(jsonStr));
-        QVERIFY2(obj.value("sponsor").toString() == "true", qPrintable(jsonStr));
 
         waiter.emitDone();
     });
@@ -936,7 +933,6 @@ void TestApi::testSponsorsItineraries()
 
         QVERIFY2(obj.value("username").toString() == "testUser", qPrintable(jsonStr));
         QVERIFY2(obj.value("email").toString() == "test@test.fr", qPrintable(jsonStr));
-        QVERIFY2(obj.value("sponsor").toString() == "true", qPrintable(jsonStr));
 
         waiter.emitDone();
     });
