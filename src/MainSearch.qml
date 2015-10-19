@@ -110,7 +110,7 @@ Components.Background {
             Controls.ShareButton {
                 id: shareButton
                 Layout.fillWidth: true
-                itinerary: rootView.lamaSession.LAMA_USER_CURRENT_ITINERARY
+                itinerary: rootView.lamaSession.CURRENT_ITINERARY
             }
 
             Controls.IconButton {

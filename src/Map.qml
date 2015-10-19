@@ -41,7 +41,7 @@ Components.Marker {
                 color: Constants.LAMA_ORANGE
                 onClicked:
                 {
-                    rootView.lamaSession.LAMA_USER_CURRENT_ITINERARY = Constants.LAMA_BASE_ITINERARY_OBJ
+                    rootView.lamaSession.CURRENT_ITINERARY = Constants.LAMA_BASE_ITINERARY_OBJ
                 }
             }
 
