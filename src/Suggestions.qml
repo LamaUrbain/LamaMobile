@@ -205,11 +205,11 @@ Components.Background {
                 if (typeof(choosenPlace) !== "undefined")
                     rootView.addToHistory(choosenPlace);
 
+                var id = rootView.lamaSession.CURRENT_WAYPOINT_ID
                 var longitude = longitudeInput.text
                 var latitude = latitudeInput.text
                 var areCardinalsHere = longitude.length > 0 || latitude.length > 0
-
-                if (currentWaypoint === undefined // cheating
+                if (id < 0 // cheating
                     || (areCardinalsHere && (Math.abs(longitude) > 180 || Math.abs(latitude) > 90)))
                 {
                     mainModal.title = "Wrong values"
@@ -219,15 +219,30 @@ Components.Background {
                     return;
                 }
 
-                if (areCardinalsHere)
+                var waypointKind
+                if (id > 0)
                 {
-                    currentWaypoint["longitude"] = longitude
-                    currentWaypoint["latitude"] = latitude
+                    waypointKind = "destinations"
+                    --id;
+                    if (areCardinalsHere)
+                    {
+                        rootView.lamaSession.CURRENT_ITINERARY[waypointKind][id]["longitude"] = longitude
+                        rootView.lamaSession.CURRENT_ITINERARY[waypointKind][id]["latitude"] = latitude
+                    }
+                    rootView.lamaSession.CURRENT_ITINERARY[waypointKind][id]["address"] = addressInput.text
                 }
-                currentWaypoint["address"] = addressInput.text
+                else
+                {
+                    waypointKind = "departure"
+                    if (areCardinalsHere)
+                    {
+                        rootView.lamaSession.CURRENT_ITINERARY[waypointKind]["longitude"] = longitude
+                        rootView.lamaSession.CURRENT_ITINERARY[waypointKind]["latitude"] = latitude
+                    }
+                    rootView.lamaSession.CURRENT_ITINERARY[waypointKind]["address"] = addressInput.text
+                }
 
                 rootView.raiseUserSessionChanged()
-
                 var currentRoute = rootView.lamaSession.CURRENT_ITINERARY
                 if ("favorite" in currentRoute && currentRoute["favorite"] === true)
                 {

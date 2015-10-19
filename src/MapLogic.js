@@ -30,29 +30,27 @@ function syncItinerary(jsonObj)
 
         rootView.lamaSession.CURRENT_ITINERARY["departure"] =
         {
-            address: rootView.lamaSession.CURRENT_ITINERARY["departure"].address,
+            address: null,
             latitude: jsonObj.departure.latitude ? getFloatValue(jsonObj.departure.latitude) : null,
             longitude: jsonObj.departure.longitude ? getFloatValue(jsonObj.departure.longitude) : null
         }
 
-        var current_destinations =  rootView.lamaSession.CURRENT_ITINERARY["destinations"]
-        var remote_destinations = jsonObj.destinations;
-        var new_destinations = new Array;
+        var destinations = jsonObj.destinations;
+        rootView.lamaSession.CURRENT_ITINERARY["destinations"] = new Array;
 
-        for (var i = 0; i < remote_destinations.length; ++i)
+        for (var i = 0; i < destinations.length; ++i)
         {
             var ref = destinations[i];
             var destination =
             {
-                address: ref.address ? ref.address : current_destinations[i].address,
+                address: null,
                 latitude: ref.latitude ? getFloatValue(ref.latitude) : null,
                 longitude: ref.longitude ? getFloatValue(ref.longitude) : null
             }
 
             if (destination.address || (destination.latitude && destination.longitude))
-                new_destinations.push(destination)
+                rootView.lamaSession.CURRENT_ITINERARY["destinations"].push(destination);
         }
-        rootView.lamaSession.CURRENT_ITINERARY["destinations"] = new_destinations;
     }
     else
         console.log("Sync error: " + JSON.stringify(jsonObj));
