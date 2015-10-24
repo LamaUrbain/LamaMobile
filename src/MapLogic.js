@@ -86,8 +86,7 @@ function updateItinerary()
     for (var idx = 0; idx < currentIt["destinations"].length; ++idx)
     {
         destArray[idx] = _formatCoords(currentIt["destinations"][idx]);
-        addr = currentIt["destinations"][idx]["address"];
-        destAddrArray[idx] = addr === null || addr.length < 1 ? "???" : addr
+        destAddrArray[idx] = currentIt["destinations"][idx]["address"];
     }
 
     if (isItineraryMine())
@@ -153,8 +152,7 @@ function createItineraryAndDisplay()
     for (var idx = 0; idx < currentIt["destinations"].length; ++idx)
     {
         destArray[idx] = _formatCoords(currentIt["destinations"][idx])
-        addr = currentIt["destinations"][idx]["address"]
-        destAddrArray[idx] = addr === null || addr.length < 1 ? "???" : addr
+        destAddrArray[idx] = currentIt["destinations"][idx]["address"]
     }
 
     itineraryServices.createItineraryWith(currentIt["name"],
