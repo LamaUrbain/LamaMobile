@@ -18,7 +18,7 @@ import QtLocation 5.3
 Window {
     id: rootView
     visible: true
-    width: 640
+    width: 576
     height: 960
 
     signal userSessionChanged()

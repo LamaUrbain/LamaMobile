@@ -56,7 +56,7 @@ void ItineraryServices::getItinerary(int id, QJSValue callback)
     getItinerary(id, fromJSCallback(callback));
 }
 
-void ItineraryServices::createItinerary(QString name, QString departure, QString destination, QString favorite, ServicesBase::CallbackType callback)
+void ItineraryServices::createItinerary(QString name, QString departure, QString departure_address, QString destination, QString destination_address, QString favorite, ServicesBase::CallbackType callback)
 {
     QUrl url(QString("%1/itineraries/").arg(serverAddress));
 
@@ -64,8 +64,12 @@ void ItineraryServices::createItinerary(QString name, QString departure, QString
     if (!name.isEmpty())
         query.addQueryItem("name", name);
     query.addQueryItem("departure", departure);
+    if (!departure_address.isEmpty())
+        query.addQueryItem("departure_address", departure_address);
     if (!destination.isEmpty())
         query.addQueryItem("destination", destination);
+    if (!destination_address.isEmpty())
+        query.addQueryItem("destination_address", destination_address);
     query.addQueryItem("favorite", !UserServices::getToken().isEmpty() && favorite == "true" ? "true" : "false");
     if (!UserServices::getToken().isEmpty())
         query.addQueryItem("token", UserServices::getToken());
@@ -73,14 +77,14 @@ void ItineraryServices::createItinerary(QString name, QString departure, QString
     postRequest(url, query.query().toLocal8Bit(), callback);
 }
 
-void ItineraryServices::createItinerary(QString name, QString departure, QString destination, QString favorite, QJSValue callback)
+void ItineraryServices::createItinerary(QString name, QString departure, QString departure_address, QString destination, QString destination_address, QString favorite, QJSValue callback)
 {
-    createItinerary(name, departure, destination, favorite, fromJSCallback(callback));
+    createItinerary(name, departure, departure_address, destination, destination_address, favorite, fromJSCallback(callback));
 }
 
-void ItineraryServices::createItineraryWith(QString name, QString departure, QStringList destinations, QString favorite, ServicesBase::CallbackType callback)
+void ItineraryServices::createItineraryWith(QString name, QString departure, QString departure_address, QStringList destinations, QStringList destination_addresses, QString favorite, ServicesBase::CallbackType callback)
 {
-    CallbackType cb = [callback, destinations, this] (int errorType, QString jsonStr)
+    CallbackType cb = [callback, destinations, destination_addresses, this] (int errorType, QString jsonStr)
     {
         QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
         int id = obj.value("id").toInt(-1);
@@ -88,21 +92,21 @@ void ItineraryServices::createItineraryWith(QString name, QString departure, QSt
         if (errorType == 0 && id != -1 && destinations.size() > 0)
         {
             std::shared_ptr<int> currentPos(new int(0));
-            addDestination(id, destinations.first(), -1, _addDestinationCallback(callback, id, currentPos, destinations));
+            addDestination(id, destinations.first(), destination_addresses.first(), -1, _addDestinationCallback(callback, id, currentPos, destinations, destination_addresses));
         }
         else
             callback(errorType, jsonStr);
     };
 
-    createItinerary(name, departure, "", favorite, cb);
+    createItinerary(name, departure, departure_address, "", "", favorite, cb);
 }
 
-void ItineraryServices::createItineraryWith(QString name, QString departure, QStringList destinations, QString favorite, QJSValue callback)
+void ItineraryServices::createItineraryWith(QString name, QString departure, QString departure_address, QStringList destinations, QStringList destination_addresses, QString favorite, QJSValue callback)
 {
-    createItineraryWith(name, departure, destinations, favorite, fromJSCallback(callback));
+    createItineraryWith(name, departure, departure_address, destinations, destination_addresses, favorite, fromJSCallback(callback));
 }
 
-void ItineraryServices::editItinerary(int id, QString name, QString departure, QString favorite, ServicesBase::CallbackType callback)
+void ItineraryServices::editItinerary(int id, QString name, QString departure, QString departure_address, QString favorite, ServicesBase::CallbackType callback)
 {
     QUrl url(QString("%1/itineraries/%2").arg(serverAddress).arg(id));
 
@@ -111,6 +115,8 @@ void ItineraryServices::editItinerary(int id, QString name, QString departure, Q
         query.addQueryItem("name", name);
     if (!departure.isEmpty())
         query.addQueryItem("departure", departure);
+    if (!departure_address.isEmpty())
+        query.addQueryItem("departure_address", departure_address);
     if (favorite == "true" || favorite == "false")
         query.addQueryItem("favorite", favorite);
     if (!UserServices::getToken().isEmpty())
@@ -120,14 +126,14 @@ void ItineraryServices::editItinerary(int id, QString name, QString departure, Q
     putRequest(url, QByteArray(), callback);
 }
 
-void ItineraryServices::editItinerary(int id, QString name, QString departure, QString favorite, QJSValue callback)
+void ItineraryServices::editItinerary(int id, QString name, QString departure, QString departure_address, QString favorite, QJSValue callback)
 {
-    editItinerary(id, name, departure, favorite, fromJSCallback(callback));
+    editItinerary(id, name, departure, departure_address, favorite, fromJSCallback(callback));
 }
 
-void ItineraryServices::overwriteItinerary(int id, QString name, QString departure, QStringList destinations, QString favorite, ServicesBase::CallbackType callback)
+void ItineraryServices::overwriteItinerary(int id, QString name, QString departure, QString departure_address, QStringList destinations, QStringList destination_addresses, QString favorite, ServicesBase::CallbackType callback)
 {
-    CallbackType cb = [callback, id, name, departure, destinations, favorite, this] (int errorType, QString jsonStr) mutable
+    CallbackType cb = [callback, id, name, departure, departure_address, destinations, destination_addresses, favorite, this] (int errorType, QString jsonStr) mutable
     {
         QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
 
@@ -135,7 +141,7 @@ void ItineraryServices::overwriteItinerary(int id, QString name, QString departu
         {
             int oldDestinationsCount = obj.value("destinations").toArray().size();
             std::shared_ptr<int> destinationsCountdown(new int(oldDestinationsCount));
-            CallbackType clearCb = _removeDestinationCallback(callback, id, destinationsCountdown, name, departure, destinations, favorite);
+            CallbackType clearCb = _removeDestinationCallback(callback, id, destinationsCountdown, name, departure, departure_address, destinations, destination_addresses, favorite);
 
             if (oldDestinationsCount > 0)
                 deleteDestination(id, 0, clearCb);
@@ -149,17 +155,19 @@ void ItineraryServices::overwriteItinerary(int id, QString name, QString departu
     getItinerary(id, cb);
 }
 
-void ItineraryServices::overwriteItinerary(int id, QString name, QString departure, QStringList destinations, QString favorite, QJSValue callback)
+void ItineraryServices::overwriteItinerary(int id, QString name, QString departure, QString departure_address, QStringList destinations, QStringList destination_addresses, QString favorite, QJSValue callback)
 {
-    overwriteItinerary(id, name, departure, destinations, favorite, fromJSCallback(callback));
+    overwriteItinerary(id, name, departure, departure_address, destinations, destination_addresses, favorite, fromJSCallback(callback));
 }
 
-void ItineraryServices::addDestination(int id, QString destination, int position, ServicesBase::CallbackType callback)
+void ItineraryServices::addDestination(int id, QString destination, QString destination_address, int position, ServicesBase::CallbackType callback)
 {
     QUrl url(QString("%1/itineraries/%2/destinations").arg(serverAddress).arg(id));
 
     QUrlQuery query;
     query.addQueryItem("destination", destination);
+    if (!destination_address.isEmpty())
+        query.addQueryItem("destination_address", destination_address);
     if (position >= 0)
         query.addQueryItem("position", QString::number(position));
     if (!UserServices::getToken().isEmpty())
@@ -168,18 +176,20 @@ void ItineraryServices::addDestination(int id, QString destination, int position
     postRequest(url, query.query().toLocal8Bit(), callback);
 }
 
-void ItineraryServices::addDestination(int id, QString destination, int position, QJSValue callback)
+void ItineraryServices::addDestination(int id, QString destination, QString destination_address, int position, QJSValue callback)
 {
-    addDestination(id, destination, position, fromJSCallback(callback));
+    addDestination(id, destination, destination_address, position, fromJSCallback(callback));
 }
 
-void ItineraryServices::editDestination(int id, int oldPosition, int newPosition, QString destination, ServicesBase::CallbackType callback)
+void ItineraryServices::editDestination(int id, int oldPosition, int newPosition, QString destination, QString destination_address, ServicesBase::CallbackType callback)
 {
     QUrl url(QString("%1/itineraries/%2/destinations/%3").arg(serverAddress).arg(id).arg(oldPosition));
 
     QUrlQuery query;
     if (!destination.isEmpty())
         query.addQueryItem("destination", destination);
+    if (!destination_address.isEmpty())
+        query.addQueryItem("destination_address", destination_address);
     if (newPosition >= 0)
         query.addQueryItem("position", QString::number(newPosition));
     if (!UserServices::getToken().isEmpty())
@@ -189,9 +199,9 @@ void ItineraryServices::editDestination(int id, int oldPosition, int newPosition
     putRequest(url, QByteArray(), callback);
 }
 
-void ItineraryServices::editDestination(int id, int oldPosition, int newPosition, QString destination, QJSValue callback)
+void ItineraryServices::editDestination(int id, int oldPosition, int newPosition, QString destination, QString destination_address, QJSValue callback)
 {
-    editDestination(id, oldPosition, newPosition, destination, fromJSCallback(callback));
+    editDestination(id, oldPosition, newPosition, destination, destination_address, fromJSCallback(callback));
 }
 
 void ItineraryServices::deleteDestination(int id, int position, ServicesBase::CallbackType callback)
@@ -244,9 +254,9 @@ void ItineraryServices::getItineraryTiles(int id, int zoomLevel, QJSValue callba
     getItineraryTiles(id, zoomLevel, fromJSCallback(callback));
 }
 
-ServicesBase::CallbackType ItineraryServices::_addDestinationCallback(CallbackType callback, int id, std::shared_ptr<int> currentPos, QStringList destinations)
+ServicesBase::CallbackType ItineraryServices::_addDestinationCallback(CallbackType callback, int id, std::shared_ptr<int> currentPos, QStringList destinations, QStringList destination_addresses)
 {
-    CallbackType cb = [callback, id, currentPos, destinations, this] (int errorType, QString jsonStr) mutable
+    CallbackType cb = [callback, id, currentPos, destinations, destination_addresses, this] (int errorType, QString jsonStr) mutable
     {
         if (currentPos && errorType == 0)
         {
@@ -254,7 +264,8 @@ ServicesBase::CallbackType ItineraryServices::_addDestinationCallback(CallbackTy
             if (*currentPos < destinations.size())
             {
                 QString dest = destinations.at(*currentPos);
-                addDestination(id, dest, -1, _addDestinationCallback(callback, id, currentPos, destinations));
+                QString dest_addr = destination_addresses.at(*currentPos);
+                addDestination(id, dest, dest_addr, -1, _addDestinationCallback(callback, id, currentPos, destinations, destination_addresses));
             }
             else
                 callback(errorType, jsonStr);
@@ -266,23 +277,23 @@ ServicesBase::CallbackType ItineraryServices::_addDestinationCallback(CallbackTy
     return cb;
 }
 
-ServicesBase::CallbackType ItineraryServices::_removeDestinationCallback(CallbackType callback, int id, std::shared_ptr<int> destinationsCountdown, QString name, QString departure, QStringList destinations, QString favorite)
+ServicesBase::CallbackType ItineraryServices::_removeDestinationCallback(CallbackType callback, int id, std::shared_ptr<int> destinationsCountdown, QString name, QString departure, QString departure_address, QStringList destinations, QStringList destination_addresses, QString favorite)
 {
-    CallbackType cb = [callback, id, destinationsCountdown, name, departure, destinations, favorite, this] (int errorType, QString jsonStr) mutable
+    CallbackType cb = [callback, id, destinationsCountdown, name, departure, departure_address, destinations, destination_addresses, favorite, this] (int errorType, QString jsonStr) mutable
     {
         if (destinationsCountdown && errorType == 0)
         {
             --(*destinationsCountdown);
             if (*destinationsCountdown <= 0)
             {
-                CallbackType editCb = [callback, id, destinations, this] (int errorType, QString jsonStr) mutable
+                CallbackType editCb = [callback, id, destinations, destination_addresses, this] (int errorType, QString jsonStr) mutable
                 {
                     if (errorType == 0)
                     {
                         if (destinations.size() > 0)
                         {
                             std::shared_ptr<int> currentPos(new int(0));
-                            addDestination(id, destinations.first(), -1, _addDestinationCallback(callback, id, currentPos, destinations));
+                            addDestination(id, destinations.first(), destination_addresses.first(), -1, _addDestinationCallback(callback, id, currentPos, destinations, destination_addresses));
                         }
                         else
                             callback(errorType, jsonStr);
@@ -291,10 +302,10 @@ ServicesBase::CallbackType ItineraryServices::_removeDestinationCallback(Callbac
                         callback(errorType, jsonStr);
                 };
 
-                editItinerary(id, name, departure, favorite, editCb);
+                editItinerary(id, name, departure, departure_address, favorite, editCb);
             }
             else
-                deleteDestination(id, 0, _removeDestinationCallback(callback, id, destinationsCountdown, name, departure, destinations, favorite));
+                deleteDestination(id, 0, _removeDestinationCallback(callback, id, destinationsCountdown, name, departure, departure_address, destinations, destination_addresses, favorite));
         }
         else
             callback(errorType, jsonStr);
