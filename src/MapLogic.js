@@ -81,8 +81,14 @@ function updateItinerary()
 {
     var currentIt = rootView.lamaSession.CURRENT_ITINERARY;
     var destArray = [];
+    var destAddrArray = [];
+    var addr = null;
     for (var idx = 0; idx < currentIt["destinations"].length; ++idx)
-        destArray[idx] = _formatCoords(currentIt["destinations"][idx])
+    {
+        destArray[idx] = _formatCoords(currentIt["destinations"][idx]);
+        addr = currentIt["destinations"][idx]["address"];
+        destAddrArray[idx] = addr === null || addr.length < 1 ? "???" : addr
+    }
 
     if (isItineraryMine())
     {
@@ -90,7 +96,9 @@ function updateItinerary()
                     parseInt(currentIt["id"]),
                     currentIt["name"],
                     _formatCoords(currentIt["departure"]),
+                    currentIt["departure"]["address"],
                     destArray,
+                    destAddrArray,
                     currentIt["favorite"] === true ? "true" : "false", displayOnUpdateResult);
     }
     else
@@ -137,14 +145,23 @@ function createItineraryAndDisplay()
     var currentIt = rootView.lamaSession.CURRENT_ITINERARY
 
     if (currentIt['name'] === null || currentIt['name'] === '')
-        currentIt['name'] = "tmp_itinerary_" + ViewsLogic.getRandomString(8);
+        currentIt['name'] = "Sans nom " + ViewsLogic.getRandomString(8);
 
     var destArray = [];
+    var destAddrArray = [];
+    var addr = null;
     for (var idx = 0; idx < currentIt["destinations"].length; ++idx)
+    {
         destArray[idx] = _formatCoords(currentIt["destinations"][idx])
+        addr = currentIt["destinations"][idx]["address"]
+        destAddrArray[idx] = addr === null || addr.length < 1 ? "???" : addr
+    }
+
     itineraryServices.createItineraryWith(currentIt["name"],
                                          _formatCoords(currentIt["departure"]),
+                                         currentIt["departure"]["address"],
                                          destArray,
+                                         destAddrArray,
                                          currentIt["favorite"] === true ? "true" : "false",
                                          onCreateItineraryWith);
 }
@@ -192,14 +209,14 @@ function moveItineraryPoint(itineraryId, point, newCoords)
     {
         var departure =
         {
-            address: null,
+            address: null, // Need Cyril geoloc's
             latitude: newCoords.y,
             longitude: newCoords.x
         }
 
         if (isItineraryMine())
         {
-            itineraryServices.editItinerary(itineraryId, "", _formatCoords(departure), "", function(statusCode, jsonStr)
+            itineraryServices.editItinerary(itineraryId, "", _formatCoords(departure), departure["address"], "", function(statusCode, jsonStr)
             {
                 rootView.mapView.mapComponent.itineraryChanged();
                 if (statusCode == 0)
@@ -219,14 +236,14 @@ function moveItineraryPoint(itineraryId, point, newCoords)
     {
         var waypoint =
         {
-            address: null,
+            address: null, // Need Cyril geoloc's
             latitude: newCoords.y,
             longitude: newCoords.x
         }
 
         if (isItineraryMine())
         {
-            itineraryServices.editDestination(itineraryId, point - 1, -1, _formatCoords(waypoint), function(statusCode, jsonStr)
+            itineraryServices.editDestination(itineraryId, point - 1, -1, _formatCoords(waypoint), waypoint["address"], function(statusCode, jsonStr)
             {
                 rootView.mapView.mapComponent.itineraryChanged();
                 if (statusCode == 0)
@@ -255,7 +272,7 @@ function addWaypoint(coord)
     if (isItineraryValid())
     {
         var waypoint = {
-            address: null,
+            address: null, // Need Cyril geoloc's
             latitude: coord.y,
             longitude: coord.x
         }
@@ -264,7 +281,7 @@ function addWaypoint(coord)
         {
             itineraryServices.addDestination(
                         rootView.lamaSession.CURRENT_ITINERARY["id"],
-                        _formatCoords(waypoint),
+                        _formatCoords(waypoint), waypoint["address"],
                         Math.max(0, rootView.lamaSession.CURRENT_ITINERARY["destinations"].length - 1),
                         function(statusCode, jsonStr)
                         {

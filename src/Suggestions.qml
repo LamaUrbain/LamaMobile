@@ -106,8 +106,8 @@ Components.Background {
             onTextChanged: {
                 suggestionPlace.searchTerm = addressInput.text
 
-                latitudeInput.enabled = (text.length === 0)
-                longitudeInput.enabled = latitudeInput.enabled
+                //latitudeInput.enabled = (text.length === 0)
+                //longitudeInput.enabled = latitudeInput.enabled
                 rootView.fillHistoryFiltered(suggestionsModel, addressInput.text, 4)
             }
         }
@@ -129,7 +129,7 @@ Components.Background {
                 placeholderText: "Latitude"
                 onTextChanged:
                 {
-                    addressInput.enabled = (text.length === 0 && longitudeInput.length === 0)
+                    //addressInput.enabled = (text.length === 0 && longitudeInput.length === 0)
                 }
 
                 Component.onCompleted:
@@ -149,7 +149,7 @@ Components.Background {
                 placeholderText: "Longitude"
                 onTextChanged:
                 {
-                    addressInput.enabled = (text.length === 0 && latitudeInput.length === 0)
+                    //addressInput.enabled = (text.length === 0 && latitudeInput.length === 0)
                 }
                 Component.onCompleted:
                 {
