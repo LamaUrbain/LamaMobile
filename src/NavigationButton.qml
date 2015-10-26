@@ -5,7 +5,9 @@ Button {
     property string navigationTarget
     property var navigationTargetProperties
     property bool acceptClick: true
+
     signal navButtonPressed()
+
     function navigate()
     {
         if (acceptClick === true)

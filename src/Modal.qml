@@ -20,6 +20,17 @@ Rectangle
         modalContentLoader.visible = !isLoading
     }
 
+    function close()
+    {
+        modal.visible = false
+        title = "Information"
+        message = "Everything's fine !"
+        buttonText = "Ok"
+        setLoadingState(false)
+        modalContentLoader.sourceComponent = modalMessageItem
+        enableButton = true
+    }
+
     id: modal
     anchors.fill: parent
     color: "#AA000000"
@@ -132,13 +143,7 @@ Rectangle
                 onClicked:
                 {
                     modalButtonClicked()
-                    modal.visible = false
-                    title = "Information"
-                    message = "Everything's fine !"
-                    buttonText = "Ok"
-                    setLoadingState(false)
-                    modalContentLoader.sourceComponent = modalMessageItem
-                    enableButton = true
+                    close()
                 }
             }
         }

@@ -7,7 +7,7 @@ Components.Background {
 
     Components.Header {
         id: header
-        title: "User Auth"
+        title: rootView.lamaSession.IS_LOGGED ? rootView.lamaSession.USERNAME : "Authentification"
     }
 
     Components.Marker {
@@ -89,6 +89,7 @@ Components.Background {
                 rootView.mainViewBack()
             }
             visible: rootView.lamaSession.IS_LOGGED
+            Component.onCompleted: { }
         }
 
         Controls.NavigationButton {

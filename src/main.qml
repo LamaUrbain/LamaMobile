@@ -80,14 +80,12 @@ Window {
             return;
 
         if (name === undefined || name === "Map")
-        {
             // Pops all but the first item (i.e. the map)
             mainView.pop(null);
-        }
         else
-        {
-            mainView.push("qrc:/Views/" + name + ".qml", {properties: prop})
-        }
+            mainView.push({item: "qrc:/Views/" + name + ".qml", properties: prop})
+
+        mainModal.close()
     }
 
     function mainViewBack()

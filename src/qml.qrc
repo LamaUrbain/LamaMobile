@@ -86,5 +86,6 @@
         <file>Modal.qml</file>
         <file>ViewsLogic.js</file>
         <file>SponsoredPaths.qml</file>
+        <file>WebView.qml</file>
     </qresource>
 </RCC>

@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.2
 import "qrc:/Views/ViewsLogic.js" as ViewsLogic
 import "qrc:/Constants.js" as Constants
 import "qrc:/Components" as Components
+import "qrc:/Controls/" as Controls
 
 IconButton
 {
@@ -17,61 +18,59 @@ IconButton
 
     Component {
         id: shareComponent
-        ColumnLayout {
-            anchors.fill: parent
 
-            anchors.leftMargin: parent.width * 0.005
-            anchors.rightMargin: parent.width * 0.005
+        Rectangle
+        {
+            anchors.fill: parent;
+            color: "#00000000"
 
-            Components.TextField {
+            Text {
+                text: "Share this itinerary on :"
+                color: Constants.LAMA_YELLOW
+                font.pixelSize: Constants.LAMA_POINTSIZE
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.top
+                anchors.topMargin: parent.height * 0.1
+            }
+
+            Controls.NavigationButton {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: parent.right
+                anchors.left: parent.left
+                anchors.leftMargin: parent.width * 0.6
+                anchors.rightMargin: parent.width * 0.1
+                height: parent.height * 0.35
+
+                centerText: "Facebook"
+                navigationTarget: "WebView"
+                navigationTargetProperties: {
+                    var properties = { webUrl: Constants.LAMA_URL_FACEBOOK_SHARE + itinerary['id'] }
+                    return (properties);
+                }
+            }
+
+            Controls.NavigationButton {
+                anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
                 anchors.right: parent.right
+                anchors.rightMargin: parent.width * 0.6
+                anchors.leftMargin: parent.width * 0.1
+                height: parent.height * 0.35
 
-                anchors.leftMargin: parent.width * 0.01
-                anchors.rightMargin: parent.width * 0.01
-
-                Layout.preferredHeight: parent.height * 0.1
-                readOnly: true
-                Component.onCompleted:
+                centerText: "Twitter"
+                navigationTarget: "WebView"
+                navigationTargetProperties:
                 {
-                    selectAll()
-                    if (itinerary !== null)
-                        text = "http://api.lama/share/" + encodeURIComponent(itinerary["owner"]) + "/" + encodeURIComponent(itinerary["name"])
+                    var properties = { webUrl: Constants.LAMA_URL_TWITTER_SHARE + itinerary['id'] + Constants.LAMA_URL_TWITTER_HASHTAGS }
+                    return (properties);
                 }
             }
-
-            Row
-            {
-                anchors.leftMargin: parent.width * 0.005
-                anchors.rightMargin: parent.width * 0.005
-                anchors.topMargin: parent.height * 0.005
-                anchors.bottomMargin: parent.height * 0.005
-
-                Layout.preferredHeight: parent.height * 0.20
-
-                anchors.horizontalCenter: parent.horizontalCenter
-
-                spacing: parent.height * 0.025
-
-                Components.Marker {
-                    anchors.top: parent.top
-                    anchors.bottom: parent.bottom
-
-                    centerText: "FACEBOOK"
-                }
-
-                Components.Marker {
-                    anchors.top: parent.top
-                    anchors.bottom: parent.bottom
-
-                    centerText: "TWITTER"
-                }
-            }
-
         }
+
     }
 
     onClicked: {
+        mainModal.buttonText = "Cancel"
         ViewsLogic.spawnModalWithSource("Share", shareComponent)
     }
 }

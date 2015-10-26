@@ -108,6 +108,24 @@ function fillWaypoints(listModelId, itinerary)
     }
 }
 
+function parseHumanAddress(addressString)
+{
+    var list = addressString.split(", ")
+    if (list.count >= 1)
+        return ({nom: list[1]});
+    else if (list.count < 7)
+        return ({nom: addressString});
+    return ({
+                nom: list[0] + ", " + list[1],
+                arrondissement: list[2],
+                ville: list[3],
+                region: list[4],
+                secteur: list[5],
+                codePostal: list[6],
+                pays: list[7]
+            });
+}
+
 function getAddressPlaceholder(waypointData)
 {
     var address = waypointData.address;
@@ -115,7 +133,7 @@ function getAddressPlaceholder(waypointData)
     var longitude = waypointData.longitude;
 
     if (address)
-        return address;
+        return parseHumanAddress(address)["nom"];
     if (latitude && longitude)
         return latitude + ", " + longitude;
     return "New Waypoint";
