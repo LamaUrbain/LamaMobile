@@ -4,10 +4,14 @@ var LAMA_BACKGROUND = Qt.lighter(LAMA_YELLOW, 1.5);
 var LAMA_POINTSIZE = 20.0;
 
 var LAMA_OSM_USERAGENT = "LamaUrbain"
-var LAMA_DEFAULT_URL = "http://lamaurbain.cha.moe/"
+
+// encodeURIComponent ....
 var LAMA_URL_FACEBOOK_SHARE = 'https://www.facebook.com/sharer/sharer.php?u=http%3A//lamaurbain.cha.moe/itinerary/'
+// encodeURIComponent ....
 var LAMA_URL_TWITTER_SHARE = 'http://twitter.com/home/?status=Check%20out%20out%20this%20itinerary%21%20http%3A//lamaurbain.cha.moe/itinerary/'
+// encodeURIComponent ....
 var LAMA_URL_TWITTER_HASHTAGS = '%20%23openstreetmap%20%40lama_urbain'
+var LAMA_DEFAULT_URL = "http://lamaurbain.cha.moe/"
 
 
 var LAMA_BUS_RESSOURCE = "qrc:/Assets/Images/6.png";

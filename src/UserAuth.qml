@@ -89,7 +89,6 @@ Components.Background {
                 rootView.mainViewBack()
             }
             visible: rootView.lamaSession.IS_LOGGED
-            Component.onCompleted: { }
         }
 
         Controls.NavigationButton {
