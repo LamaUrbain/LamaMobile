@@ -70,6 +70,7 @@
         <file>ImageButton.qml</file>
         <file>ShareButton.qml</file>
         <file>MapItem.qml</file>
+        <file>ImageGravatar.qml</file>
     </qresource>
     <qresource prefix="/Views">
         <file>AlertInformation.qml</file>

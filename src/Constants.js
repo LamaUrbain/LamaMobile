@@ -12,12 +12,16 @@ var LAMA_URL_TWITTER_SHARE = 'http://twitter.com/home/?status=Check%20out%20out%
 // encodeURIComponent ....
 var LAMA_URL_TWITTER_HASHTAGS = '%20%23openstreetmap%20%40lama_urbain'
 var LAMA_DEFAULT_URL = "http://lamaurbain.cha.moe/"
+var LAMA_GRAVATAR_URL = "http://www.gravatar.com/avatar/"
+var LAMA_GRAVATAR_EXT = ".jpg"
+var LAMA_GRAVATAR_SIZE = "256"
 
 
 var LAMA_BUS_RESSOURCE = "qrc:/Assets/Images/6.png";
 var LAMA_TRAIN_RESSOURCE = "qrc:/Assets/Images/22.png";
 var LAMA_CAR_RESSOURCE = "qrc:/Assets/Images/6.png";
 var LAMA_ONFOOT_RESSOURCE = "qrc:/Assets/Images/27.png";
+var LAMA_PROFILE_RESSOURCE = "qrc:/Assets/Images/26.png";
 var LAMA_TRAM_RESSOURCE = "qrc:/Assets/Images/24.png";
 var LAMA_BIKE_RESSOURCE = "qrc:/Assets/Images/18.png";
 var LAMA_BACK_RESSOURSE = "qrc:/Assets/Images/9.png";
