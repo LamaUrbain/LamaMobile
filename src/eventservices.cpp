@@ -25,7 +25,7 @@ void EventServices::reportIncident(QString username, QString dateBegin, QString 
 {
     if (username.isEmpty() || dateBegin.isEmpty() || (position.isEmpty() && address.isEmpty()))
     {
-        callback.call(-1, "Bad parameters");
+        callback(-1, "Bad parameters");
         return;
     }
 
@@ -60,7 +60,7 @@ void EventServices::sendFeedback(QString username, QString rateScore, QString me
 {
     if (username.isEmpty() || rateScore.isEmpty() || message.isEmpty())
     {
-        callback.call(-1, "Bad parameters");
+        callback(-1, "Bad parameters");
         return;
     }
 

@@ -1,8 +1,13 @@
 #ifndef EVENTSERVICES_H
 #define EVENTSERVICES_H
 
+#include <QObject>
+#include "servicesbase.h"
+
 class EventServices : public ServicesBase
 {
+     Q_OBJECT
+
 public:
     EventServices();
     ~EventServices();

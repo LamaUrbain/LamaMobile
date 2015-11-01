@@ -77,6 +77,8 @@ private:
     UserServices _userServices;
     ItineraryServices _itineraryServices;
     EventServices _eventServices;
+
+    ServicesBase::CallbackType _getBasicCallBack(TestWaiter &waiter);
 };
 
 #endif

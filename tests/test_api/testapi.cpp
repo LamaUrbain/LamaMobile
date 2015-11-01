@@ -76,6 +76,15 @@ TestApi::~TestApi()
 {
 }
 
+ServicesBase::CallbackType TestApi::_getBasicCallBack(TestWaiter &waiter)
+{
+    return (ServicesBase::CallbackType([&waiter] (int errorType, QString jsonStr) mutable
+      {
+          QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+          waiter.emitDone();
+      }));
+}
+
 // Users
 
 void TestApi::testCreateUser()
@@ -1020,24 +1029,18 @@ void TestApi::testSponsorsItineraries()
 
 void TestApi::testEvents()
 {
+    TestWaiter waiter;
+
     _eventServices.reportIncident("testUser",
                                   "2015-03-31T08:00:00Z", "2015-03-31T09:00:00Z",
                                   "48.832672, 2.288375", "",
-                                  [&waiter] (int errorType, QString jsonStr) mutable
-      {
-          QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
-          waiter.emitDone();
-      });
+                                  _getBasicCallBack(waiter));
     waiter.waitForDone();
 
     _eventServices.reportIncident("testUser",
                                   "2015-03-31T08:00:00Z", "",
                                   "48.832672, 2.288375", "",
-                                  [&waiter] (int errorType, QString jsonStr) mutable
-      {
-          QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
-          waiter.emitDone();
-      });
+                                  _getBasicCallBack(waiter));
     waiter.waitForDone();
 
     // Testing automaticaly deduction of begin date
@@ -1051,22 +1054,16 @@ void TestApi::testEvents()
       });
     waiter.waitForDone();
 
-    _eventServices.getIncidentList([&waiter] (int errorType, QString jsonStr) mutable
-      {
-          QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
-          waiter.emitDone();
-      });
+    _eventServices.getIncidentList(_getBasicCallBack(waiter));
     waiter.waitForDone();
 }
 
 void TestApi::testSendFeedback()
 {
+    TestWaiter waiter;
+
     _eventServices.sendFeedback("testUser", "5", "Lama Urbain is freaking usefull !!",
-                                  [&waiter] (int errorType, QString jsonStr) mutable
-      {
-          QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
-          waiter.emitDone();
-      });
+                                  _getBasicCallBack(waiter));
     waiter.waitForDone();
 }
 
