@@ -1018,4 +1018,56 @@ void TestApi::testSponsorsItineraries()
     waiter.waitForDone();
 }
 
+void TestApi::testEvents()
+{
+    _eventServices.reportIncident("testUser",
+                                  "2015-03-31T08:00:00Z", "2015-03-31T09:00:00Z",
+                                  "48.832672, 2.288375", "",
+                                  [&waiter] (int errorType, QString jsonStr) mutable
+      {
+          QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+          waiter.emitDone();
+      });
+    waiter.waitForDone();
+
+    _eventServices.reportIncident("testUser",
+                                  "2015-03-31T08:00:00Z", "",
+                                  "48.832672, 2.288375", "",
+                                  [&waiter] (int errorType, QString jsonStr) mutable
+      {
+          QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+          waiter.emitDone();
+      });
+    waiter.waitForDone();
+
+    // Testing automaticaly deduction of begin date
+    _eventServices.reportIncident("testUser",
+                                  "", "",
+                                  "48.832672, 2.288375", "",
+                                  [&waiter] (int errorType, QString jsonStr) mutable
+      {
+          QVERIFY2(errorType == 0, qPrintable(QString("%1 (No automatic date resolution) : [%2]").arg(errorType).arg(jsonStr)));
+          waiter.emitDone();
+      });
+    waiter.waitForDone();
+
+    _eventServices.getIncidentList([&waiter] (int errorType, QString jsonStr) mutable
+      {
+          QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+          waiter.emitDone();
+      });
+    waiter.waitForDone();
+}
+
+void TestApi::testSendFeedback()
+{
+    _eventServices.sendFeedback("testUser", "5", "Lama Urbain is freaking usefull !!",
+                                  [&waiter] (int errorType, QString jsonStr) mutable
+      {
+          QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+          waiter.emitDone();
+      });
+    waiter.waitForDone();
+}
+
 QTEST_MAIN(TestApi)

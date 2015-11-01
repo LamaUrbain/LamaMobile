@@ -5,6 +5,7 @@
 
 #include "userservices.h"
 #include "itineraryservices.h"
+#include "eventservices.h"
 
 // Used to wait for the end of a network request
 class TestWaiter : public QObject
@@ -68,9 +69,14 @@ private slots:
     void testGetSponsors();
     void testSponsorsItineraries();
 
+    // Events
+    void testEvents();
+    void testSendFeedback();
+
 private:
     UserServices _userServices;
     ItineraryServices _itineraryServices;
+    EventServices _eventServices;
 };
 
 #endif
