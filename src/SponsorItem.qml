@@ -14,41 +14,13 @@ RowLayout {
         deleted()
     }
 
-    MouseArea {
-        anchors.fill: parent
-
-        onClicked: {
-            rootView.mainViewTo("SponsorsDetails", {})
-        }
-    }
-
-    Image
+    Text
     {
-        id: sponsorLogo
-        anchors.fill: parent
-        fillMode: Image.PreserveAspectFit
-        source: sponsorToDisplay.logo
-
-        Rectangle {
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
-            height: parent.height * 0.15
-
-            color: "black"
-            opacity: 0.8
-            z: parent.z + 1
-
-            Text
-            {
-                id: sponsorName
-                anchors.centerIn: parent
-                color: Constants.LAMA_YELLOW
-                font.pointSize: Constants.LAMA_POINTSIZE
-                opacity: 1
-                z: parent.z + 1
-                text: sponsorToDisplay.name
-            }
-        }
+        id: sponsorName
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: parent.left
+        color: "white"
+        font.pointSize: Constants.LAMA_POINTSIZE
+        text: sponsorToDisplay.username
     }
 }

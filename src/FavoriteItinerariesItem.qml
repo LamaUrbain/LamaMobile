@@ -7,6 +7,7 @@ import "qrc:/Constants.js" as Constants
 RowLayout {
     property alias favoriteDescription: favoriteText.centerText
     property var linkedItinerary: Constants.LAMA_BASE_ITINERARY_OBJ
+    property bool readOnly: false
 
     signal deleted()
 
@@ -35,6 +36,7 @@ RowLayout {
         Layout.minimumWidth: parent.width * 0.1
         Layout.maximumWidth: parent.width * 0.15
         Layout.preferredWidth: parent.width * 0.12
+        visible: readOnly == false
         onDeleted: {
             raiseDeleted()
         }

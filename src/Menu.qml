@@ -31,6 +31,7 @@ Components.Background {
             anchors.topMargin: parent.height * 0.005
             anchors.bottomMargin: parent.height * 0.005
             navigationTarget: "FavoriteItineraries"
+            navigationTargetProperties: {itineraties: rootView.lamaSession.KNONW_ITINERARIES}
         }
 
         Controls.NavigationButton {

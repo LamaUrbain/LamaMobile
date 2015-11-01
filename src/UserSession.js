@@ -23,17 +23,7 @@ var LAMA_SESSION =
     CURRENT_ITINERARY: {},
     CURRENT_WAYPOINT_ID: -1,
     CURRENT_WAYPOINT: {},
-    KNOWN_SPONSORS:
-    [
-        {
-            name: "McDo",
-            logo: "http://img2.wikia.nocookie.net/__cb20110404033201/happymeal/images/1/13/McDonald's_logo.png",
-        },
-        {
-            name: "KFC",
-            logo: "http://www.pocketnews.com.my/wp-content/uploads/2014/10/KFC_logo.jpg",
-        }
-    ],
+    KNOWN_SPONSORS: [],
     KNOWN_ITINERARIES: []
     //[
     //    {
@@ -238,6 +228,20 @@ function tryLogin(isReloging)
     loginAndCreateToken(rootView);
 }
 
+function loadSponsors()
+{
+    console.log("load sponsors")
+    var sponsors = userServices.getUsers("", "true", function(status, response)
+    {
+        if (status == 0)
+        {
+            rootView.lamaSession.KNOWN_SPONSORS = JSON.parse(response)
+        }
+        console.log("loaded", rootView.lamaSession.KNOWN_SPONSORS.length, "sponsors")
+    })
+
+}
+
 function loginAndCreateToken(rootView, callback)
 {
     userServices.createToken(rootView.lamaSession.USERNAME, rootView.lamaSession.PASSWORD,
@@ -251,6 +255,7 @@ function loginAndCreateToken(rootView, callback)
             rootView.lamaSession.TOKEN = JSON.parse(jsonStr).token
             loadItineraries()
             saveSessionState()
+            loadSponsors()
         }
         else
         {

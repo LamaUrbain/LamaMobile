@@ -72,10 +72,8 @@ function onItineraryCreateResponse(statusCode, jsonStr)
 function fillSponsors(listModel, knownSponsors)
 {
     listModel.clear();
-
-    for (var mult = 0; mult < 10; ++mult)
-        for (var idx = 0; idx < knownSponsors.length; ++idx)
-            listModel.append({sponsor: knownSponsors[idx]})
+    for (var idx = 0; idx < knownSponsors.length; ++idx)
+        listModel.append({sponsor: knownSponsors[idx]})
 }
 
 function fillFavorites(listModel, knownItineraries)
