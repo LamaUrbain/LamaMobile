@@ -8,6 +8,9 @@ import "qrc:/Views/ViewsLogic.js" as ViewsLogic
 
 Components.Background {
 
+    property var itineraries: []
+    property bool readOnly: false
+
     Components.Header {
         id: header
         title: "Favorites"
@@ -15,7 +18,7 @@ Components.Background {
 
     function refreshFavorites()
     {
-        var routesCount = ViewsLogic.fillFavorites(favoriteModel, rootView.lamaSession.KNOWN_ITINERARIES);
+        var routesCount = ViewsLogic.fillFavorites(favoriteModel, itineraries);
         noFavContainer.visible = routesCount === 0;
     }
 
@@ -57,6 +60,7 @@ Components.Background {
                 height: favorites.height * 0.09
                 favoriteDescription: itinerary.name
                 linkedItinerary: itinerary
+                readOnly: readOnly
                 onDeleted: {
                     rootView.lamaSession.KNOWN_ITINERARIES[index]["favorite"] = false
                     favoriteModel.remove(index)

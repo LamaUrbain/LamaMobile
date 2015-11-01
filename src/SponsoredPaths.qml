@@ -25,41 +25,40 @@ Components.Background {
     Component {
         id: sponsorDelegate
 
-        Rectangle {
-            height: sponsorGrid.cellHeight
-            width: sponsorGrid.cellWidth
-
-            color: "transparent"
+        Controls.Button {
+            width: sponsorGrid.width
+            height: sponsorGrid.height * 0.10
 
             Components.SponsorItem {
                 anchors.fill: parent
 
                 sponsorToDisplay: sponsor
             }
+
+            MouseArea {
+                anchors.fill: parent
+
+                onClicked: {
+                    itineraryServices.getItineraries("", sponsor.username, "true", "",
+                    function (status, response)
+                    {
+                        console.log(response)
+                        rootView.mainViewTo("FavoriteItineraries", {itineraries: JSON.parse(response), readOnly: true})
+                    })
+                }
+            }
         }
     }
 
-    Item {
-        anchors.top: header.top
+    ListView {
+        id: sponsorGrid
+
+        anchors.top: header.bottom
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
 
-        GridView {
-            id: sponsorGrid
-
-            anchors.fill: parent
-
-            model: sponsorsModel
-            delegate: sponsorDelegate
-            cellWidth: parent.width / 3
-            cellHeight: parent.height / 5
-
-            snapMode: GridView.SnapToRow
-
-            Component.onCompleted: {
-                console.log(height, parent.height)
-            }
-        }
+        model: sponsorsModel
+        delegate: sponsorDelegate
     }
 }
