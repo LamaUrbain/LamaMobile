@@ -127,6 +127,7 @@ Components.Background {
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
                 placeholderText: "Latitude"
+                maximumLength: 10
                 onTextChanged:
                 {
                     //addressInput.enabled = (text.length === 0 && longitudeInput.length === 0)
@@ -147,6 +148,7 @@ Components.Background {
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
                 placeholderText: "Longitude"
+                maximumLength: 10
                 onTextChanged:
                 {
                     //addressInput.enabled = (text.length === 0 && latitudeInput.length === 0)
