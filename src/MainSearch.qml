@@ -8,6 +8,10 @@ import "qrc:/Views/ViewsLogic.js" as ViewsLogic
 
 Components.Background {
 
+    property bool readOnly: false
+
+    id: mainSearch
+
     function refreshModel()
     {
         ViewsLogic.fillWaypoints(waypointsModel, rootView.lamaSession.CURRENT_ITINERARY)
@@ -79,6 +83,7 @@ Components.Background {
                 waypointDescription: ViewsLogic.getAddressPlaceholder(waypointData)
                 linkedWaypointId: index
                 deletable: index == 0 ? false : true
+                readOnly: mainSearch.readOnly
                 onDeleted:
                 {
                     waypointsModel.remove(index)
@@ -86,6 +91,7 @@ Components.Background {
                 }
             }
             footer: Controls.ImageButton {
+                visible: readOnly == false
                 iconSource: Constants.LAMA_ADD_RESSOURCE
                 height: search.height * (0.09 + 0.02)
                 width: search.width * (0.10 + 0.02)

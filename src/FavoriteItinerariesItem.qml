@@ -11,6 +11,8 @@ RowLayout {
 
     signal deleted()
 
+    id: favoriteItineraryItem
+
     function raiseDeleted()
     {
         deleted()
@@ -22,6 +24,7 @@ RowLayout {
         anchors.bottom: parent.bottom
         Layout.fillWidth: true
         navigationTarget: "MainSearch"
+        navigationTargetProperties: {'readOnly': readOnly}
         onNavButtonPressed:
         {
             rootView.lamaSession.CURRENT_ITINERARY = linkedItinerary

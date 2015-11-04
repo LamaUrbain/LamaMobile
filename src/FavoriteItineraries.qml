@@ -11,6 +11,8 @@ Components.Background {
     property var itineraries: []
     property bool readOnly: false
 
+    id: favoriteItineraries
+
     Components.Header {
         id: header
         title: "Favorites"
@@ -60,7 +62,7 @@ Components.Background {
                 height: favorites.height * 0.09
                 favoriteDescription: itinerary.name
                 linkedItinerary: itinerary
-                readOnly: readOnly
+                readOnly: favoriteItineraries.readOnly
                 onDeleted: {
                     rootView.lamaSession.KNOWN_ITINERARIES[index]["favorite"] = false
                     favoriteModel.remove(index)

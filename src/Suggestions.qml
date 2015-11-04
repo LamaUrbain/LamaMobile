@@ -12,6 +12,7 @@ import "qrc:/Views/ViewsLogic.js" as ViewsLogic
 Components.Background {
     id: waypointSuggestions
 
+    property bool readOnly: false
     property var currentWaypoint: ViewsLogic.getPtFromIndex(rootView.lamaSession.CURRENT_WAYPOINT_ID,
                                                 rootView.lamaSession.CURRENT_ITINERARY)
     property var choosenPlace
@@ -96,6 +97,7 @@ Components.Background {
             anchors.right: parent.right
             Layout.preferredHeight: parent.height * 0.1
             placeholderText: "Address"
+            readOnly: readOnly
 
             Component.onCompleted:
             {
@@ -128,6 +130,7 @@ Components.Background {
                 anchors.bottom: parent.bottom
                 placeholderText: "Latitude"
                 maximumLength: 10
+                readOnly: readOnly
                 onTextChanged:
                 {
                     //addressInput.enabled = (text.length === 0 && longitudeInput.length === 0)
@@ -149,6 +152,7 @@ Components.Background {
                 anchors.bottom: parent.bottom
                 placeholderText: "Longitude"
                 maximumLength: 10
+                readOnly: readOnly
                 onTextChanged:
                 {
                     //addressInput.enabled = (text.length === 0 && latitudeInput.length === 0)
@@ -191,7 +195,7 @@ Components.Background {
 
         ListView {
             id: suggestionsView
-            model: suggestionsModel
+            model: readOnly == false ? suggestionsModel : []
             delegate: suggestionDelegate
             Layout.fillHeight: true
             anchors.left: parent.left

@@ -8,15 +8,19 @@ RowLayout {
     property int linkedWaypointId: -1
     property alias waypointDescription: waypointText.centerText
     property bool deletable: false
+    property bool readOnly: false
 
     anchors.left: parent.left
     anchors.right: parent.right
 
     Component.onCompleted: {
-        if (deletable === true)
-            deleteLabel.visible = true
-        else
-            deleteLabel.visible = false
+        if (readOnly == false)
+        {
+            if (deletable === true)
+                deleteLabel.visible = true
+            else
+                deleteLabel.visible = false
+        }
     }
 
     signal deleted()
@@ -32,6 +36,7 @@ RowLayout {
         anchors.bottom: parent.bottom
         Layout.fillWidth: true
         navigationTarget: "Suggestions"
+        navigationTargetProperties: {'readOnly': readOnly}
         onNavButtonPressed:
         {
             rootView.lamaSession.CURRENT_WAYPOINT_ID = linkedWaypointId
@@ -45,6 +50,7 @@ RowLayout {
         Layout.minimumWidth: parent.width * 0.1
         Layout.maximumWidth: parent.width * 0.15
         Layout.preferredWidth: parent.width * 0.12
+        visible: readOnly == false
         onDeleted: {
             raiseDeleted()
         }
