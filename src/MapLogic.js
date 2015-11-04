@@ -41,7 +41,7 @@ function syncItinerary(jsonObj)
 
         for (var i = 0; i < remote_destinations.length; ++i)
         {
-            var ref = destinations[i];
+            var ref = remote_destinations[i];
             var destination =
             {
                 address: ref.address ? ref.address : current_destinations[i].address,
