@@ -23,7 +23,7 @@ EventServices *EventServices::getInstance()
 
 void EventServices::reportIncident(QString eventName, QString dateBegin, QString dateEnd, QString position, QString address, ServicesBase::CallbackType callback)
 {
-    if (username.isEmpty() || position.isEmpty())
+    if (eventName.isEmpty() || position.isEmpty())
     {
         callback(-1, "Internal Bad parameters");
         return;
@@ -31,7 +31,7 @@ void EventServices::reportIncident(QString eventName, QString dateBegin, QString
 
     QUrl url(QString("%1/incidents/").arg(serverAddress));
     QUrlQuery query;
-    query.addQueryItem("name", "eventName");
+    query.addQueryItem("name", eventName);
     query.addQueryItem("position", position);
     if (!dateBegin.isEmpty())
         query.addQueryItem("begin", dateBegin);
@@ -52,9 +52,9 @@ void EventServices::getIncidentList(ServicesBase::CallbackType callback) /*, QSt
     getRequest(url, callback);
 }
 
-void EventServices::reportIncident(QString username, QString dateBegin, QString dateEnd, QString position, QString adress, QJSValue callback)
+void EventServices::reportIncident(QString eventName, QString dateBegin, QString dateEnd, QString position, QString adress, QJSValue callback)
 {
-    reportIncident(username, dateBegin, dateEnd, position, adress, fromJSCallback(callback));
+    reportIncident(eventName, dateBegin, dateEnd, position, adress, fromJSCallback(callback));
 }
 
 void EventServices::getIncidentList(QJSValue callback)
