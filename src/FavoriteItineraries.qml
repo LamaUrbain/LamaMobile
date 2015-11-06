@@ -4,106 +4,113 @@ import QtQuick.Layouts 1.1
 import "qrc:/Components/" as Components
 import "qrc:/Controls/" as Controls
 import "qrc:/Constants.js" as Constants
-import "qrc:/Views/ViewsLogic.js" as ViewsLogic
 
 Components.Background {
+    id: favoritesView
+    color: Constants.LAMA_BACKGROUND2
 
-    property var itineraries: []
-    property bool readOnly: false
+    property string owner: rootView.session.username
+    property bool readOnly: owner != "" && owner != rootView.session.username
 
-    id: favoriteItineraries
-
-    Components.Header {
-        id: header
-        title: "Favorites"
+    Component.onCompleted: {
+        reloadFavorites();
     }
 
-    function refreshFavorites()
+    function reloadFavorites()
     {
-        var routesCount = ViewsLogic.fillFavorites(favoriteModel, itineraries);
-        noFavContainer.visible = routesCount === 0;
-    }
-
-    ListModel {
-        id: favoriteModel
-
-        Component.onCompleted:
+        favoriteModel.clear();
+        if (owner)
         {
-            refreshFavorites()
-            rootView.userSessionChanged.connect(refreshFavorites);
-        }
-        Component.onDestruction:
-        {
-            rootView.userSessionChanged.disconnect(refreshFavorites);
+            rootView.loadFavorites(owner, function(obj)
+            {
+                for (var i = 0; i < obj.length; ++i)
+                    favoriteModel.append(obj[i]);
+            });
         }
     }
 
+    ListModel { id: favoriteModel }
 
-    ScrollView
-    {
-        id: favorites
-        anchors.top: header.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
+    ColumnLayout {
+        id: contents
+        spacing: 20
+        anchors {
+            fill: parent
+            margins: 30
+        }
 
-        anchors.leftMargin: parent.height * 0.005
-        anchors.rightMargin: parent.height * 0.005
-        anchors.topMargin: parent.height * 0.005
-        anchors.bottomMargin: parent.height * 0.005
+        Components.Header {
+            id: header
+            title: favoritesView.readOnly ? favoritesView.owner : "Your favorites"
+        }
 
-        height: parent.height * 0.8
+        Components.Separator {
+            isTopSeparator: true
+            Layout.fillWidth: true
+            Layout.preferredHeight: 11
+        }
 
         ListView {
+            clip: true
+            Layout.fillWidth: true
+            Layout.fillHeight: true
             model: favoriteModel
-            spacing: parent.height * 0.005
+            spacing: 8
             delegate: Components.FavoriteItinerariesItem {
                 anchors.left: parent.left
                 anchors.right: parent.right
-                height: favorites.height * 0.09
-                favoriteDescription: itinerary.name
-                linkedItinerary: itinerary
-                readOnly: favoriteItineraries.readOnly
-                onDeleted: {
-                    rootView.lamaSession.KNOWN_ITINERARIES[index]["favorite"] = false
-                    favoriteModel.remove(index)
-                    rootView.saveSessionState(rootView.lamaSession)
+                name: model.name
+                readOnly: favoritesView.readOnly
+                itineraryId: model.id
+                onDeleteRequest: rootView.deleteItinerary(model.id, reloadFavorites);
+                onDisplayRequest: {
+                    rootView.displayItinerary(model.id);
+                    rootView.mainViewTo("Map", false, null);
                 }
             }
         }
-    }
 
-    Rectangle
-    {
-        id: noFavContainer
-        anchors.fill: parent
-        anchors.top: header.bottom
-
-        visible: false
-        color: "#00000000"
-        onVisibleChanged:
-        {
-            noFavTxt.text = rootView.lamaSession.IS_LOGGED ? "You have no favorites :(" : "You must first login in order\nto list your favorites routes";
-            noFavLoginBtn.visible = !(rootView.lamaSession.IS_LOGGED)
+        Components.Separator {
+            isTopSeparator: false
+            Layout.fillWidth: true
+            Layout.preferredHeight: 11
         }
 
-        Text
-        {
-            id: noFavTxt
-            wrapMode: Text.WordWrap
-            horizontalAlignment: Text.AlignHCenter
-            font.pointSize: Constants.LAMA_POINTSIZE
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            //anchors.verticalCenterOffset: -(parent.height * 0.25)
-        }
+        Column {
+            spacing: 15
+            anchors {
+                left: parent.left
+                right: parent.right
+            }
 
-        Controls.NavigationButton {
-            id: noFavLoginBtn
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: parent.height * 0.3
-            centerText: "Log in"
-            navigationTarget: "UserAuth"
+            Controls.NavigationButton {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                source: Constants.LAMA_PROFILE_RESSOURCE
+                text: "Your profile"
+                navigationTarget: "UserProfile"
+                visible: !favoritesView.readOnly
+            }
+
+            Controls.NavigationButton {
+                text: "Your settings"
+                primary: false
+                source: Constants.LAMA_SETTINGS_RESSOURCE
+                anchors.left: parent.left
+                anchors.right: parent.right
+                navigationTarget: "UserAccount"
+                visible: !favoritesView.readOnly
+            }
+
+            Controls.NavigationButton {
+                text: "Back to sponsors"
+                source: Constants.LAMA_BACK_RESSOURSE
+                anchors.left: parent.left
+                anchors.right: parent.right
+                acceptClick: false
+                onNavButtonPressed: rootView.mainViewBack();
+                visible: favoritesView.readOnly
+            }
         }
     }
 }

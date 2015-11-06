@@ -231,9 +231,6 @@ void MapOverlayExtension::updateTiles()
                         {
                             int x = obj.value("x").toInt();
                             int y = obj.value("y").toInt();
-
-                            qDebug() << "Receive:" << x << y;
-
                             _itineraryTiles[currentScale]->append(QPoint(x, y));
                         }
                     }
@@ -353,12 +350,11 @@ bool MapOverlayExtension::mouseReleaseEvent(QMouseEvent *event)
             pos.setY(p->getCenterPos().y() * 256 + p->getCenterOffset().y() - p->getScrollOffset().y() - MAP_EXTRA_SIZE_HALF + event->pos().y() - _map->height() / 2);
 
             QPointF newCoords = p->coordsFromPixels(pos);
-
-            movePoint(_selectedPoint, newCoords);
             emit pointMoved(_itineraryId, _selectedPoint, newCoords);
         }
 
         _selectedPoint = -1;
+        _map->repaint();
         return true;
     }
 

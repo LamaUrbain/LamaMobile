@@ -4,180 +4,149 @@ import QtQuick.Layouts 1.1
 import "qrc:/Components/" as Components
 import "qrc:/Controls/" as Controls
 import "qrc:/Constants.js" as Constants
-import "qrc:/Views/ViewsLogic.js" as ViewsLogic
 
 Components.Background {
-
-    property bool readOnly: false
-
-    id: mainSearch
-
-    function refreshModel()
-    {
-        ViewsLogic.fillWaypoints(waypointsModel, rootView.lamaSession.CURRENT_ITINERARY)
+    color: Constants.LAMA_BACKGROUND2
+    Component.onCompleted: {
+        itinerary.copy(rootView.currentItinerary);
+        nameField.text = itinerary.name ? itinerary.name : "";
     }
 
-    Component.onCompleted:
-    {
-        rootView.checkCurrentIt()
-        rootView.onUserSessionChanged.connect(refreshModel)
-    }
-    Component.onDestruction: rootView.onUserSessionChanged.disconnect(refreshModel)
+    Components.Itinerary { id: itinerary }
 
-    Components.Header {
-        id: header
-        title: "Search"
-        onBackClicked:
-        {
-            if (rootView.lamaSession.CURRENT_ITINERARY["name"] !== nameInput.text)
-            {
-                rootView.lamaSession.CURRENT_ITINERARY["name"] = nameInput.text;
-                var idxKnown = ViewsLogic.getIndexItineraryKnown(rootView.lamaSession.KNOWN_ITINERARIES, rootView.lamaSession.CURRENT_ITINERARY);
-                if (idxKnown >= 0)
-                {
-                    rootView.lamaSession.KNOWN_ITINERARIES[idxKnown] = rootView.lamaSession.CURRENT_ITINERARY;
-                    rootView.raiseUserSessionChanged()
-                }
-            }
+    ColumnLayout {
+        id: contents
+        spacing: 20
+        anchors {
+            fill: parent
+            margins: 30
         }
-    }
 
-    ListModel {
-        id: waypointsModel
-
-        Component.onCompleted : refreshModel()
-    }
-
-
-    Components.TextField {
-        id: nameInput
-        anchors.top: header.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        height: parent.height * 0.05
-        anchors.leftMargin: parent.height * 0.005
-        anchors.rightMargin: parent.height * 0.005
-        anchors.topMargin: parent.height * 0.005
-
-        placeholderText: "Name"
-        Component.onCompleted:
-        {
-            if (ViewsLogic.isValueAtKeyValid(rootView.lamaSession.CURRENT_ITINERARY, "name"))
-                text = rootView.lamaSession.CURRENT_ITINERARY["name"]
+        Components.Header {
+            id: header
+            title: "Search"
         }
-    }
 
-    ScrollView {
-        id: search
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: nameInput.bottom
-        height: parent.height * 0.8
-        anchors.leftMargin: parent.height * 0.005
-        anchors.rightMargin: parent.height * 0.005
-        anchors.topMargin: parent.height * 0.005
+        Components.Separator {
+            isTopSeparator: false
+            Layout.fillWidth: true
+            Layout.preferredHeight: 11
+        }
+
+        Components.TextField {
+            id: nameField
+            Layout.preferredHeight: 40
+            Layout.fillWidth: true
+            placeholderText: "Change itinerary name"
+            font.pixelSize: Constants.LAMA_PIXELSIZE_MEDIUM
+            onTextChanged: itinerary.name = text;
+        }
+
+        Components.Separator {
+            isTopSeparator: true
+            Layout.fillWidth: true
+            Layout.preferredHeight: 11
+        }
+
         ListView {
-            model: waypointsModel
-            delegate: Components.Waypoint {
-                height: search.height * 0.09
-                waypointDescription: ViewsLogic.getAddressPlaceholder(waypointData)
-                linkedWaypointId: index
-                deletable: index == 0 ? false : true
-                readOnly: mainSearch.readOnly
-                onDeleted:
-                {
-                    waypointsModel.remove(index)
-                    rootView.lamaSession.CURRENT_ITINERARY["destinations"].splice(index, 1)
+            id: searchListView
+            clip: true
+            spacing: 8
+            model: itinerary.destinations
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            header: Item {
+                height: headerItem.height + 9
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
+                Components.Waypoint {
+                    id: headerItem
+                    isDeparture: true
+                    address: itinerary.departure
+                    onEditRequest: rootView.mainViewTo("Suggestions", false, { model: itinerary, destinationId: -1 });
+                    anchors {
+                        top: parent.top
+                        topMargin: 1
+                    }
                 }
             }
-            footer: Controls.ImageButton {
-                visible: readOnly == false
-                iconSource: Constants.LAMA_ADD_RESSOURCE
-                height: search.height * (0.09 + 0.02)
-                width: search.width * (0.10 + 0.02)
-                onClicked: {
-                    var newDest = {address: "New Waypoint"}
-                    waypointsModel.append({waypointData: newDest})
-                    if (!ViewsLogic.isValueAtKeyValid(rootView.lamaSession.CURRENT_ITINERARY, "destinations"))
-                        rootView.lamaSession.CURRENT_ITINERARY["destinations"] = ([]);
-                    rootView.lamaSession.CURRENT_ITINERARY["destinations"].push(newDest)
+            delegate: Components.Waypoint {
+                address: model.address
+                onDeleteRequest: itinerary.destinations.remove(index);
+                onEditRequest: rootView.mainViewTo("Suggestions", false, { model: itinerary, destinationId: index });
+            }
+            footer: Item {
+                height: footerItem.height + (searchListView.model.count == 0 ? 2 : 10)
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
+                Controls.Button {
+                    id: footerItem
+                    width: 75
+                    height: 75
+                    image.width: 50
+                    image.height: 50
+                    anchors.bottom: parent.bottom
+                    source: Constants.LAMA_ADD_RESSOURCE
+                    onClicked: itinerary.destinations.append({address: ""});
                 }
             }
         }
-    }
 
-    Components.BottomAction {
-        id: launch
+        Components.Separator {
+            isTopSeparator: false
+            Layout.fillWidth: true
+            Layout.preferredHeight: 11
+        }
 
-        RowLayout {
-            anchors.fill: parent
-            spacing: 2
-
-            Controls.ShareButton {
-                id: shareButton
-                Layout.fillWidth: true
-                itinerary: rootView.lamaSession.CURRENT_ITINERARY
-            }
-
-            Controls.IconButton {
-                property bool saved: false
-
-                onClicked: {
-                    console.log(rootView.lamaSession.KNOWN_ITINERARIES)
-
-                    rootView.lamaSession.CURRENT_ITINERARY["favorite"] = !rootView.lamaSession.CURRENT_ITINERARY["favorite"]
-                    var isFavorited = rootView.lamaSession.CURRENT_ITINERARY["favorite"]
-
-                    iconSource = isFavorited ? Constants.LAMA_SAVED_RESSOURCE: Constants.LAMA_SAVE_RESSOURCE
-
-                    var idxKnown = ViewsLogic.getIndexItineraryKnown(rootView.lamaSession.KNOWN_ITINERARIES, rootView.lamaSession.CURRENT_ITINERARY);
-
-                    if (isFavorited && idxKnown < 0)
-                    {
-                        rootView.lamaSession.CURRENT_ITINERARY['id'] = -(Math.round(Date.now() / 1000) % 100000000)
-                        rootView.lamaSession.KNOWN_ITINERARIES.push(rootView.lamaSession.CURRENT_ITINERARY)
-                    }
-                    else if (idxKnown >= 0)
-                    {
-                        if (isFavorited)
-                            rootView.lamaSession.KNOWN_ITINERARIES[idxKnown] = rootView.lamaSession.CURRENT_ITINERARY;
-                        else
-                            rootView.lamaSession.KNOWN_ITINERARIES.splice(idxKnown, 1);
-                    }
-
-                    rootView.raiseUserSessionChanged()
-                    rootView.saveSessionState(rootView.lamaSession)
-                    // edit itineraryServices in raiseusersessionchanged
-                    //itineraryServices.editItinerary(int id, QString name, QString departure, QString favorite, ServicesBase::CallbackType callback);
-                }
-
-                id: modifyButton
-                Layout.fillWidth: true
-                text: "Save"
-                iconSource: rootView.lamaSession.CURRENT_ITINERARY["favorite"] ? Constants.LAMA_SAVED_RESSOURCE: Constants.LAMA_SAVE_RESSOURCE
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                height: parent.height
+        Column {
+            spacing: 15
+            anchors {
+                left: parent.left
+                right: parent.right
             }
 
             Controls.NavigationButton {
-                Layout.fillWidth: true
-                centerText: "Launch"
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
+                id: navButton
+                anchors.left: parent.left
+                anchors.right: parent.right
+                source: Constants.LAMA_SEARCH_RESSOURCE
+                text: "Search"
                 navigationTarget: "Map"
-                onNavButtonPressed:
-                {
-                    if (rootView.lamaSession.CURRENT_ITINERARY["name"] !== nameInput.text)
-                    {
-                        rootView.lamaSession.CURRENT_ITINERARY["name"] = nameInput.text;
-                        rootView.raiseUserSessionChanged()
-                    }
+                acceptClick: false
+                onNavButtonPressed: rootView.mainSearch(itinerary.toObject());
+            }
 
-                    rootView.resolveCurrentItinerary()
+            RowLayout {
+                height: sharedButton.height
+                spacing: 15
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
+
+                Controls.NavigationButton {
+                    visible: itinerary.owner
+                    text: "Favorite"
+                    primary: false
+                    source: itinerary.favorite ? Constants.LAMA_SAVED_RESSOURCE : Constants.LAMA_SAVE_RESSOURCE
+                    anchors.top: parent.top
+                    anchors.bottom: parent.bottom
+                    Layout.fillWidth: true
+                    acceptClick: false
+                    onNavButtonPressed: itinerary.favorite = !itinerary.favorite;
+                }
+
+                Controls.ShareButton {
+                    id: sharedButton
+                    primary: false
+                    Layout.fillWidth: true
+                    itineraryId: itinerary.id
                 }
             }
         }
     }
-
 }

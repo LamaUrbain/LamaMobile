@@ -1,44 +1,30 @@
-import QtQuick 2.0
+import QtQuick 2.5
 import QtGraphicalEffects 1.0
-import "qrc:/Constants.js" as Constants
 
-Rectangle {
+Item {
+    id: ring
+    width: 75
+    height: 75
 
     property alias ringColor: overlay.color
-
-    function isSpinning(enableSpin)
-    {
-        if (enableSpin)
-        {
-            spinRing.start()
-        }
-        else
-        {
-            spinRing.stop()
-            spinner.rotation = 0
-        }
-    }
-
-    width: parent.width / 4
-    height: width
-    color: "Transparent"
 
     Image {
         id: spinner
         source: "/Assets/Images/spinnerIcon.png"
+        mipmap: true
         anchors.fill: parent
 
-        ColorOverlay
-        {
+        ColorOverlay {
             id: overlay
             anchors.fill: parent
             source: parent
             color: "white"
         }
-        NumberAnimation
-        {
+
+        NumberAnimation {
             id: spinRing
             target: spinner
+            running: ring.visible
             properties: "rotation"
             from: 0.0
             to: 360.0

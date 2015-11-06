@@ -1,11 +1,10 @@
 TEMPLATE = app
 
-QT += qml quick network location sql
+QT += qml quick network positioning location sql
 
 CONFIG += c++11
 
 SOURCES += main.cpp \
-    #mobilitydiagram.cpp \
     mapgetter.cpp \
     mapwidget.cpp \
     mapextension.cpp \
@@ -13,9 +12,11 @@ SOURCES += main.cpp \
     itineraryservices.cpp \
     mapoverlayextension.cpp \
     userservices.cpp \
-    eventservices.cpp
+    eventservices.cpp \
+    geolocator.cpp
 RESOURCES += qml.qrc \
-    images.qrc
+    images.qrc \
+    fonts.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -23,9 +24,7 @@ QML_IMPORT_PATH =
 # Default rules for deployment.
 include(deployment.pri)
 
-HEADERS += \
-    #mobilitydiagram.h \
-    mapgetter.h \
+HEADERS += mapgetter.h \
     mapwidget.h \
     mapextension.h \
     servicesbase.h \
@@ -34,4 +33,5 @@ HEADERS += \
     mapwidgetprivate.h \
     quadtree.h \
     userservices.h \
-    eventservices.h
+    eventservices.h \
+    geolocator.h

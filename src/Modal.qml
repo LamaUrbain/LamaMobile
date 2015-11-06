@@ -1,152 +1,108 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.2
+import "qrc:/Controls/" as Controls
 import "qrc:/Components" as Components
 import "qrc:/Constants.js" as Constants
 
-Rectangle
-{
-    property alias title: modalTitle.text
-    property alias buttonText: modalButton.text
-    property alias enableButton: buttonZone.visible
-    property alias message: modalContentLoader.message
-    property alias modalSourceComponent: modalContentLoader.sourceComponent
-
-    signal modalButtonClicked()
-
-    function setLoadingState(isLoading)
-    {
-        modalRing.isSpinning(isLoading)
-        modalRing.visible = isLoading
-        modalContentLoader.visible = !isLoading
-    }
-
-    function close()
-    {
-        modal.visible = false
-        title = "Information"
-        message = "Everything's fine !"
-        buttonText = "Ok"
-        setLoadingState(false)
-        modalContentLoader.sourceComponent = modalMessageItem
-        enableButton = true
-    }
-
-    id: modal
-    anchors.fill: parent
-    color: "#AA000000"
+Components.MaskBackground {
+    id: modalView
     visible: false
 
-    MouseArea
-    {
-        anchors.fill:parent
-        propagateComposedEvents: false
-        preventStealing: true
+    onVisibleChanged: {
+        if (visible)
+        {
+            focus = true;
+            return;
+        }
+        modalSourceComponent = undefined;
     }
 
-    Column
-    {
+    Keys.onReturnPressed: {
+        if (!loading)
+            visible = false;
+    }
+
+    property bool loading: true
+    property alias title: modalTitle.title
+    property alias message: modalMessage.text
+    property alias modalSourceComponent: modalLoader.sourceComponent
+
+    Rectangle {
+        anchors.fill: parent
+        color: "#66000000"
+    }
+
+    Components.Background {
         anchors.centerIn: parent
-        width: parent.width * 0.8
-        height: parent.height * 0.6
-        spacing: height * 0.025
+        width: modalView.loading ? 300 : 500
+        height: modalView.loading ? 300 : messageArea.height + 60
+        radius: 15
 
-        Components.Marker
-        {
-            id: messageZone
-            anchors.left: parent.left
-            anchors.right: parent.right
-            color: Constants.LAMA_ORANGE
-            height: parent.height * 0.8
-            radius: 10
-
-            Text
-            {
-                id: modalTitle
-                anchors.top: parent.top
-                anchors.topMargin: parent.height * 0.05
-                anchors.left: parent.left
-                anchors.right: parent.right
-
-                color: Constants.LAMA_YELLOW
-                Layout.minimumHeight: parent.height * 0.1
-                Layout.preferredHeight: parent.height * 0.1
-
-                font.pixelSize: Constants.LAMA_POINTSIZE
-                font.weight: Font.Bold
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-                text: "Information"
-                wrapMode: Text.WordWrap
-            }
-
-            Loader
-            {
-                id: modalContentLoader
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: modalTitle.bottom
-                anchors.bottom: parent.bottom
-                Layout.fillHeight: true
-
-                property string message: "Everything's fine !"
-
-                sourceComponent: modalMessageItem
-
-                Component {
-                    id: modalMessageItem
-
-                    Text
-                    {
-                        id: modalMessage
-                        anchors.fill: parent
-
-                        color: Constants.LAMA_YELLOW
-                        font.pixelSize: Constants.LAMA_POINTSIZE
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
-                        text: message
-                        wrapMode: Text.WordWrap
-                    }
-                }
-            }
-
-            Components.LoadingRing
-            {
-                id: modalRing
-                anchors.centerIn: parent
-                ringColor: Constants.LAMA_YELLOW
-                visible: false
-            }
+        Components.LoadingRing {
+            anchors.centerIn: parent
+            ringColor: Constants.LAMA_YELLOW
+            visible: modalView.visible && modalView.loading
         }
 
-        Components.Marker
-        {
-            id: buttonZone
-            anchors.left: parent.left
-            anchors.right: parent.right
-            color: Constants.LAMA_YELLOW
-            height: parent.height * 0.2
-            radius: 10
+        ColumnLayout {
+            id: messageArea
+            spacing: 20
+            visible: modalView.visible && !modalView.loading
+            anchors {
+                left: parent.left
+                right: parent.right
+                leftMargin: 30
+                rightMargin: 30
+                verticalCenter: parent.verticalCenter
+            }
 
-            MouseArea
-            {
-                anchors.fill: parent
-                Text
-                {
-                    id: modalButton
-                    anchors.centerIn: parent
-                    font.pixelSize: Constants.LAMA_POINTSIZE * 2
-                    color: "white"
-                    text: "Ok"
-                    font.weight: Font.Bold
+            Components.Header {
+                id: modalTitle
+                title: ""
+                autoBack: false
+                onBackClicked: modalView.visible = false;
+            }
+
+            Components.Separator {
+                isTopSeparator: true
+                Layout.fillWidth: true
+                Layout.preferredHeight: 11
+            }
+
+            Loader {
+                id: modalLoader
+                sourceComponent: undefined
+                visible: modalView.modalSourceComponent
+                anchors {
+                    left: parent.left
+                    right: parent.right
                 }
-                onClicked:
-                {
-                    modalButtonClicked()
-                    close()
-                }
+            }
+
+            Components.TextLabel {
+                id: modalMessage
+                Layout.fillWidth: true
+                wrapMode: Text.Wrap
+                elide: Text.ElideRight
+                textFormat: Text.PlainText
+                maximumLineCount: 6
+                horizontalAlignment: Text.AlignHCenter
+                visible: !modalView.modalSourceComponent
+            }
+
+            Components.Separator {
+                isTopSeparator: false
+                Layout.fillWidth: true
+                Layout.preferredHeight: 11
+            }
+
+            Controls.NavigationButton {
+                text: "Close"
+                anchors.left: parent.left
+                anchors.right: parent.right
+                acceptClick: false
+                onNavButtonPressed: modalView.visible = false;
             }
         }
     }
 }
-

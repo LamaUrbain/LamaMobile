@@ -1,40 +1,28 @@
-import QtQuick 2.0
+import QtQuick 2.5
+import QtQuick.Layouts 1.1
 import "qrc:/Components/" as Components
-import "qrc:/Constants.js" as Constants
 
-Row {
-    anchors.leftMargin: parent.height * 0.005
-    anchors.rightMargin: parent.height * 0.005
-    anchors.topMargin: parent.height * 0.005
-    height: parent.height * 0.10
+Column {
+    spacing: 15
 
     property string fieldName
     property alias isPassword: formEntryText.isPassword
-    property alias labelText: formEntryLabel.centerText
-    property alias textFieldPlaceHolder: formEntryText.placeholderText
+    property alias labelText: formEntryLabel.text
+    property string textFieldPlaceHolder: "Enter " + fieldName.toLowerCase()
     property alias textFieldText: formEntryText.text
 
-    onFieldNameChanged: {
-        formEntryLabel.centerText = fieldName
-        formEntryText.placeholderText = "Enter " + fieldName
-    }
-
-    Components.Marker {
+    Components.TextLabel {
         id: formEntryLabel
-        centerText: "Label:"
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        width: parent.width * 0.3
-        height: parent.height * 0.5
-        color: Constants.LAMA_ORANGE
+        text: fieldName
     }
 
     Components.TextField {
         id: formEntryText
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        width: parent.width * 0.7
-        opacity: 0.9
+        placeholderText: textFieldPlaceHolder
+        height: 55
+        anchors {
+            left: parent.left
+            right: parent.right
+        }
     }
 }
-

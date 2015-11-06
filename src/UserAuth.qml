@@ -1,131 +1,101 @@
-import QtQuick 2.0
+import QtQuick 2.5
+import QtQuick.Layouts 1.1
 import "qrc:/Components/" as Components
 import "qrc:/Controls/" as Controls
 import "qrc:/Views/ViewsLogic.js" as ViewsLogic
+import "qrc:/Constants.js" as Constants
 
 Components.Background {
+    color: Constants.LAMA_BACKGROUND2
 
-    Components.Header {
-        id: header
-        title: rootView.lamaSession.IS_LOGGED ? rootView.lamaSession.USERNAME : "Authentification"
-    }
-
-    Components.Marker {
-        id: userAuth
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: header.bottom
-        height: parent.height * 0.8
-        anchors.leftMargin: parent.height * 0.005
-        anchors.rightMargin: parent.height * 0.005
-        anchors.topMargin: parent.height * 0.005
-        anchors.bottomMargin: parent.height * 0.005
-
-        Components.FormEntry {
-            id: usernameForm
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: parent.top
-            fieldName: "Username"
+    ColumnLayout {
+        id: contents
+        spacing: 20
+        anchors {
+            fill: parent
+            margins: 30
         }
 
-        Components.FormEntry {
-            id: passwordForm
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: usernameForm.bottom
-            isPassword: true
-            fieldName: "Password"
-
+        Components.Header {
+            id: header
+            title: "Login"
         }
 
-        Row {
-            id: authExtra
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.bottom: parent.bottom
-            height: parent.height * 0.10
-            anchors.leftMargin: parent.height * 0.005
-            anchors.rightMargin: parent.height * 0.005
-            anchors.bottomMargin: parent.height * 0.005
+        Components.Separator {
+            isTopSeparator: true
+            Layout.fillWidth: true
+            Layout.preferredHeight: 11
+        }
 
-            Components.Marker {
-                id: forgottenPasswordButton
-                centerText: "Reset Password"
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                width: parent.width * 0.5
-                height: parent.height
-                onClicked: {
-                    rootView.mainViewTo("UserForgottenPassword")
+        Column {
+            spacing: 20
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            Components.FormEntry {
+                id: usernameForm
+                fieldName: "Username"
+                anchors {
+                    left: parent.left
+                    right: parent.right
                 }
             }
-            Components.Marker {
-                id: subscribeButton
-                centerText: "Subscribe Now"
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                width: parent.width * 0.5
-                onClicked: {
-                    rootView.mainViewTo("UserRegistration")
+
+            Components.FormEntry {
+                id: passwordForm
+                isPassword: true
+                fieldName: "Password"
+                anchors {
+                    left: parent.left
+                    right: parent.right
                 }
             }
         }
-    }
 
-
-    Components.BottomAction {
-        Components.Marker {
-            id: logOut
-            anchors.left: parent.left
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            anchors.right: parent.right
-            anchors.rightMargin: parent.width * 0.45
-            centerText: "Log out"
-            onClicked:
-            {
-                rootView.logOut()
-                rootView.mainViewBack()
-            }
-            visible: rootView.lamaSession.IS_LOGGED
+        Components.Separator {
+            isTopSeparator: false
+            Layout.fillWidth: true
+            Layout.preferredHeight: 11
         }
 
-        Controls.NavigationButton {
-            id: navButton
-            anchors.right: parent.right
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
-            anchors.leftMargin: parent.width * (0.45 * (rootView.lamaSession.IS_LOGGED ? 1 : 0))
-            centerText: "Connect"
-            navigationTarget: "Map"
-            onNavButtonPressed:
-            {
-                var nick = usernameForm.textFieldText
-                var pass = passwordForm.textFieldText
-                if (ViewsLogic.checkInput(nick) === false &&
-                    ViewsLogic.checkInput(pass) === false)
+        Column {
+            spacing: 15
+            anchors {
+                left: parent.left
+                right: parent.right
+            }
+
+            Controls.NavigationButton {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                source: Constants.LAMA_SIGNIN_RESSOURCE
+                text: "Login"
+                acceptClick: false
+                onNavButtonPressed:
                 {
-                    rootView.lamaSession.USERNAME = nick
-                    rootView.lamaSession.PASSWORD = pass
-                    mainModal.title = "Authentication"
-                    mainModal.setLoadingState(true);
-                    mainModal.enableButton = false
-                    mainModal.visible = true;
-
-                    rootView.tryLogin(true)
-                    rootView.mainViewBack()
+                    var nick = usernameForm.textFieldText;
+                    var pass = passwordForm.textFieldText;
+                    if (ViewsLogic.checkInput(nick) === false && ViewsLogic.checkInput(pass) === false)
+                        rootView.authenticate(nick, pass);
+                    else
+                    {
+                        rootView.modal.loading = false;
+                        rootView.modal.title = "Authentification error"
+                        rootView.modal.message = "It seems you have mistyped your login and/or your password."
+                        rootView.modal.visible = true;
+                    }
                 }
-                else
-                {
-                    mainModal.title = "Incorrect login or password"
-                    mainModal.message = "It seems you have mistyped your login and password."
-                    mainModal.visible = true;
-                }
-                this.acceptClick = false
             }
 
+            Controls.NavigationButton {
+                text: "Sign up"
+                primary: false
+                source: Constants.LAMA_SIGNUP_RESSOURCE
+                anchors.left: parent.left
+                anchors.right: parent.right
+                navigationTarget: "UserRegistration"
+                replace: true
+            }
         }
     }
 }

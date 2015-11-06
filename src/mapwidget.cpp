@@ -37,6 +37,7 @@ MapWidgetPrivate::MapWidgetPrivate(MapWidget *ptr)
       _scrollOffset(-MAP_EXTRA_SIZE_HALF, -MAP_EXTRA_SIZE_HALF),
       _scrollValueSet(false),
       _wheeling(false),
+      _id(-1),
       _changed(true),
       _currentWheel(0),
       _mapGetter(new MapGetter)
@@ -414,7 +415,7 @@ void MapWidgetPrivate::generateCache()
                 ext->drawTile(&painter, pos, tilePos);
         }
         else
-            painter.fillRect(tilePos.x(), tilePos.y(), MAP_EXTRA_SIZE_HALF, MAP_EXTRA_SIZE_HALF, Qt::white);
+            painter.fillRect(tilePos.x(), tilePos.y(), MAP_EXTRA_SIZE_HALF, MAP_EXTRA_SIZE_HALF, Qt::lightGray);
     }
 
     foreach (MapExtension *ext, _extensions)
@@ -520,6 +521,11 @@ QSizeF MapWidgetPrivate::tileSize(const QPoint &pos) const
     return size;
 }
 
+int MapWidgetPrivate::getCurrentItinerary() const
+{
+    return _id;
+}
+
 void MapWidgetPrivate::displayItinerary(int id)
 {
     Q_Q(MapWidget);
@@ -529,11 +535,20 @@ void MapWidgetPrivate::displayItinerary(int id)
 
     if (id >= 0)
     {
+        _id = id;
+
         MapOverlayExtension *ext = new MapOverlayExtension(q);
         ext->setItinerary(id);
         q->addExtension(ext);
+        q->currentItineraryChanged();
 
         QObject::connect(ext, SIGNAL(pointMoved(int, int, QPointF)), q, SIGNAL(mapPointMoved(int, int, QPointF)));
+    }
+    else
+    {
+        _id = -1;
+        displayChanged();
+        q->currentItineraryChanged();
     }
 }
 
@@ -661,6 +676,12 @@ void MapWidget::repaint()
 {
     Q_D(MapWidget);
     d->displayChanged();
+}
+
+int MapWidget::getCurrentItinerary() const
+{
+    Q_D(const MapWidget);
+    return d->getCurrentItinerary();
 }
 
 void MapWidget::displayItinerary(int id)

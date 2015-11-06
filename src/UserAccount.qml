@@ -4,118 +4,101 @@ import QtQuick.Layouts 1.1
 import "qrc:/Components/" as Components
 import "qrc:/Controls/" as Controls
 import "qrc:/Constants.js" as Constants
+import "qrc:/Views/ViewsLogic.js" as ViewsLogic
 
 Components.Background {
+    color: Constants.LAMA_BACKGROUND2
 
-    Components.Header {
-        id: header
-        title: "User Account Management"
-    }
-
-    Row {
-        id: informations
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: header.bottom
-        height: parent.height * 0.1
-        anchors.leftMargin: parent.height * 0.005
-        anchors.rightMargin: parent.height * 0.005
-        anchors.topMargin: parent.height * 0.005
-        anchors.bottomMargin: parent.height * 0.005
-
-        Components.Marker {
-            id: username
-            centerText: rootView.lamaSession.USERNAME
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            width: parent.width //* 0.75
+    ColumnLayout {
+        id: contents
+        spacing: 20
+        anchors {
+            fill: parent
+            margins: 30
         }
 
-        //Components.Marker {
-        //    id: avatar
-        //    centerText: rootView.lamaSession.AVATAR
-        //    anchors.top: parent.top
-        //    anchors.bottom: parent.bottom
-        //    width: parent.width * 0.25
-        //}
-    }
+        Components.Header {
+            id: header
+            title: "Settings"
+        }
 
-    Column {
-        id: options
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: informations.bottom
-        height: parent.height * 0.7
-        anchors.leftMargin: parent.height * 0.005
-        anchors.rightMargin: parent.height * 0.005
-        anchors.topMargin: parent.height * 0.005
-        anchors.bottomMargin: parent.height * 0.005
-
-        Components.Marker {
-            id: changePassword
-            color: Constants.LAMA_ORANGE
-            centerText: "Change Password:"
-            anchors.left: parent.left
-            width: parent.height * 0.75
-            height: parent.height * 0.1
-            anchors.leftMargin: parent.height * 0.005
-            anchors.rightMargin: parent.height * 0.005
-            anchors.topMargin: parent.height * 0.005
-            anchors.bottomMargin: parent.height * 0.005
+        Components.Separator {
+            isTopSeparator: true
+            Layout.fillWidth: true
+            Layout.preferredHeight: 11
         }
 
         Column {
-            height: parent.height * 0.9
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.leftMargin: parent.height * 0.005
-            anchors.rightMargin: parent.height * 0.005
-            anchors.topMargin: parent.height * 0.005
-            anchors.bottomMargin: parent.height * 0.005
+            spacing: 20
+            Layout.fillWidth: true
+            Layout.fillHeight: true
 
-            Components.TextField {
-                id: passwordTxtOld
-                height: parent.height * 0.1
-                anchors.left: parent.left
-                anchors.right: parent.right
-                placeholderText: "Current Password"
+            Components.FormEntry {
+                id: emailForm
+                fieldName: "Email"
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
             }
 
-            Components.TextField {
-                id: passwordTxt
-                height: parent.height * 0.1
-                anchors.left: parent.left
-                anchors.right: parent.right
-                placeholderText: "New Password"
+            Components.FormEntry {
+                id: passwordForm
+                isPassword: true
+                fieldName: "Password"
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
             }
 
-            Components.TextField {
-                id: passwordTxtConfirm
-                height: parent.height * 0.1
-                anchors.left: parent.left
-                anchors.right: parent.right
-                placeholderText: "Confirm New Password"
+            Components.FormEntry {
+                id: passwordConfirmForm
+                isPassword: true
+                fieldName: "Confirm"
+                textFieldPlaceHolder: "Confirm password"
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
             }
         }
-    }
 
-    Components.BottomAction {
-        Controls.Button  {
-            anchors.fill: parent
-            centerText: "Save settings"
-            onClicked:
+        Components.Separator {
+            isTopSeparator: false
+            Layout.fillWidth: true
+            Layout.preferredHeight: 11
+        }
+
+        Controls.NavigationButton {
+            anchors.left: parent.left
+            anchors.right: parent.right
+            enabled: emailForm.textFieldText.length > 0 || passwordForm.textFieldText.length > 0
+            source: Constants.LAMA_SETTINGS_RESSOURCE
+            text: "Save your settings"
+            acceptClick: false
+            onNavButtonPressed:
             {
-                mainModal.title = "Resetting password"
-                if (passwordTxtOld.text != rootView.lamaSession.PASSWORD
-                    || passwordTxt.text != passwordTxtConfirm.text)
-                    mainModal.message = "It seems you have mistyped your password."
-                else
+                var email = emailForm.textFieldText;
+                var password = passwordForm.textFieldText;
+                var confirm = passwordConfirmForm.textFieldText;
+
+                if (password && ViewsLogic.checkPassword(password, confirm) != false)
                 {
-                    mainModal.setLoadingState(true);
-                    mainModal.enableButton = false
-                    rootView.resetPassword(passwordTxtOld, passwordTxt, passwordTxtConfirm)
+                    rootView.modal.loading = false;
+                    rootView.modal.title = "Error"
+                    rootView.modal.message = "Invalid password or both passwords do not match."
+                    rootView.modal.visible = true;
                 }
-                mainModal.visible = true;
+                else if (email && ViewsLogic.checkMail(email) != false)
+                {
+                    rootView.modal.loading = false;
+                    rootView.modal.title = "Error"
+                    rootView.modal.message = "Invalid email."
+                    rootView.modal.visible = true;
+                }
+                else
+                    rootView.editAccount(password, email);
             }
         }
     }

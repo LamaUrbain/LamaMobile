@@ -51,6 +51,7 @@ public:
     QPointF coordsFromPixels(const QPoint &pos) const;
     QSizeF tileSize(const QPoint &pos) const;
 
+    int getCurrentItinerary() const;
     void displayItinerary(int id);
     void itineraryChanged();
     QList<QPointF> getItineraryPoints(int id) const;
@@ -90,6 +91,7 @@ private:
     bool _wheeling;
 
     // Extensions
+    int _id;
     QList<MapExtension *> _extensions;
 
     // Interactions

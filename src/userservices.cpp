@@ -47,7 +47,7 @@ void UserServices::getUsers(QString search, QString sponsored, QJSValue callback
 
 void UserServices::getUser(QString username, ServicesBase::CallbackType callback)
 {
-    QUrl url(QString("%1/users/%2/").arg(serverAddress).arg(username));
+    QUrl url(QString("%1/users/%2").arg(serverAddress).arg(username));
     getRequest(url, callback);
 }
 
@@ -66,7 +66,7 @@ void UserServices::createUser(QString username, QString password, QString email,
     query.addQueryItem("email", email);
     query.addQueryItem("sponsor", sponsor ? "true" : "false");
 
-    postRequest(url, query.query().toLocal8Bit(), callback);
+    postRequest(url, query.query().toUtf8(), callback);
 }
 
 void UserServices::createUser(QString username, QString password, QString email, bool sponsor, QJSValue callback)
@@ -74,15 +74,17 @@ void UserServices::createUser(QString username, QString password, QString email,
     createUser(username, password, email, sponsor, fromJSCallback(callback));
 }
 
-void UserServices::editUser(QString username, QString password, QString email, ServicesBase::CallbackType callback)
+void UserServices::editUser(QString username, QString password, QString email, QString sponsor, ServicesBase::CallbackType callback)
 {
-    QUrl url(QString("%1/users/%2/").arg(serverAddress).arg(username));
+    QUrl url(QString("%1/users/%2").arg(serverAddress).arg(username));
 
     QUrlQuery query;
     if (!password.isEmpty())
         query.addQueryItem("password", password);
     if (!email.isEmpty())
         query.addQueryItem("email", email);
+    if (!sponsor.isEmpty())
+        query.addQueryItem("sponsor", sponsor == "true" ? "true" : "false");
     if (!_token.isEmpty())
         query.addQueryItem("token", _token);
     url.setQuery(query.query());
@@ -90,9 +92,9 @@ void UserServices::editUser(QString username, QString password, QString email, S
     putRequest(url, QByteArray(), callback);
 }
 
-void UserServices::editUser(QString username, QString password, QString email, QJSValue callback)
+void UserServices::editUser(QString username, QString password, QString email, QString sponsor, QJSValue callback)
 {
-    editUser(username, password, email, fromJSCallback(callback));
+    editUser(username, password, email, sponsor, fromJSCallback(callback));
 }
 
 void UserServices::deleteUser(QString username, ServicesBase::CallbackType callback)
@@ -121,7 +123,7 @@ void UserServices::createToken(QString username, QString password, ServicesBase:
         if (errorType == 0)
         {
             QJsonParseError error;
-            QJsonDocument document = QJsonDocument::fromJson(jsonStr.toLatin1(), &error);
+            QJsonDocument document = QJsonDocument::fromJson(jsonStr.toUtf8(), &error);
 
             if (error.error == QJsonParseError::NoError)
             {
@@ -141,7 +143,7 @@ void UserServices::createToken(QString username, QString password, ServicesBase:
     query.addQueryItem("username", username);
     query.addQueryItem("password", password);
 
-    postRequest(url, query.query().toLocal8Bit(), cb);
+    postRequest(url, query.query().toUtf8(), cb);
 }
 
 void UserServices::createToken(QString username, QString password, QJSValue callback)

@@ -3,62 +3,68 @@ import QtQuick.Controls 1.3
 import QtQuick.Layouts 1.1
 import "qrc:/Components/" as Components
 import "qrc:/Controls/" as Controls
-import "qrc:/Views/ViewsLogic.js" as ViewsLogic
+import "qrc:/Constants.js" as Constants
 
 Components.Background {
-    id: rootBackground
+    color: Constants.LAMA_BACKGROUND2
 
-    Components.Header {
-        id: header
-        title: "Sponsored paths"
-    }
-
-    ListModel {
-        id: sponsorsModel
-
-        Component.onCompleted:
-        {
-            ViewsLogic.fillSponsors(this, rootView.lamaSession.KNOWN_SPONSORS)
+    ColumnLayout {
+        id: contents
+        spacing: 20
+        anchors {
+            fill: parent
+            margins: 30
         }
-    }
 
-    Component {
-        id: sponsorDelegate
+        Components.Header {
+            id: header
+            title: "Our sponsors"
+        }
 
-        Controls.Button {
-            width: sponsorGrid.width
-            height: sponsorGrid.height * 0.10
+        Components.Separator {
+            isTopSeparator: true
+            Layout.fillWidth: true
+            Layout.preferredHeight: 11
+        }
 
-            Components.SponsorItem {
-                anchors.fill: parent
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
 
-                sponsorToDisplay: sponsor
-            }
-
-            MouseArea {
-                anchors.fill: parent
-
-                onClicked: {
-                    itineraryServices.getItineraries("", sponsor.username, "true", "",
-                    function (status, response)
-                    {
-                        console.log(response)
-                        rootView.mainViewTo("FavoriteItineraries", {itineraries: JSON.parse(response), readOnly: true})
-                    })
+            GridView {
+                clip: true
+                width: Math.min(Math.floor(parent.width / cellWidth), model.count) * cellWidth
+                anchors {
+                    top: parent.top
+                    bottom: parent.bottom
+                    horizontalCenter: parent.horizontalCenter
+                }
+                cellWidth: 220
+                cellHeight: 252
+                model: rootView.sponsors
+                delegate: Components.SponsorItem {
+                    username: model.username
+                    email: model.email
+                    onSelectionRequest: {
+                        rootView.mainViewTo("FavoriteItineraries", null, { owner: username });
+                    }
                 }
             }
         }
-    }
 
-    ListView {
-        id: sponsorGrid
+        Components.Separator {
+            isTopSeparator: false
+            Layout.fillWidth: true
+            Layout.preferredHeight: 11
+        }
 
-        anchors.top: header.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-
-        model: sponsorsModel
-        delegate: sponsorDelegate
+        Controls.NavigationButton {
+            anchors.left: parent.left
+            anchors.right: parent.right
+            source: Constants.LAMA_SPONSORS_RESSOURCE
+            text: "Become a sponsor!"
+            acceptClick: false
+            onNavButtonPressed: Qt.openUrlExternally("http://eip.epitech.eu/2016/lamaurbain/#contact");
+        }
     }
 }

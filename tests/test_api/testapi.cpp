@@ -7,12 +7,12 @@ UserSession::UserSession(TestWaiter &waiter, UserServices &userServices)
 {
     _userServices.createUser("testUser", "testPassword", "test@test.fr", false, [this] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toUtf8()).object();
 
-        QVERIFY2(obj.value("username").toString() == "testUser", qPrintable(jsonStr));
-        QVERIFY2(obj.value("email").toString() == "test@test.fr", qPrintable(jsonStr));
+        QVERIFY2(obj.value("username").toString() == "testUser", qUtf8Printable(jsonStr));
+        QVERIFY2(obj.value("email").toString() == "test@test.fr", qUtf8Printable(jsonStr));
 
         _waiter.emitDone();
     });
@@ -21,12 +21,12 @@ UserSession::UserSession(TestWaiter &waiter, UserServices &userServices)
 
     _userServices.createToken("testUser", "testPassword", [this] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toUtf8()).object();
 
-        QVERIFY2(obj.value("owner").toString() == "testUser", qPrintable(jsonStr));
-        QVERIFY2(obj.value("token").toString().size() == 32, qPrintable(jsonStr));
+        QVERIFY2(obj.value("owner").toString() == "testUser", qUtf8Printable(jsonStr));
+        QVERIFY2(obj.value("token").toString().size() == 32, qUtf8Printable(jsonStr));
 
         _waiter.emitDone();
     });
@@ -38,7 +38,7 @@ UserSession::~UserSession()
 {
     _userServices.deleteUser("testUser", [this] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
         _waiter.emitDone();
     });
 
@@ -46,7 +46,7 @@ UserSession::~UserSession()
 
     _userServices.deleteToken([this] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
         _waiter.emitDone();
     });
 
@@ -80,7 +80,7 @@ ServicesBase::CallbackType TestApi::_getBasicCallBack(TestWaiter &waiter)
 {
     return (ServicesBase::CallbackType([&waiter] (int errorType, QString jsonStr) mutable
       {
-          QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+          QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
           waiter.emitDone();
       }));
 }
@@ -93,12 +93,12 @@ void TestApi::testCreateUser()
 
     _userServices.createUser("testUser", "testPassword", "test@test.fr", false, [&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toUtf8()).object();
 
-        QVERIFY2(obj.value("username").toString() == "testUser", qPrintable(jsonStr));
-        QVERIFY2(obj.value("email").toString() == "test@test.fr", qPrintable(jsonStr));
+        QVERIFY2(obj.value("username").toString() == "testUser", qUtf8Printable(jsonStr));
+        QVERIFY2(obj.value("email").toString() == "test@test.fr", qUtf8Printable(jsonStr));
 
         waiter.emitDone();
     });
@@ -107,12 +107,12 @@ void TestApi::testCreateUser()
 
     _userServices.createToken("testUser", "testPassword", [&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toUtf8()).object();
 
-        QVERIFY2(obj.value("owner").toString() == "testUser", qPrintable(jsonStr));
-        QVERIFY2(obj.value("token").toString().size() == 32, qPrintable(jsonStr));
+        QVERIFY2(obj.value("owner").toString() == "testUser", qUtf8Printable(jsonStr));
+        QVERIFY2(obj.value("token").toString().size() == 32, qUtf8Printable(jsonStr));
 
         waiter.emitDone();
     });
@@ -121,7 +121,7 @@ void TestApi::testCreateUser()
 
     _userServices.deleteUser("testUser", [&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
         waiter.emitDone();
     });
 
@@ -129,7 +129,7 @@ void TestApi::testCreateUser()
 
     _userServices.deleteToken([&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
         waiter.emitDone();
     });
 
@@ -157,16 +157,16 @@ void TestApi::testNoAuthCreateItinerary()
 
     _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toUtf8()).object();
 
         itineraryId = obj.value("id").toInt(-1);
 
-        QVERIFY2(itineraryId >= 0, qPrintable(jsonStr));
-        QVERIFY2(obj.value("departure").isObject(), qPrintable(jsonStr));
-        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("latitude").toDouble(), 48.815346), qPrintable(jsonStr));
-        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("longitude").toDouble(), 2.363165), qPrintable(jsonStr));
+        QVERIFY2(itineraryId >= 0, qUtf8Printable(jsonStr));
+        QVERIFY2(obj.value("departure").isObject(), qUtf8Printable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("latitude").toDouble(), 48.815346), qUtf8Printable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("longitude").toDouble(), 2.363165), qUtf8Printable(jsonStr));
 
         waiter.emitDone();
     });
@@ -178,7 +178,7 @@ void TestApi::testNoAuthCreateItinerary()
 
     _itineraryServices.deleteItinerary(itineraryId, [&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
         waiter.emitDone();
     });
 
@@ -186,31 +186,31 @@ void TestApi::testNoAuthCreateItinerary()
 
     _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "48.832672, 2.288375", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toUtf8()).object();
 
         itineraryId = obj.value("id").toInt(-1);
 
-        QVERIFY2(itineraryId >= 0, qPrintable(jsonStr));
-        QVERIFY2(obj.value("departure").isObject(), qPrintable(jsonStr));
-        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("latitude").toDouble(), 48.815346), qPrintable(jsonStr));
-        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("longitude").toDouble(), 2.363165), qPrintable(jsonStr));
+        QVERIFY2(itineraryId >= 0, qUtf8Printable(jsonStr));
+        QVERIFY2(obj.value("departure").isObject(), qUtf8Printable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("latitude").toDouble(), 48.815346), qUtf8Printable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("longitude").toDouble(), 2.363165), qUtf8Printable(jsonStr));
 
         QJsonArray destinations = obj.value("destinations").toArray();
 
-        QVERIFY2(destinations.size() == 1, qPrintable(jsonStr));
+        QVERIFY2(destinations.size() == 1, qUtf8Printable(jsonStr));
 
         QJsonArray::const_iterator it = destinations.begin();
 
         if (it != destinations.constEnd())
         {
             QJsonObject obj = (*it).toObject();
-            QVERIFY2(qFuzzyCompare(obj.value("latitude").toDouble(), 48.832672), qPrintable(jsonStr));
-            QVERIFY2(qFuzzyCompare(obj.value("longitude").toDouble(), 2.288375), qPrintable(jsonStr));
+            QVERIFY2(qFuzzyCompare(obj.value("latitude").toDouble(), 48.832672), qUtf8Printable(jsonStr));
+            QVERIFY2(qFuzzyCompare(obj.value("longitude").toDouble(), 2.288375), qUtf8Printable(jsonStr));
         }
         else
-            QVERIFY2(false, qPrintable(jsonStr));
+            QVERIFY2(false, qUtf8Printable(jsonStr));
 
         waiter.emitDone();
     });
@@ -222,7 +222,7 @@ void TestApi::testNoAuthCreateItinerary()
 
     _itineraryServices.deleteItinerary(itineraryId, [&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
         waiter.emitDone();
     });
 
@@ -236,16 +236,16 @@ void TestApi::testNoAuthGetItineraries()
 
     _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toUtf8()).object();
 
         itineraryId = obj.value("id").toInt(-1);
 
-        QVERIFY2(itineraryId >= 0, qPrintable(jsonStr));
-        QVERIFY2(obj.value("departure").isObject(), qPrintable(jsonStr));
-        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("latitude").toDouble(), 48.815346), qPrintable(jsonStr));
-        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("longitude").toDouble(), 2.363165), qPrintable(jsonStr));
+        QVERIFY2(itineraryId >= 0, qUtf8Printable(jsonStr));
+        QVERIFY2(obj.value("departure").isObject(), qUtf8Printable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("latitude").toDouble(), 48.815346), qUtf8Printable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("longitude").toDouble(), 2.363165), qUtf8Printable(jsonStr));
 
         waiter.emitDone();
     });
@@ -257,16 +257,16 @@ void TestApi::testNoAuthGetItineraries()
 
     _itineraryServices.getItineraries("testItinerary", "", "false", "name", [&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonArray array = QJsonDocument::fromJson(jsonStr.toLatin1()).array();
+        QJsonArray array = QJsonDocument::fromJson(jsonStr.toUtf8()).array();
 
-        QVERIFY2(array.size() > 0, qPrintable(QString("%1 : [%2]").arg(array.size()).arg(jsonStr)));
+        QVERIFY2(array.size() > 0, qUtf8Printable(QString("%1 : [%2]").arg(array.size()).arg(jsonStr)));
 
         if (array.size() > 0)
         {
             QJsonObject obj = array.first().toObject();
-            QVERIFY2(obj.value("name").toString() == "testItinerary", qPrintable(jsonStr));
+            QVERIFY2(obj.value("name").toString() == "testItinerary", qUtf8Printable(jsonStr));
         }
 
         waiter.emitDone();
@@ -276,7 +276,7 @@ void TestApi::testNoAuthGetItineraries()
 
     _itineraryServices.deleteItinerary(itineraryId, [&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
         waiter.emitDone();
     });
 
@@ -290,16 +290,16 @@ void TestApi::testNoAuthGetItinerary()
 
     _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toUtf8()).object();
 
         itineraryId = obj.value("id").toInt(-1);
 
-        QVERIFY2(itineraryId >= 0, qPrintable(jsonStr));
-        QVERIFY2(obj.value("departure").isObject(), qPrintable(jsonStr));
-        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("latitude").toDouble(), 48.815346), qPrintable(jsonStr));
-        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("longitude").toDouble(), 2.363165), qPrintable(jsonStr));
+        QVERIFY2(itineraryId >= 0, qUtf8Printable(jsonStr));
+        QVERIFY2(obj.value("departure").isObject(), qUtf8Printable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("latitude").toDouble(), 48.815346), qUtf8Printable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("longitude").toDouble(), 2.363165), qUtf8Printable(jsonStr));
 
         waiter.emitDone();
     });
@@ -311,12 +311,12 @@ void TestApi::testNoAuthGetItinerary()
 
     _itineraryServices.getItinerary(itineraryId, [&waiter, itineraryId] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toUtf8()).object();
 
-        QVERIFY2(obj.value("id").toInt(-1) == itineraryId, qPrintable(jsonStr));
-        QVERIFY2(obj.value("name").toString() == "testItinerary", qPrintable(jsonStr));
+        QVERIFY2(obj.value("id").toInt(-1) == itineraryId, qUtf8Printable(jsonStr));
+        QVERIFY2(obj.value("name").toString() == "testItinerary", qUtf8Printable(jsonStr));
 
         waiter.emitDone();
     });
@@ -325,7 +325,7 @@ void TestApi::testNoAuthGetItinerary()
 
     _itineraryServices.deleteItinerary(itineraryId, [&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
         waiter.emitDone();
     });
 
@@ -340,16 +340,16 @@ void TestApi::testNoAuthEditItinerary()
     // Epitech
     _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toUtf8()).object();
 
         itineraryId = obj.value("id").toInt(-1);
 
-        QVERIFY2(itineraryId >= 0, qPrintable(jsonStr));
-        QVERIFY2(obj.value("departure").isObject(), qPrintable(jsonStr));
-        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("latitude").toDouble(), 48.815346), qPrintable(jsonStr));
-        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("longitude").toDouble(), 2.363165), qPrintable(jsonStr));
+        QVERIFY2(itineraryId >= 0, qUtf8Printable(jsonStr));
+        QVERIFY2(obj.value("departure").isObject(), qUtf8Printable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("latitude").toDouble(), 48.815346), qUtf8Printable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("longitude").toDouble(), 2.363165), qUtf8Printable(jsonStr));
 
         waiter.emitDone();
     });
@@ -362,23 +362,23 @@ void TestApi::testNoAuthEditItinerary()
     // Append "Porte de Versailles"
     _itineraryServices.addDestination(itineraryId, "48.832672, 2.288375", "", -1, [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toUtf8()).object();
         QJsonArray destinations = obj.value("destinations").toArray();
 
-        QVERIFY2(destinations.size() == 1, qPrintable(jsonStr));
+        QVERIFY2(destinations.size() == 1, qUtf8Printable(jsonStr));
 
         QJsonArray::const_iterator it = destinations.begin();
 
         if (it != destinations.constEnd())
         {
             QJsonObject obj = (*it).toObject();
-            QVERIFY2(qFuzzyCompare(obj.value("latitude").toDouble(), 48.832672), qPrintable(jsonStr));
-            QVERIFY2(qFuzzyCompare(obj.value("longitude").toDouble(), 2.288375), qPrintable(jsonStr));
+            QVERIFY2(qFuzzyCompare(obj.value("latitude").toDouble(), 48.832672), qUtf8Printable(jsonStr));
+            QVERIFY2(qFuzzyCompare(obj.value("longitude").toDouble(), 2.288375), qUtf8Printable(jsonStr));
         }
         else
-            QVERIFY2(false, qPrintable(jsonStr));
+            QVERIFY2(false, qUtf8Printable(jsonStr));
 
         waiter.emitDone();
     });
@@ -388,33 +388,33 @@ void TestApi::testNoAuthEditItinerary()
     // Add "Porte d'Orléans" between Epitech and "Porte de Versailles"
     _itineraryServices.addDestination(itineraryId, "48.823040, 2.325578", "", 0, [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toUtf8()).object();
         QJsonArray destinations = obj.value("destinations").toArray();
 
-        QVERIFY2(destinations.size() == 2, qPrintable(jsonStr));
+        QVERIFY2(destinations.size() == 2, qUtf8Printable(jsonStr));
 
         QJsonArray::const_iterator it = destinations.begin();
 
         if (it != destinations.constEnd())
         {
             QJsonObject obj = (*it).toObject();
-            QVERIFY2(qFuzzyCompare(obj.value("latitude").toDouble(), 48.823040), qPrintable(jsonStr));
-            QVERIFY2(qFuzzyCompare(obj.value("longitude").toDouble(), 2.325578), qPrintable(jsonStr));
+            QVERIFY2(qFuzzyCompare(obj.value("latitude").toDouble(), 48.823040), qUtf8Printable(jsonStr));
+            QVERIFY2(qFuzzyCompare(obj.value("longitude").toDouble(), 2.325578), qUtf8Printable(jsonStr));
 
             ++it;
             if (it != destinations.constEnd())
             {
                 QJsonObject obj2 = (*it).toObject();
-                QVERIFY2(qFuzzyCompare(obj2.value("latitude").toDouble(), 48.832672), qPrintable(jsonStr));
-                QVERIFY2(qFuzzyCompare(obj2.value("longitude").toDouble(), 2.288375), qPrintable(jsonStr));
+                QVERIFY2(qFuzzyCompare(obj2.value("latitude").toDouble(), 48.832672), qUtf8Printable(jsonStr));
+                QVERIFY2(qFuzzyCompare(obj2.value("longitude").toDouble(), 2.288375), qUtf8Printable(jsonStr));
             }
             else
-                QVERIFY2(false, qPrintable(jsonStr));
+                QVERIFY2(false, qUtf8Printable(jsonStr));
         }
         else
-            QVERIFY2(false, qPrintable(jsonStr));
+            QVERIFY2(false, qUtf8Printable(jsonStr));
 
         waiter.emitDone();
     });
@@ -424,23 +424,23 @@ void TestApi::testNoAuthEditItinerary()
     // Remove "Porte de Versailles"
     _itineraryServices.deleteDestination(itineraryId, 1, [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toUtf8()).object();
         QJsonArray destinations = obj.value("destinations").toArray();
 
-        QVERIFY2(destinations.size() == 1, qPrintable(jsonStr));
+        QVERIFY2(destinations.size() == 1, qUtf8Printable(jsonStr));
 
         QJsonArray::const_iterator it = destinations.begin();
 
         if (it != destinations.constEnd())
         {
             QJsonObject obj = (*it).toObject();
-            QVERIFY2(qFuzzyCompare(obj.value("latitude").toDouble(), 48.823040), qPrintable(jsonStr));
-            QVERIFY2(qFuzzyCompare(obj.value("longitude").toDouble(), 2.325578), qPrintable(jsonStr));
+            QVERIFY2(qFuzzyCompare(obj.value("latitude").toDouble(), 48.823040), qUtf8Printable(jsonStr));
+            QVERIFY2(qFuzzyCompare(obj.value("longitude").toDouble(), 2.325578), qUtf8Printable(jsonStr));
         }
         else
-            QVERIFY2(false, qPrintable(jsonStr));
+            QVERIFY2(false, qUtf8Printable(jsonStr));
 
         waiter.emitDone();
     });
@@ -450,33 +450,33 @@ void TestApi::testNoAuthEditItinerary()
     // Append "Porte de Versailles"
     _itineraryServices.addDestination(itineraryId, "48.832672, 2.288375", "", -1, [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toUtf8()).object();
         QJsonArray destinations = obj.value("destinations").toArray();
 
-        QVERIFY2(destinations.size() == 2, qPrintable(jsonStr));
+        QVERIFY2(destinations.size() == 2, qUtf8Printable(jsonStr));
 
         QJsonArray::const_iterator it = destinations.begin();
 
         if (it != destinations.constEnd())
         {
             QJsonObject obj = (*it).toObject();
-            QVERIFY2(qFuzzyCompare(obj.value("latitude").toDouble(), 48.823040), qPrintable(jsonStr));
-            QVERIFY2(qFuzzyCompare(obj.value("longitude").toDouble(), 2.325578), qPrintable(jsonStr));
+            QVERIFY2(qFuzzyCompare(obj.value("latitude").toDouble(), 48.823040), qUtf8Printable(jsonStr));
+            QVERIFY2(qFuzzyCompare(obj.value("longitude").toDouble(), 2.325578), qUtf8Printable(jsonStr));
 
             ++it;
             if (it != destinations.constEnd())
             {
                 QJsonObject obj2 = (*it).toObject();
-                QVERIFY2(qFuzzyCompare(obj2.value("latitude").toDouble(), 48.832672), qPrintable(jsonStr));
-                QVERIFY2(qFuzzyCompare(obj2.value("longitude").toDouble(), 2.288375), qPrintable(jsonStr));
+                QVERIFY2(qFuzzyCompare(obj2.value("latitude").toDouble(), 48.832672), qUtf8Printable(jsonStr));
+                QVERIFY2(qFuzzyCompare(obj2.value("longitude").toDouble(), 2.288375), qUtf8Printable(jsonStr));
             }
             else
-                QVERIFY2(false, qPrintable(jsonStr));
+                QVERIFY2(false, qUtf8Printable(jsonStr));
         }
         else
-            QVERIFY2(false, qPrintable(jsonStr));
+            QVERIFY2(false, qUtf8Printable(jsonStr));
 
         waiter.emitDone();
     });
@@ -486,23 +486,23 @@ void TestApi::testNoAuthEditItinerary()
     // Remove "Porte d'Orléans"
     _itineraryServices.deleteDestination(itineraryId, 0, [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toUtf8()).object();
         QJsonArray destinations = obj.value("destinations").toArray();
 
-        QVERIFY2(destinations.size() == 1, qPrintable(jsonStr));
+        QVERIFY2(destinations.size() == 1, qUtf8Printable(jsonStr));
 
         QJsonArray::const_iterator it = destinations.begin();
 
         if (it != destinations.constEnd())
         {
             QJsonObject obj = (*it).toObject();
-            QVERIFY2(qFuzzyCompare(obj.value("latitude").toDouble(), 48.832672), qPrintable(jsonStr));
-            QVERIFY2(qFuzzyCompare(obj.value("longitude").toDouble(), 2.288375), qPrintable(jsonStr));
+            QVERIFY2(qFuzzyCompare(obj.value("latitude").toDouble(), 48.832672), qUtf8Printable(jsonStr));
+            QVERIFY2(qFuzzyCompare(obj.value("longitude").toDouble(), 2.288375), qUtf8Printable(jsonStr));
         }
         else
-            QVERIFY2(false, qPrintable(jsonStr));
+            QVERIFY2(false, qUtf8Printable(jsonStr));
 
         waiter.emitDone();
     });
@@ -512,12 +512,12 @@ void TestApi::testNoAuthEditItinerary()
     // Remove "Porte de Versailles"
     _itineraryServices.deleteDestination(itineraryId, 0, [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toUtf8()).object();
         QJsonArray destinations = obj.value("destinations").toArray();
 
-        QVERIFY2(destinations.size() == 0, qPrintable(jsonStr));
+        QVERIFY2(destinations.size() == 0, qUtf8Printable(jsonStr));
 
         waiter.emitDone();
     });
@@ -526,7 +526,7 @@ void TestApi::testNoAuthEditItinerary()
 
     _itineraryServices.deleteItinerary(itineraryId, [&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
         waiter.emitDone();
     });
 
@@ -549,16 +549,17 @@ void TestApi::testAuthCreateItinerary()
 
     _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toUtf8()).object();
 
         itineraryId = obj.value("id").toInt(-1);
 
-        QVERIFY2(itineraryId >= 0, qPrintable(jsonStr));
-        QVERIFY2(obj.value("departure").isObject(), qPrintable(jsonStr));
-        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("latitude").toDouble(), 48.815346), qPrintable(jsonStr));
-        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("longitude").toDouble(), 2.363165), qPrintable(jsonStr));
+        QVERIFY2(itineraryId >= 0, qUtf8Printable(jsonStr));
+        QVERIFY2(obj.value("owner").toString() == "testUser", qUtf8Printable(jsonStr));
+        QVERIFY2(obj.value("departure").isObject(), qUtf8Printable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("latitude").toDouble(), 48.815346), qUtf8Printable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("longitude").toDouble(), 2.363165), qUtf8Printable(jsonStr));
 
         waiter.emitDone();
     });
@@ -570,7 +571,7 @@ void TestApi::testAuthCreateItinerary()
 
     _itineraryServices.deleteItinerary(itineraryId, [&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
         waiter.emitDone();
     });
 
@@ -587,16 +588,16 @@ void TestApi::testAuthGetItineraries()
 
     _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toUtf8()).object();
 
         itineraryId = obj.value("id").toInt(-1);
 
-        QVERIFY2(itineraryId >= 0, qPrintable(jsonStr));
-        QVERIFY2(obj.value("departure").isObject(), qPrintable(jsonStr));
-        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("latitude").toDouble(), 48.815346), qPrintable(jsonStr));
-        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("longitude").toDouble(), 2.363165), qPrintable(jsonStr));
+        QVERIFY2(itineraryId >= 0, qUtf8Printable(jsonStr));
+        QVERIFY2(obj.value("departure").isObject(), qUtf8Printable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("latitude").toDouble(), 48.815346), qUtf8Printable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("longitude").toDouble(), 2.363165), qUtf8Printable(jsonStr));
 
         waiter.emitDone();
     });
@@ -608,17 +609,17 @@ void TestApi::testAuthGetItineraries()
 
     _itineraryServices.getItineraries("testItinerary", "testUser", "false", "name", [&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonArray array = QJsonDocument::fromJson(jsonStr.toLatin1()).array();
+        QJsonArray array = QJsonDocument::fromJson(jsonStr.toUtf8()).array();
 
-        QVERIFY2(array.size() > 0, qPrintable(QString("%1 : [%2]").arg(array.size()).arg(jsonStr)));
+        QVERIFY2(array.size() > 0, qUtf8Printable(QString("%1 : [%2]").arg(array.size()).arg(jsonStr)));
 
         if (array.size() > 0)
         {
             QJsonObject obj = array.first().toObject();
-            QVERIFY2(obj.value("owner").toString() == "testUser", qPrintable(jsonStr));
-            QVERIFY2(obj.value("name").toString() == "testItinerary", qPrintable(jsonStr));
+            QVERIFY2(obj.value("owner").toString() == "testUser", qUtf8Printable(jsonStr));
+            QVERIFY2(obj.value("name").toString() == "testItinerary", qUtf8Printable(jsonStr));
         }
 
         waiter.emitDone();
@@ -628,7 +629,7 @@ void TestApi::testAuthGetItineraries()
 
     _itineraryServices.deleteItinerary(itineraryId, [&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
         waiter.emitDone();
     });
 
@@ -645,16 +646,16 @@ void TestApi::testAuthGetItinerary()
 
     _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toUtf8()).object();
 
         itineraryId = obj.value("id").toInt(-1);
 
-        QVERIFY2(itineraryId >= 0, qPrintable(jsonStr));
-        QVERIFY2(obj.value("departure").isObject(), qPrintable(jsonStr));
-        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("latitude").toDouble(), 48.815346), qPrintable(jsonStr));
-        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("longitude").toDouble(), 2.363165), qPrintable(jsonStr));
+        QVERIFY2(itineraryId >= 0, qUtf8Printable(jsonStr));
+        QVERIFY2(obj.value("departure").isObject(), qUtf8Printable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("latitude").toDouble(), 48.815346), qUtf8Printable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("longitude").toDouble(), 2.363165), qUtf8Printable(jsonStr));
 
         waiter.emitDone();
     });
@@ -666,12 +667,12 @@ void TestApi::testAuthGetItinerary()
 
     _itineraryServices.getItinerary(itineraryId, [&waiter, itineraryId] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toUtf8()).object();
 
-        QVERIFY2(obj.value("id").toInt(-1) == itineraryId, qPrintable(jsonStr));
-        QVERIFY2(obj.value("name").toString() == "testItinerary", qPrintable(jsonStr));
+        QVERIFY2(obj.value("id").toInt(-1) == itineraryId, qUtf8Printable(jsonStr));
+        QVERIFY2(obj.value("name").toString() == "testItinerary", qUtf8Printable(jsonStr));
 
         waiter.emitDone();
     });
@@ -680,7 +681,7 @@ void TestApi::testAuthGetItinerary()
 
     _itineraryServices.deleteItinerary(itineraryId, [&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
         waiter.emitDone();
     });
 
@@ -699,16 +700,16 @@ void TestApi::testAuthEditItinerary()
     // Epitech
     _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toUtf8()).object();
 
         itineraryId = obj.value("id").toInt(-1);
 
-        QVERIFY2(itineraryId >= 0, qPrintable(jsonStr));
-        QVERIFY2(obj.value("departure").isObject(), qPrintable(jsonStr));
-        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("latitude").toDouble(), 48.815346), qPrintable(jsonStr));
-        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("longitude").toDouble(), 2.363165), qPrintable(jsonStr));
+        QVERIFY2(itineraryId >= 0, qUtf8Printable(jsonStr));
+        QVERIFY2(obj.value("departure").isObject(), qUtf8Printable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("latitude").toDouble(), 48.815346), qUtf8Printable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("longitude").toDouble(), 2.363165), qUtf8Printable(jsonStr));
 
         waiter.emitDone();
     });
@@ -721,23 +722,23 @@ void TestApi::testAuthEditItinerary()
     // Append "Porte de Versailles"
     _itineraryServices.addDestination(itineraryId, "48.832672, 2.288375", "", -1, [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toUtf8()).object();
         QJsonArray destinations = obj.value("destinations").toArray();
 
-        QVERIFY2(destinations.size() == 1, qPrintable(jsonStr));
+        QVERIFY2(destinations.size() == 1, qUtf8Printable(jsonStr));
 
         QJsonArray::const_iterator it = destinations.begin();
 
         if (it != destinations.constEnd())
         {
             QJsonObject obj = (*it).toObject();
-            QVERIFY2(qFuzzyCompare(obj.value("latitude").toDouble(), 48.832672), qPrintable(jsonStr));
-            QVERIFY2(qFuzzyCompare(obj.value("longitude").toDouble(), 2.288375), qPrintable(jsonStr));
+            QVERIFY2(qFuzzyCompare(obj.value("latitude").toDouble(), 48.832672), qUtf8Printable(jsonStr));
+            QVERIFY2(qFuzzyCompare(obj.value("longitude").toDouble(), 2.288375), qUtf8Printable(jsonStr));
         }
         else
-            QVERIFY2(false, qPrintable(jsonStr));
+            QVERIFY2(false, qUtf8Printable(jsonStr));
 
         waiter.emitDone();
     });
@@ -746,7 +747,7 @@ void TestApi::testAuthEditItinerary()
 
     _itineraryServices.deleteItinerary(itineraryId, [&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
         waiter.emitDone();
     });
 
@@ -763,12 +764,12 @@ void TestApi::testCreateSponsor()
 
     _userServices.createUser("testUser", "testPassword", "test@test.fr", true, [&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toUtf8()).object();
 
-        QVERIFY2(obj.value("username").toString() == "testUser", qPrintable(jsonStr));
-        QVERIFY2(obj.value("email").toString() == "test@test.fr", qPrintable(jsonStr));
+        QVERIFY2(obj.value("username").toString() == "testUser", qUtf8Printable(jsonStr));
+        QVERIFY2(obj.value("email").toString() == "test@test.fr", qUtf8Printable(jsonStr));
 
         waiter.emitDone();
     });
@@ -777,12 +778,12 @@ void TestApi::testCreateSponsor()
 
     _userServices.createToken("testUser", "testPassword", [&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toUtf8()).object();
 
-        QVERIFY2(obj.value("owner").toString() == "testUser", qPrintable(jsonStr));
-        QVERIFY2(obj.value("token").toString().size() == 32, qPrintable(jsonStr));
+        QVERIFY2(obj.value("owner").toString() == "testUser", qUtf8Printable(jsonStr));
+        QVERIFY2(obj.value("token").toString().size() == 32, qUtf8Printable(jsonStr));
 
         waiter.emitDone();
     });
@@ -791,7 +792,7 @@ void TestApi::testCreateSponsor()
 
     _userServices.deleteUser("testUser", [&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
         waiter.emitDone();
     });
 
@@ -799,7 +800,7 @@ void TestApi::testCreateSponsor()
 
     _userServices.deleteToken([&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
         waiter.emitDone();
     });
 
@@ -812,12 +813,12 @@ void TestApi::testGetSponsors()
 
     _userServices.createUser("testUser1", "testPassword", "test@test.fr", true, [&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toUtf8()).object();
 
-        QVERIFY2(obj.value("username").toString() == "testUser1", qPrintable(jsonStr));
-        QVERIFY2(obj.value("email").toString() == "test@test.fr", qPrintable(jsonStr));
+        QVERIFY2(obj.value("username").toString() == "testUser1", qUtf8Printable(jsonStr));
+        QVERIFY2(obj.value("email").toString() == "test@test.fr", qUtf8Printable(jsonStr));
 
         waiter.emitDone();
     });
@@ -826,12 +827,12 @@ void TestApi::testGetSponsors()
 
     _userServices.createUser("testUser2", "testPassword", "test@test.fr", true, [&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toUtf8()).object();
 
-        QVERIFY2(obj.value("username").toString() == "testUser2", qPrintable(jsonStr));
-        QVERIFY2(obj.value("email").toString() == "test@test.fr", qPrintable(jsonStr));
+        QVERIFY2(obj.value("username").toString() == "testUser2", qUtf8Printable(jsonStr));
+        QVERIFY2(obj.value("email").toString() == "test@test.fr", qUtf8Printable(jsonStr));
 
         waiter.emitDone();
     });
@@ -840,9 +841,9 @@ void TestApi::testGetSponsors()
 
     _userServices.getUsers("", "true", [&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonArray array = QJsonDocument::fromJson(jsonStr.toLatin1()).array();
+        QJsonArray array = QJsonDocument::fromJson(jsonStr.toUtf8()).array();
 
         bool user1Found = false;
         bool user2Found = false;
@@ -860,8 +861,8 @@ void TestApi::testGetSponsors()
                 break;
         }
 
-        QVERIFY2(user1Found, qPrintable(jsonStr));
-        QVERIFY2(user2Found, qPrintable(jsonStr));
+        QVERIFY2(user1Found, qUtf8Printable(jsonStr));
+        QVERIFY2(user2Found, qUtf8Printable(jsonStr));
 
         waiter.emitDone();
     });
@@ -870,12 +871,12 @@ void TestApi::testGetSponsors()
 
     _userServices.createToken("testUser1", "testPassword", [&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toUtf8()).object();
 
-        QVERIFY2(obj.value("owner").toString() == "testUser1", qPrintable(jsonStr));
-        QVERIFY2(obj.value("token").toString().size() == 32, qPrintable(jsonStr));
+        QVERIFY2(obj.value("owner").toString() == "testUser1", qUtf8Printable(jsonStr));
+        QVERIFY2(obj.value("token").toString().size() == 32, qUtf8Printable(jsonStr));
 
         waiter.emitDone();
     });
@@ -884,7 +885,7 @@ void TestApi::testGetSponsors()
 
     _userServices.deleteUser("testUser1", [&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
         waiter.emitDone();
     });
 
@@ -892,7 +893,7 @@ void TestApi::testGetSponsors()
 
     _userServices.deleteToken([&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
         waiter.emitDone();
     });
 
@@ -900,12 +901,12 @@ void TestApi::testGetSponsors()
 
     _userServices.createToken("testUser2", "testPassword", [&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toUtf8()).object();
 
-        QVERIFY2(obj.value("owner").toString() == "testUser2", qPrintable(jsonStr));
-        QVERIFY2(obj.value("token").toString().size() == 32, qPrintable(jsonStr));
+        QVERIFY2(obj.value("owner").toString() == "testUser2", qUtf8Printable(jsonStr));
+        QVERIFY2(obj.value("token").toString().size() == 32, qUtf8Printable(jsonStr));
 
         waiter.emitDone();
     });
@@ -914,7 +915,7 @@ void TestApi::testGetSponsors()
 
     _userServices.deleteUser("testUser2", [&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
         waiter.emitDone();
     });
 
@@ -922,7 +923,7 @@ void TestApi::testGetSponsors()
 
     _userServices.deleteToken([&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
         waiter.emitDone();
     });
 
@@ -936,12 +937,12 @@ void TestApi::testSponsorsItineraries()
 
     _userServices.createUser("testUser", "testPassword", "test@test.fr", true, [&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toUtf8()).object();
 
-        QVERIFY2(obj.value("username").toString() == "testUser", qPrintable(jsonStr));
-        QVERIFY2(obj.value("email").toString() == "test@test.fr", qPrintable(jsonStr));
+        QVERIFY2(obj.value("username").toString() == "testUser", qUtf8Printable(jsonStr));
+        QVERIFY2(obj.value("email").toString() == "test@test.fr", qUtf8Printable(jsonStr));
 
         waiter.emitDone();
     });
@@ -950,12 +951,12 @@ void TestApi::testSponsorsItineraries()
 
     _userServices.createToken("testUser", "testPassword", [&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toUtf8()).object();
 
-        QVERIFY2(obj.value("owner").toString() == "testUser", qPrintable(jsonStr));
-        QVERIFY2(obj.value("token").toString().size() == 32, qPrintable(jsonStr));
+        QVERIFY2(obj.value("owner").toString() == "testUser", qUtf8Printable(jsonStr));
+        QVERIFY2(obj.value("token").toString().size() == 32, qUtf8Printable(jsonStr));
 
         waiter.emitDone();
     });
@@ -964,16 +965,16 @@ void TestApi::testSponsorsItineraries()
 
     _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toLatin1()).object();
+        QJsonObject obj = QJsonDocument::fromJson(jsonStr.toUtf8()).object();
 
         itineraryId = obj.value("id").toInt(-1);
 
-        QVERIFY2(itineraryId >= 0, qPrintable(jsonStr));
-        QVERIFY2(obj.value("departure").isObject(), qPrintable(jsonStr));
-        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("latitude").toDouble(), 48.815346), qPrintable(jsonStr));
-        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("longitude").toDouble(), 2.363165), qPrintable(jsonStr));
+        QVERIFY2(itineraryId >= 0, qUtf8Printable(jsonStr));
+        QVERIFY2(obj.value("departure").isObject(), qUtf8Printable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("latitude").toDouble(), 48.815346), qUtf8Printable(jsonStr));
+        QVERIFY2(qFuzzyCompare(obj.value("departure").toObject().value("longitude").toDouble(), 2.363165), qUtf8Printable(jsonStr));
 
         waiter.emitDone();
     });
@@ -983,18 +984,18 @@ void TestApi::testSponsorsItineraries()
     if (itineraryId < 0)
         QFAIL("Could not create a valid itinerary.");
 
-    _itineraryServices.getItineraries("testItinerary", "", "false", "name", [&waiter] (int errorType, QString jsonStr) mutable
+    _itineraryServices.getItineraries("testItinerary", "", "false", "", [&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
-        QJsonArray array = QJsonDocument::fromJson(jsonStr.toLatin1()).array();
+        QJsonArray array = QJsonDocument::fromJson(jsonStr.toUtf8()).array();
 
-        QVERIFY2(array.size() > 0, qPrintable(QString("%1 : [%2]").arg(array.size()).arg(jsonStr)));
+        QVERIFY2(array.size() > 0, qUtf8Printable(QString("%1 : [%2]").arg(array.size()).arg(jsonStr)));
 
         if (array.size() > 0)
         {
             QJsonObject obj = array.first().toObject();
-            QVERIFY2(obj.value("name").toString() == "testItinerary", qPrintable(jsonStr));
+            QVERIFY2(obj.value("name").toString() == "testItinerary", qUtf8Printable(jsonStr));
         }
 
         waiter.emitDone();
@@ -1004,7 +1005,7 @@ void TestApi::testSponsorsItineraries()
 
     _itineraryServices.deleteItinerary(itineraryId, [&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
         waiter.emitDone();
     });
 
@@ -1012,7 +1013,7 @@ void TestApi::testSponsorsItineraries()
 
     _userServices.deleteUser("testUser", [&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
         waiter.emitDone();
     });
 
@@ -1020,7 +1021,7 @@ void TestApi::testSponsorsItineraries()
 
     _userServices.deleteToken([&waiter] (int errorType, QString jsonStr) mutable
     {
-        QVERIFY2(errorType == 0, qPrintable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
+        QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
         waiter.emitDone();
     });
 
@@ -1049,7 +1050,7 @@ void TestApi::testEvents()
                                   "48.832672, 2.288375", "",
                                   [&waiter] (int errorType, QString jsonStr) mutable
       {
-          QVERIFY2(errorType == 0, qPrintable(QString("%1 (No automatic date resolution) : [%2]").arg(errorType).arg(jsonStr)));
+          QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 (No automatic date resolution) : [%2]").arg(errorType).arg(jsonStr)));
           waiter.emitDone();
       });
     waiter.waitForDone();

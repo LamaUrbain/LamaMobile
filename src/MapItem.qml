@@ -8,6 +8,7 @@ Item {
     width: sourceItem.width
     height: sourceItem.height
 
+    property bool focusScope: false
     property point anchorPoint: Qt.point(sourceItem.width / 2, sourceItem.height)
     property point coordinate
     property QtObject sourceItem
@@ -15,12 +16,27 @@ Item {
     property int baseX: -1
     property int baseY: -1
 
+    signal cancelRequest();
+
     onCoordinateChanged: updatePos();
+    onVisibleChanged: {
+        if (visible)
+            updatePos();
+    }
 
     Connections {
-        target: parent
+        target: popover.visible ? parent : null
         onMapCenterChanged: updatePos();
         onMapScaleChanged: updatePos();
+    }
+
+    MouseArea {
+        z: -1
+        parent: popover.parent
+        enabled: popover.visible && popover.focusScope
+        visible: enabled
+        anchors.fill: parent
+        onClicked: popover.cancelRequest();
     }
 
     function updatePos()

@@ -42,7 +42,7 @@ void EventServices::reportIncident(QString eventName, QString dateBegin, QString
     if (!address.isEmpty())
         query.addQueryItem("address", address);
 
-    postRequest(url, query.query().toLocal8Bit(), callback);
+    postRequest(url, query.query().toUtf8(), callback);
 }
 
 void EventServices::getIncidentList(ServicesBase::CallbackType callback) /*, QString dateBegin = NULL, QString dateEnd = NULL)*/

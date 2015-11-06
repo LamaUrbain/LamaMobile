@@ -40,6 +40,7 @@ class MapWidget : public QQuickPaintedItem
     Q_PROPERTY(int offsetY READ getOffsetY NOTIFY offsetYChanged)
     Q_PROPERTY(qreal mapScale READ getMapScale WRITE setMapScale NOTIFY mapScaleChanged)
     Q_PROPERTY(QPointF mapCenter READ getMapCenter WRITE setMapCenter NOTIFY mapCenterChanged)
+    Q_PROPERTY(int currentItinerary READ getCurrentItinerary NOTIFY currentItineraryChanged)
 
     friend class MapExtension;
 
@@ -65,8 +66,10 @@ signals:
     void mapPointMoved(int id, int point, QPointF newCoords);
     void offsetXChanged();
     void offsetYChanged();
+    void currentItineraryChanged();
 
 public slots:
+    int getCurrentItinerary() const;
     void displayItinerary(int id);
     void itineraryChanged();
     QList<QPointF> getItineraryPoints(int id) const;

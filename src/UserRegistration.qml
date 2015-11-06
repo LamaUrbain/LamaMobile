@@ -1,123 +1,121 @@
-import QtQuick 2.0
+import QtQuick 2.5
+import QtQuick.Layouts 1.1
 import "qrc:/Components/" as Components
 import "qrc:/Controls/" as Controls
-import "qrc:/Constants.js" as Constants
 import "qrc:/Views/ViewsLogic.js" as ViewsLogic
+import "qrc:/Constants.js" as Constants
 
 Components.Background {
+    color: Constants.LAMA_BACKGROUND2
 
-    Components.Header {
-        id: header
-        title: "Registration"
-    }
-
-    Components.Marker {
-        id: userAuth
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: header.bottom
-        height: parent.height * 0.8
-        anchors.leftMargin: parent.height * 0.005
-        anchors.rightMargin: parent.height * 0.005
-        anchors.topMargin: parent.height * 0.005
-        anchors.bottomMargin: parent.height * 0.005
-
-        Components.FormEntry {
-            id: nameForm
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: parent.top
-            fieldName: "Name"
+    ColumnLayout {
+        id: contents
+        spacing: 20
+        anchors {
+            fill: parent
+            margins: 30
         }
 
-        Components.FormEntry {
-            id: emailForm
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: nameForm.bottom
-            fieldName: "Email"
+        Components.Header {
+            id: header
+            title: "Sign up"
         }
 
-        Components.FormEntry {
-            id: passwordForm
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: emailForm.bottom
-            fieldName: "Password"
-            isPassword: true
+        Components.Separator {
+            isTopSeparator: true
+            Layout.fillWidth: true
+            Layout.preferredHeight: 11
         }
 
-        Components.FormEntry {
-            id: passwordConfirmForm
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.top: passwordForm.bottom
-            labelText: "Confirm"
-            textFieldPlaceHolder: "Confirm Password"
-            isPassword: true
-        }
-    }
+        Column {
+            spacing: 20
+            Layout.fillWidth: true
+            Layout.fillHeight: true
 
-    Components.BottomAction {
-        Controls.NavigationButton {
-            id: navButton
-            anchors.fill: parent
-            centerText: "Register"
-            navigationTarget: "Map"
-            onNavButtonPressed:
-            {
-                var mail = emailForm.textFieldText
-                var nickname = nameForm.textFieldText
-                var pass = passwordForm.textFieldText
-                if (ViewsLogic.checkInput(nickname) === false &&
-                    ViewsLogic.checkMail(mail) === false &&
-                    ViewsLogic.checkPassword(pass, passwordConfirmForm.textFieldText) === false)
-                {
-                    mainModal.title = "Registration"
-                    mainModal.setLoadingState(true);
-                    mainModal.enableButton = false
-                    mainModal.visible = true;
-                    rootView.lamaSession.IS_LOGGED = false
-                    rootView.lamaSession.USERNAME = nickname
-                    rootView.lamaSession.PASSWORD = pass
-                    userServices.createUser(nickname, pass, mail, false, onRegistrationResult)
-                }
-                else
-                {
-                    mainModal.title = "Invalid registration"
-                    mainModal.message = "Username needs to be at least " + Constants.LAMA_MIN_INPUT_LENGTH + " characters long\n\n"
-                                        + "Email has to be valid\n\n"
-                                        + "Password needs to be at least " + Constants.LAMA_MIN_INPUT_LENGTH * 2 + " characters long\n\n"
-                                        + "Both passwords must match"
-                    mainModal.visible = true;
-                }
-                this.acceptClick = false
+            Components.FormEntry {
+                id: nameForm
+                anchors.left: parent.left
+                anchors.right: parent.right
+                fieldName: "Name"
             }
 
-            function registrationComplete_ClickedModal()
-            {
-                mainModal.modalButtonClicked.disconnect(registrationComplete_ClickedModal);
-                navButton.navigate();
+            Components.FormEntry {
+                id: emailForm
+                anchors.left: parent.left
+                anchors.right: parent.right
+                fieldName: "Email"
             }
 
-            function onRegistrationResult(status, json)
-            {
-                console.log("Registration result :" + status)
-                if (status === 0)
-                {
-                    mainModal.message = "You have successfully registratered to the \nLamaUrbain community !"
-                            + "\nYou may now proceed to log in\n\n"
+            Components.FormEntry {
+                id: passwordForm
+                anchors.left: parent.left
+                anchors.right: parent.right
+                fieldName: "Password"
+                isPassword: true
+            }
 
-                    mainModal.onModalButtonClicked.connect(registrationComplete_ClickedModal)
-                }
-                else
+            Components.FormEntry {
+                id: passwordConfirmForm
+                anchors.left: parent.left
+                anchors.right: parent.right
+                labelText: "Confirm"
+                textFieldPlaceHolder: "Confirm Password"
+                isPassword: true
+            }
+        }
+
+        Components.Separator {
+            isTopSeparator: false
+            Layout.fillWidth: true
+            Layout.preferredHeight: 11
+        }
+
+        Column {
+            spacing: 15
+            anchors {
+                left: parent.left
+                right: parent.right
+            }
+
+            Controls.NavigationButton {
+                anchors.left: parent.left
+                anchors.right: parent.right
+                source: Constants.LAMA_SIGNUP_RESSOURCE
+                text: "Sign up"
+                navigationTarget: "Map"
+                acceptClick: false
+                onNavButtonPressed:
                 {
-                    mainModal.message = "Sorry, either someone else already uses these informations\n"
-                    + "or our services are unavailable...\nPlease try again later"
+                    var mail = emailForm.textFieldText;
+                    var nickname = nameForm.textFieldText;
+                    var pass = passwordForm.textFieldText;
+                    if (ViewsLogic.checkInput(nickname) === false &&
+                            ViewsLogic.checkMail(mail) === false &&
+                            ViewsLogic.checkPassword(pass, passwordConfirmForm.textFieldText) === false)
+                    {
+                        rootView.register(nickname, pass, mail);
+                    }
+                    else
+                    {
+                        mainModal.title = "Sign up error";
+                        mainModal.message = "Username needs to be at least " + Constants.LAMA_MIN_INPUT_LENGTH + " characters long\n"
+                                + "Email has to be valid\n"
+                                + "Password needs to be at least " + Constants.LAMA_MIN_INPUT_LENGTH * 2 + " characters long\n"
+                                + "Both passwords must match.";
+                        mainModal.loading = false;
+                        mainModal.visible = true;
+                    }
                 }
-                mainModal.setLoadingState(false);
-                mainModal.enableButton = true;
-                navButton.acceptClick = true
+            }
+
+            Controls.NavigationButton {
+                text: "Login"
+                primary: false
+                anchors.left: parent.left
+                anchors.right: parent.right
+                source: Constants.LAMA_SIGNIN_RESSOURCE
+                navigationTarget: "UserAuth"
+                replace: true
             }
         }
     }

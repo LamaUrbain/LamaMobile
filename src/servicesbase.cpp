@@ -2,7 +2,7 @@
 #include <QNetworkRequest>
 #include "servicesbase.h"
 
-const QString ServicesBase::serverAddress = QStringLiteral("http://api.lamaurbain.cha.moe");
+const QString ServicesBase::serverAddress = QStringLiteral("http://api.lamaurba.in");
 
 ServicesBase::ServicesBase(QObject *parent)
     : QObject(parent)
@@ -47,7 +47,7 @@ ServicesBase::CallbackType ServicesBase::fromJSCallback(QJSValue callback)
                         .arg(result.property("fileName").toString())
                         .arg(result.property("lineNumber").toInt())
                         .arg(result.toString());
-                qWarning() << errorString.toLatin1().constData();
+                qWarning() << errorString.toUtf8().constData();
             }
         }
     };
@@ -80,8 +80,10 @@ void ServicesBase::onRequestFinished()
 
     if (reply && _pending.contains(reply))
     {
+        QString result = reply->readAll();
+        qDebug() << "Reply:" << (int)reply->error() << result;
         CallbackType callback = _pending.value(reply);
-        callback(static_cast<int>(reply->error()), QString(reply->readAll()));
+        callback(static_cast<int>(reply->error()), result);
         _pending.remove(reply);
         reply->deleteLater();
     }
@@ -102,7 +104,7 @@ void ServicesBase::sendRequest(QNetworkAccessManager::Operation type, const QUrl
             request.setRawHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0");
             request.setRawHeader("X-Custom-User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0");
             request.setRawHeader("Content-Type", "application/x-www-form-urlencoded");
-            request.setRawHeader("Content-Length", QByteArray::number(QString(data).size()));
+            request.setRawHeader("Content-Length", QByteArray::number(data.size()));
             qDebug() << "POST:" << url.toString() << "- Body:" << data;
             reply = _manager.post(request, data);
             break;
@@ -110,7 +112,7 @@ void ServicesBase::sendRequest(QNetworkAccessManager::Operation type, const QUrl
             request.setRawHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0");
             request.setRawHeader("X-Custom-User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0");
             request.setRawHeader("Content-Type", "application/x-www-form-urlencoded");
-            request.setRawHeader("Content-Length", QByteArray::number(QString(data).size()));
+            request.setRawHeader("Content-Length", QByteArray::number(data.size()));
             qDebug() << "PUT:" << url.toString() << "- Body:" << data;
             reply = _manager.put(request, data);
             break;

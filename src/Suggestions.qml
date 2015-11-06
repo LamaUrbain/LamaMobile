@@ -1,265 +1,281 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.3
 import QtQuick.Layouts 1.1
-
-import QtPositioning 5.3
-import QtLocation 5.3
-
+import QtPositioning 5.5
+import QtLocation 5.5
 import "qrc:/Components/" as Components
 import "qrc:/Controls/" as Controls
-import "qrc:/Views/ViewsLogic.js" as ViewsLogic
+import "qrc:/Constants.js" as Constants
 
 Components.Background {
-    id: waypointSuggestions
+    id: suggestionsView
+    color: Constants.LAMA_BACKGROUND2
 
-    property bool readOnly: false
-    property var currentWaypoint: ViewsLogic.getPtFromIndex(rootView.lamaSession.CURRENT_WAYPOINT_ID,
-                                                rootView.lamaSession.CURRENT_ITINERARY)
-    property var choosenPlace
+    property QtObject model: null
+    property int destinationId: -1
 
-    Components.Header
+    function validate()
     {
-        id: header
+        if (addressTextField.text.length > 1)
+        {
+            if (model)
+            {
+                if (destinationId < 0)
+                    model.departure = addressTextField.text;
+                else if (destinationId < model.destinations.count)
+                    model.destinations.set(destinationId, { address: addressTextField.text });
+            }
+            rootView.mainViewBack();
+        }
     }
 
-    PlaceSearchModel {
-        id: suggestionPlace
+    Component.onCompleted: {
+        var position = rootView.mapView.getCurrentPosition();
+        placeSearchModel.searchArea = QtPositioning.circle(QtPositioning.coordinate(position.y, position.x), 10000);
+
+        if (model)
+        {
+            if (destinationId < 0)
+            {
+                header.title = "Departure";
+                addressTextField.text = model.departure;
+            }
+            else
+            {
+                header.title = "Destination n°" + (destinationId + 1);
+                var destination = model.destinations.get(destinationId);
+                if (destination)
+                    addressTextField.text = destination.address;
+            }
+            addressTextField.cursorPosition = 0;
+        }
+        addressTextField.forceActiveFocus();
+    }
+
+    Timer {
+        id: suggestionTimer
+        interval: 250
+        running: false
+        repeat: false
+        onTriggered: {
+            var address = addressTextField.text;
+            if (address.length >= 3) {
+                geocodeModel.reset();
+                geocodeModel.query = address;
+                geocodeModel.update();
+                placeSearchModel.reset();
+                placeSearchModel.searchTerm = address;
+                placeSearchModel.update();
+            }
+        }
+    }
+
+    ListModel { id: addressModel }
+    ListModel { id: placeModel }
+
+    GeocodeModel {
+        id: geocodeModel
         plugin: geoPlugin
         limit: 4
 
-        searchArea: QtPositioning.circle(QtPositioning.coordinate(48.8555, 2.35039), 1000)
+        onStatusChanged: {
+            if (status === GeocodeModel.Ready)
+            {
+                addressModel.clear();
 
-        onSearchTermChanged: update()
+                for (var i = 0; i < count && addressModel.count < limit; ++i)
+                {
+                    var location = get(i);
+
+                    if (!location || location.address.country != "France")
+                        continue;
+
+                    var address = String(location.address.text).replace(/[<]br[^>]*[>]/gi, ", ");
+
+                    var place = {
+                        title: address,
+                        address: "",
+                        icon: ""
+                    };
+
+                    if (place.title)
+                    {
+                        console.debug("geoaddress [%1/%2]".arg(i + 1).arg(count), place.address);
+                        addressModel.append(place);
+                    }
+                }
+            }
+            else if (status === GeocodeModel.Error)
+                addressModel.clear();
+        }
+    }
+
+    PlaceSearchModel {
+        id: placeSearchModel
+        plugin: geoPlugin
+        limit: 4
 
         onStatusChanged: {
             if (status === PlaceSearchModel.Ready)
             {
-                console.debug("Request ready: %1 results".arg(count))
-                if (count > 0)
-                    suggestionsModel.clear()
+                placeModel.clear();
 
-                for (var i = 0; i < count; ++i)
+                for (var i = 0; i < count && placeModel.count < limit; ++i)
                 {
-                    // skip whatever not a place result.
                     if (data(i, "type") !== PlaceSearchModel.PlaceResult)
                         continue;
 
-                    var place = {};
-                    place['place_title'] = data(i, "title");
-                    place['place_icon'] = data(i, "icon").url();
+                    var p = data(i, "place").location.address;
+                    var address = String(p.text.length > 0 ? p.text : p.street).replace(/[<]br[^>]*[>]/gi, ", ");
 
-                    var p = data(i, "place")
-                    place['place_name'] = p.name;
-                    place['place_latitude'] = p.location.coordinate.latitude;
-                    place['place_longitude'] = p.location.coordinate.longitude;
+                    var place = {
+                        title: data(i, "title"),
+                        address: address,
+                        icon: data(i, "icon").url().toString()
+                    };
 
-                    console.debug("place [%1/%2]".arg(i + 1).arg(count), place['place_title'])
-
-                    if (place['place_title'] !== "")
+                    if (place.title !== "" && place.address)
                     {
-                        suggestionsModel.append({'place': place})
+                        console.debug("place [%1/%2]".arg(i + 1).arg(count), JSON.stringify(place));
+                        placeModel.append(place);
                     }
                 }
             }
-            else if (suggestionPlace.status === PlaceSearchModel.Error)
-            {
-                console.log("error:", errorString())
-            }
-            else if (status == PlaceSearchModel.Loading)
-            {
-                console.debug("loading", searchTerm)
-            }
-        }
-    }
-
-    ListModel {
-        id: suggestionsModel
-
-        Component.onCompleted: {
-            rootView.fillHistory(suggestionsModel, 4)
+            else if (status === PlaceSearchModel.Error)
+                placeModel.clear();
         }
     }
 
     ColumnLayout {
-        anchors.top: header.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        height: parent.height * 0.8
-        spacing: 2
-        anchors.leftMargin: parent.height * 0.005
-        anchors.rightMargin: parent.height * 0.005
-        anchors.topMargin: parent.height * 0.005
-        anchors.bottomMargin: parent.height * 0.005
-
-        Components.TextField {
-            id: addressInput
-            anchors.left: parent.left
-            anchors.right: parent.right
-            Layout.preferredHeight: parent.height * 0.1
-            placeholderText: "Address"
-            readOnly: readOnly
-
-            Component.onCompleted:
-            {
-                if (ViewsLogic.isValueAtKeyValid(currentWaypoint, "address") === true)
-                    text = currentWaypoint["address"]
-            }
-
-            onTextChanged: {
-                suggestionPlace.searchTerm = addressInput.text
-
-                //latitudeInput.enabled = (text.length === 0)
-                //longitudeInput.enabled = latitudeInput.enabled
-                rootView.fillHistoryFiltered(suggestionsModel, addressInput.text, 4)
-            }
+        id: contents
+        spacing: 20
+        anchors {
+            fill: parent
+            margins: 30
         }
 
-        Rectangle
-        {
-            Layout.preferredHeight: parent.height * 0.1
-            anchors.left: parent.left
-            anchors.right: parent.right
-            color: "Transparent"
-
-            Components.TextField
-            {
-                id: latitudeInput
-                width: parent.width * 0.495
-                anchors.left: parent.left
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                placeholderText: "Latitude"
-                maximumLength: 10
-                readOnly: readOnly
-                onTextChanged:
-                {
-                    //addressInput.enabled = (text.length === 0 && longitudeInput.length === 0)
-                }
-
-                Component.onCompleted:
-                {
-                    if (ViewsLogic.isValueAtKeyValid(currentWaypoint, "latitude") === true)
-                        text = currentWaypoint["latitude"]
-                }
-                validator: RegExpValidator { regExp: /^(\-?\d{1,2}(\.\d+)?)$/ }
-            }
-            Components.TextField
-            {
-                id: longitudeInput
-                width: parent.width * 0.495
-                anchors.right: parent.right
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                placeholderText: "Longitude"
-                maximumLength: 10
-                readOnly: readOnly
-                onTextChanged:
-                {
-                    //addressInput.enabled = (text.length === 0 && latitudeInput.length === 0)
-                }
-                Component.onCompleted:
-                {
-                    if (ViewsLogic.isValueAtKeyValid(currentWaypoint, "longitude") === true)
-                        text = currentWaypoint["longitude"]
-                }
-                validator: RegExpValidator { regExp: /^(\-?1?\d{1,2}(\.\d+)?)$/ }
-            }
+        Components.Header {
+            id: header
+            title: "Address"
         }
 
-        Component {
-            id: suggestionDelegate
-
-            Components.Marker {
-                id: suggestion
-                width: suggestionsView.width
-                height: suggestion.paintedHeight * 1.25
-
-                Image {
-                    anchors.left: parent.left
-                    anchors.top: parent.top
-                    anchors.bottom: parent.bottom
-                    anchors.leftMargin: parent.width * 1/8
-                    width: parent.width * 0.05
-                    source: place["place_icon"]
-                }
-
-                centerText: place["place_title"]
-                onClicked: {
-                    choosenPlace = place
-                    longitudeInput.text = choosenPlace["place_longitude"]
-                    latitudeInput.text  = choosenPlace["place_latitude"]
-                    addressInput.text   = choosenPlace["place_title"]
-                }
-            }
+        Components.Separator {
+            isTopSeparator: true
+            Layout.fillWidth: true
+            Layout.preferredHeight: 11
         }
 
-        ListView {
-            id: suggestionsView
-            model: readOnly == false ? suggestionsModel : []
-            delegate: suggestionDelegate
+        Item {
+            Layout.fillWidth: true
             Layout.fillHeight: true
-            anchors.left: parent.left
-            anchors.right: parent.right
+
+            RowLayout {
+                id: addressArea
+                height: 50
+                spacing: 15
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
+
+                Components.TextField {
+                    id: addressTextField
+                    Layout.preferredHeight: 50
+                    Layout.fillWidth: true
+                    placeholderText: "Enter address"
+                    font.pixelSize: Constants.LAMA_PIXELSIZE_MEDIUM
+                    onAccepted: suggestionsView.validate();
+                    onTextChanged: suggestionTimer.restart();
+                }
+
+                Controls.DeleteButton {
+                    Layout.preferredWidth: 50
+                    Layout.preferredHeight: 50
+                    onDeleted: addressTextField.text = "";
+                }
+            }
+
+            Flickable {
+                clip: true
+                contentWidth: width
+                contentHeight: Math.min(height, suggestionArea.height)
+                anchors {
+                    top: addressArea.bottom
+                    left: parent.left
+                    right: parent.right
+                    bottom: parent.bottom
+                    topMargin: 35
+                }
+
+                Column {
+                    id: suggestionArea
+                    spacing: 25
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                    }
+
+                    Components.TextLabel {
+                        visible: addressModel.count > 0
+                        text: "Suggestions"
+                        color: Constants.LAMA_ORANGE
+                        font.pixelSize: Constants.LAMA_PIXELSIZE + 4
+                        font.bold: true
+                    }
+
+                    Components.SuggestionList {
+                        model: addressModel
+                        spacing: 8
+                        hasIcon: false
+                        onSelectionRequest: addressTextField.text = address;
+                        anchors {
+                            left: parent.left
+                            right: parent.right
+                        }
+                    }
+
+                    Components.TextLabel {
+                        visible: placeModel.count > 0
+                        text: "Nearby places"
+                        color: Constants.LAMA_ORANGE
+                        font.pixelSize: Constants.LAMA_PIXELSIZE + 4
+                        font.bold: true
+                    }
+
+                    Components.SuggestionList {
+                        model: placeModel
+                        spacing: 8
+                        onSelectionRequest: addressTextField.text = address;
+                        anchors {
+                            left: parent.left
+                            right: parent.right
+                        }
+                    }
+                }
+            }
         }
-    }
 
-    Components.BottomAction {
-        Controls.Button {
-            centerText: "Validate"
-            anchors.fill: parent
-            onClicked: {
-                if (typeof(choosenPlace) !== "undefined")
-                    rootView.addToHistory(choosenPlace);
+        Components.Separator {
+            isTopSeparator: false
+            Layout.fillWidth: true
+            Layout.preferredHeight: 11
+        }
 
-                var id = rootView.lamaSession.CURRENT_WAYPOINT_ID
-                var longitude = longitudeInput.text
-                var latitude = latitudeInput.text
-                var areCardinalsHere = longitude.length > 0 || latitude.length > 0
-                if (id < 0 // cheating
-                    || (areCardinalsHere && (Math.abs(longitude) > 180 || Math.abs(latitude) > 90)))
-                {
-                    mainModal.title = "Wrong values"
-                    mainModal.message = "Latitude must be between -90 and 90\n"
-                                      + "Longitude must be between -180 and 180"
-                    mainModal.visible = true
-                    return;
-                }
+        Column {
+            spacing: 15
+            anchors {
+                left: parent.left
+                right: parent.right
+            }
 
-                var waypointKind
-                if (id > 0)
-                {
-                    waypointKind = "destinations"
-                    --id;
-                    if (areCardinalsHere)
-                    {
-                        rootView.lamaSession.CURRENT_ITINERARY[waypointKind][id]["longitude"] = longitude
-                        rootView.lamaSession.CURRENT_ITINERARY[waypointKind][id]["latitude"] = latitude
-                    }
-                    rootView.lamaSession.CURRENT_ITINERARY[waypointKind][id]["address"] = addressInput.text
-                }
-                else
-                {
-                    waypointKind = "departure"
-                    if (areCardinalsHere)
-                    {
-                        rootView.lamaSession.CURRENT_ITINERARY[waypointKind]["longitude"] = longitude
-                        rootView.lamaSession.CURRENT_ITINERARY[waypointKind]["latitude"] = latitude
-                    }
-                    rootView.lamaSession.CURRENT_ITINERARY[waypointKind]["address"] = addressInput.text
-                }
-
-                rootView.raiseUserSessionChanged()
-                var currentRoute = rootView.lamaSession.CURRENT_ITINERARY
-                if ("favorite" in currentRoute && currentRoute["favorite"] === true)
-                {
-                    var idx = ViewsLogic.getIndexItineraryKnown(rootView.lamaSession.KNOWN_ITINERARIES, currentRoute)
-                    if (idx >= 0)
-                    {
-                        rootView.lamaSession.KNOWN_ITINERARIES[idx] = currentRoute;
-                        rootView.saveSessionState(rootView.lamaSession)
-                    }
-                }
-                rootView.mainViewBack();
+            Controls.NavigationButton {
+                enabled: addressTextField.text.length > 0
+                anchors.left: parent.left
+                anchors.right: parent.right
+                source: Constants.LAMA_ADDRESS_RESSOURCE
+                text: "Validate"
+                acceptClick: false
+                onNavButtonPressed: suggestionsView.validate();
             }
         }
     }

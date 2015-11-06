@@ -1,26 +1,39 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.1
 import QtQuick.Controls 1.3
-import "qrc:/Controls/"
-import "qrc:/Constants.js" as Constants
+import "qrc:/Components/" as Components
+import "qrc:/Controls/" as Controls
 
-RowLayout {
-    property var sponsorToDisplay
+Item {
+    width: 220
+    height: 252
 
-    signal deleted()
+    property alias username: sponsorName.text
+    property alias email: sponsorGravatar.email
 
-    function raiseDeleted()
-    {
-        deleted()
+    signal selectionRequest();
+
+    Column {
+        id: itemContent
+        anchors.centerIn: parent
+        spacing: 8
+
+        Controls.ImageGravatar {
+            id: sponsorGravatar
+            anchors.horizontalCenter: parent.horizontalCenter
+            pixelSize: 200
+        }
+
+        Components.TextLabel {
+            id: sponsorName
+            width: sponsorGravatar.width
+            horizontalAlignment: Text.AlignHCenter
+            elide: Text.ElideRight
+        }
     }
 
-    Text
-    {
-        id: sponsorName
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.left: parent.left
-        color: "white"
-        font.pointSize: Constants.LAMA_POINTSIZE
-        text: sponsorToDisplay.username
+    MouseArea {
+        anchors.fill: parent
+        onClicked: selectionRequest();
     }
 }

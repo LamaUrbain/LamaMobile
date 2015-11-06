@@ -2,57 +2,45 @@ import QtQuick 2.0
 import QtQuick.Layouts 1.1
 import QtQuick.Controls 1.3
 import "qrc:/Controls/"
+import "qrc:/Components/" as Components
 import "qrc:/Constants.js" as Constants
 
 RowLayout {
-    property int linkedWaypointId: -1
-    property alias waypointDescription: waypointText.centerText
-    property bool deletable: false
-    property bool readOnly: false
-
-    anchors.left: parent.left
-    anchors.right: parent.right
-
-    Component.onCompleted: {
-        if (readOnly == false)
-        {
-            if (deletable === true)
-                deleteLabel.visible = true
-            else
-                deleteLabel.visible = false
-        }
+    id: waypoint
+    height: 50
+    spacing: 15
+    anchors {
+        left: parent.left
+        right: parent.right
     }
 
-    signal deleted()
+    property bool isDeparture: false
+    property string address: ""
 
-    function raiseDeleted()
-    {
-        deleted()
-    }
+    signal editRequest();
+    signal deleteRequest();
 
-    NavigationButton {
+    Components.TextField {
         id: waypointText
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
+        text: address
+        readOnly: true
+        Layout.preferredHeight: 40
         Layout.fillWidth: true
-        navigationTarget: "Suggestions"
-        navigationTargetProperties: {'readOnly': readOnly}
-        onNavButtonPressed:
-        {
-            rootView.lamaSession.CURRENT_WAYPOINT_ID = linkedWaypointId
+        placeholderText: ""
+        font.pixelSize: Constants.LAMA_PIXELSIZE_MEDIUM
+        onTextChanged: cursorPosition = 0;
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: editRequest();
         }
     }
 
     DeleteButton {
         id: deleteLabel
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        Layout.minimumWidth: parent.width * 0.1
-        Layout.maximumWidth: parent.width * 0.15
-        Layout.preferredWidth: parent.width * 0.12
-        visible: readOnly == false
-        onDeleted: {
-            raiseDeleted()
-        }
+        visible: !isDeparture
+        Layout.preferredWidth: 50
+        Layout.preferredHeight: 50
+        onDeleted: deleteRequest();
     }
 }

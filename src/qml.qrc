@@ -4,7 +4,7 @@
         <file>Constants.js</file>
         <file>UserSession.js</file>
         <file>APILogic.js</file>
-        <file>MapLogic.js</file>
+        <file>UILogic.js</file>
     </qresource>
     <qresource prefix="/Assets">
         <file>Images/vehicleMean.png</file>
@@ -37,16 +37,16 @@
         <file>Images/26.png</file>
         <file>Images/27.png</file>
         <file>Images/21b.png</file>
+        <file>Images/logo_small.png</file>
         <file>Images/spinnerIcon.png</file>
         <file>Images/arrival.png</file>
         <file>Images/departure.png</file>
         <file>Images/map_indicator_selected.png</file>
         <file>Images/map_indicator.png</file>
+        <file>Images/shadow_small.png</file>
     </qresource>
     <qresource prefix="/Components">
-        <file>Marker.qml</file>
         <file>Header.qml</file>
-        <file>BottomAction.qml</file>
         <file>FavoriteItinerariesItem.qml</file>
         <file>TextField.qml</file>
         <file>Waypoint.qml</file>
@@ -56,24 +56,37 @@
         <file>SponsorItem.qml</file>
         <file>DeleteButton.qml</file>
         <file>PopOver.qml</file>
-        <file>Triangle.qml</file>
-        <file>MapPieMenu.qml</file>
         <file>MapCircle.qml</file>
+        <file>TextLabel.qml</file>
+        <file>ApplicationFont.qml</file>
+        <file>MarkerArea.qml</file>
+        <file>MarkerInput.qml</file>
+        <file>MaskBackground.qml</file>
+        <file>Separator.qml</file>
+        <file>Itinerary.qml</file>
+        <file>Session.qml</file>
+        <file>SuggestionList.qml</file>
+        <file>DateField.qml</file>
+        <file>FormDateEntry.qml</file>
     </qresource>
     <qresource prefix="/Controls">
         <file>BackButton.qml</file>
-        <file>TransportCheckedBox.qml</file>
         <file>Button.qml</file>
         <file>NavigationButton.qml</file>
         <file>DeleteButton.qml</file>
-        <file>IconButton.qml</file>
         <file>ImageButton.qml</file>
         <file>ShareButton.qml</file>
         <file>MapItem.qml</file>
         <file>ImageGravatar.qml</file>
+        <file>MenuToggle.qml</file>
+        <file>MenuButton.qml</file>
+        <file>MenuCategory.qml</file>
+        <file>HomeButton.qml</file>
+        <file>ItineraryToggle.qml</file>
+        <file>FacebookButton.qml</file>
+        <file>TwitterButton.qml</file>
     </qresource>
     <qresource prefix="/Views">
-        <file>AlertInformation.qml</file>
         <file>FavoriteItineraries.qml</file>
         <file>MainSearch.qml</file>
         <file>Map.qml</file>
@@ -81,12 +94,14 @@
         <file>Suggestions.qml</file>
         <file>UserAccount.qml</file>
         <file>UserAuth.qml</file>
-        <file>UserFeedback.qml</file>
         <file>UserRegistration.qml</file>
-        <file>UserForgottenPassword.qml</file>
         <file>Modal.qml</file>
         <file>ViewsLogic.js</file>
         <file>SponsoredPaths.qml</file>
-        <file>WebView.qml</file>
+        <file>HomeSearch.qml</file>
+        <file>Home.qml</file>
+        <file>MainSearchReadOnly.qml</file>
+        <file>UserProfile.qml</file>
+        <file>Incidents.qml</file>
     </qresource>
 </RCC>

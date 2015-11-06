@@ -1,40 +1,50 @@
-import QtQuick 2.0
+import QtQuick 2.5
 import "qrc:/Controls/" as Controls
 import "qrc:/Constants.js" as Constants
 
 Row {
     id: header
 
+    spacing: 15
+
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: parent.top
 
-    height: parent.height * 0.075
+    height: backBtn.height
 
-    anchors.leftMargin: parent.height * 0.005
-    anchors.rightMargin: parent.height * 0.005
-    anchors.topMargin: parent.height * 0.005
-
+    property bool autoBack: true
     property string title
+    property string titleSecondary
+
     signal backClicked();
 
     z: 10
 
     Controls.BackButton {
         id: backBtn
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        width: parent.width * 0.2
-        color: Constants.LAMA_ORANGE
-        onClicked: backClicked()
+        autoBack: parent.autoBack
+        onClicked: backClicked();
     }
 
-    Marker {
-        id: labelTitle
-        centerText: header.title
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        width: parent.width * 0.8
-        color: Constants.LAMA_ORANGE
+    Row {
+        id: labelArea
+        height: labelTitle.height
+        anchors.verticalCenter: parent.verticalCenter
+
+        TextLabel {
+            id: labelTitle
+            text: header.title
+            color: Constants.LAMA_ORANGE
+            font.pixelSize: Constants.LAMA_PIXELSIZE + 4
+            font.bold: true
+        }
+
+        TextLabel {
+            text: header.titleSecondary
+            color: Constants.LAMA_YELLOW
+            font.pixelSize: Constants.LAMA_PIXELSIZE + 4
+            font.bold: true
+        }
     }
 }

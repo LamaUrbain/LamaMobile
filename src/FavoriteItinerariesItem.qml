@@ -4,44 +4,53 @@ import QtQuick.Controls 1.3
 import "qrc:/Controls/"
 import "qrc:/Constants.js" as Constants
 
-RowLayout {
-    property alias favoriteDescription: favoriteText.centerText
-    property var linkedItinerary: Constants.LAMA_BASE_ITINERARY_OBJ
+Column {
+    id: favoriteItem
+    spacing: 8
+
+    property alias name: favoriteText.text
+    property int itineraryId: -1
     property bool readOnly: false
 
-    signal deleted()
+    signal displayRequest();
+    signal deleteRequest();
 
-    id: favoriteItineraryItem
-
-    function raiseDeleted()
-    {
-        deleted()
-    }
-
-    NavigationButton {
+    MenuCategory {
         id: favoriteText
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        Layout.fillWidth: true
-        navigationTarget: "MainSearch"
-        navigationTargetProperties: {'readOnly': readOnly}
-        onNavButtonPressed:
-        {
-            rootView.lamaSession.CURRENT_ITINERARY = linkedItinerary
-            //rootView.raiseUserSessionChanged()
+        height: 35
+        anchors {
+            left: parent.left
+            right: parent.right
         }
     }
 
-    DeleteButton {
-        id: deleteLabel
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        Layout.minimumWidth: parent.width * 0.1
-        Layout.maximumWidth: parent.width * 0.15
-        Layout.preferredWidth: parent.width * 0.12
-        visible: readOnly == false
-        onDeleted: {
-            raiseDeleted()
+    Row {
+        spacing: 8
+
+        Button {
+            width: 44
+            height: width
+            source: Constants.LAMA_SEE_RESSOURCE
+            onClicked: displayRequest();
+        }
+
+        DeleteButton {
+            visible: !readOnly
+            width: 44
+            height: width
+            onDeleted: deleteRequest();
+        }
+
+        FacebookButton {
+            width: 44
+            height: width
+            itineraryId: favoriteItem.itineraryId
+        }
+
+        TwitterButton {
+            width: 44
+            height: width
+            itineraryId: favoriteItem.itineraryId
         }
     }
 }
