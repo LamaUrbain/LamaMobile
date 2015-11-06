@@ -71,7 +71,6 @@ private slots:
 
     // Events
     void testEvents();
-    void testSendFeedback();
 
 private:
     UserServices _userServices;

@@ -1031,20 +1031,20 @@ void TestApi::testEvents()
 {
     TestWaiter waiter;
 
-    _eventServices.reportIncident("testUser",
+    _eventServices.reportIncident("test Event 1",
                                   "2015-03-31T08:00:00Z", "2015-03-31T09:00:00Z",
                                   "48.832672, 2.288375", "",
                                   _getBasicCallBack(waiter));
     waiter.waitForDone();
 
-    _eventServices.reportIncident("testUser",
+    _eventServices.reportIncident("test Event 2",
                                   "2015-03-31T08:00:00Z", "",
                                   "48.832672, 2.288375", "",
                                   _getBasicCallBack(waiter));
     waiter.waitForDone();
 
     // Testing automaticaly deduction of begin date
-    _eventServices.reportIncident("testUser",
+    _eventServices.reportIncident("test Event 3",
                                   "", "",
                                   "48.832672, 2.288375", "",
                                   [&waiter] (int errorType, QString jsonStr) mutable
@@ -1055,15 +1055,6 @@ void TestApi::testEvents()
     waiter.waitForDone();
 
     _eventServices.getIncidentList(_getBasicCallBack(waiter));
-    waiter.waitForDone();
-}
-
-void TestApi::testSendFeedback()
-{
-    TestWaiter waiter;
-
-    _eventServices.sendFeedback("testUser", "5", "Lama Urbain is freaking usefull !!",
-                                  _getBasicCallBack(waiter));
     waiter.waitForDone();
 }
 
