@@ -11,12 +11,8 @@ var LAMA_PIXELSIZE_MEDIUM = 20;
 var LAMA_PIXELSIZE_SMALL = 16;
 
 var LAMA_OSM_USERAGENT = "LamaUrbain"
-
-// encodeURIComponent ....
 var LAMA_URL_FACEBOOK_SHARE = 'https://www.facebook.com/sharer/sharer.php?u=http%3A//lamaurba.in/itinerary/'
-// encodeURIComponent ....
 var LAMA_URL_TWITTER_SHARE = 'http://twitter.com/home/?status=Check%20out%20out%20this%20itinerary%21%20http%3A//lamaurba.in/itinerary/'
-// encodeURIComponent ....
 var LAMA_URL_TWITTER_HASHTAGS = '%20%23openstreetmap%20%40lama_urbain'
 var LAMA_DEFAULT_URL = "http://lamaurba.in/"
 var LAMA_GRAVATAR_URL = "http://www.gravatar.com/avatar/"
@@ -45,14 +41,8 @@ var LAMA_TWITTER_RESSOURCE = "qrc:/Assets/Images/25.png";
 var LAMA_SAVE_RESSOURCE = "qrc:/Assets/Images/21.png";
 var LAMA_SAVED_RESSOURCE = "qrc:/Assets/Images/21b.png";
 var LAMA_SEE_RESSOURCE = "qrc:/Assets/Images/3.png";
-
-var LAMA_BUS_RESSOURCE = "qrc:/Assets/Images/6.png";
-var LAMA_TRAIN_RESSOURCE = "qrc:/Assets/Images/22.png";
-var LAMA_CAR_RESSOURCE = "qrc:/Assets/Images/6.png";
-var LAMA_ONFOOT_RESSOURCE = "qrc:/Assets/Images/27.png";
+var LAMA_ARROW_RESSOURCE = "qrc:/Assets/Images/arrow.png";
 var LAMA_PROFILE_RESSOURCE = "qrc:/Assets/Images/26.png";
-var LAMA_TRAM_RESSOURCE = "qrc:/Assets/Images/24.png";
-var LAMA_BIKE_RESSOURCE = "qrc:/Assets/Images/18.png";
 var LAMA_CROSS_RESSOURSE = "qrc:/Assets/Images/2.png";
 var LAMA_ADD_RESSOURCE = "qrc:/Assets/Images/8.png";
 var LAMA_DEPARTURE_RESSOURCE = "qrc:/Assets/Images/departure.png";

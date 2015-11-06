@@ -44,6 +44,7 @@
         <file>Images/map_indicator_selected.png</file>
         <file>Images/map_indicator.png</file>
         <file>Images/shadow_small.png</file>
+        <file>Images/arrow.png</file>
     </qresource>
     <qresource prefix="/Components">
         <file>Header.qml</file>

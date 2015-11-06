@@ -19,7 +19,7 @@ Components.MarkerInput {
         source: parent.source
         fillMode: Image.PreserveAspectFit
         anchors.centerIn: parent
-        width: Math.floor(parent.width / 2)
+        width: Math.floor(Math.min(parent.width, parent.height) / 2)
         height: width
         mipmap: true
     }

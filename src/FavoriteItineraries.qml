@@ -50,22 +50,35 @@ Components.Background {
             Layout.preferredHeight: 11
         }
 
-        ListView {
-            clip: true
+        Item {
             Layout.fillWidth: true
             Layout.fillHeight: true
-            model: favoriteModel
-            spacing: 8
-            delegate: Components.FavoriteItinerariesItem {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                name: model.name
-                readOnly: favoritesView.readOnly
-                itineraryId: model.id
-                onDeleteRequest: rootView.deleteItinerary(model.id, reloadFavorites);
-                onDisplayRequest: {
-                    rootView.displayItinerary(model.id);
-                    rootView.mainViewTo("Map", false, null);
+
+            ListView {
+                clip: true
+                model: favoriteModel
+                spacing: 10
+                anchors {
+                    fill: parent
+                    leftMargin: -15
+                    rightMargin: -15
+                    topMargin: -5
+                }
+                delegate: Components.FavoriteItinerariesItem {
+                    anchors {
+                        left: parent.left
+                        right: parent.right
+                        leftMargin: 15
+                        rightMargin: 15
+                    }
+                    name: model.name
+                    readOnly: favoritesView.readOnly
+                    itineraryId: model.id
+                    onDeleteRequest: rootView.deleteItinerary(model.id, reloadFavorites);
+                    onDisplayRequest: {
+                        rootView.displayItinerary(model.id);
+                        rootView.mainViewTo("Map", false, null);
+                    }
                 }
             }
         }
