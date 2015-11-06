@@ -1033,13 +1033,13 @@ void TestApi::testEvents()
     TestWaiter waiter;
 
     _eventServices.reportIncident("test Event 1",
-                                  "2015-03-31T08:00:00Z", "2015-03-31T09:00:00Z",
+                                  "2015-11-06 19:08:47", "2015-11-06 21:08:47",
                                   "48.832672, 2.288375", "",
                                   _getBasicCallBack(waiter));
     waiter.waitForDone();
 
     _eventServices.reportIncident("test Event 2",
-                                  "2015-03-31T08:00:00Z", "",
+                                  "2015-11-06 19:08:47", "",
                                   "48.832672, 2.288375", "",
                                   _getBasicCallBack(waiter));
     waiter.waitForDone();

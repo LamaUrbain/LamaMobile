@@ -29,7 +29,7 @@ void EventServices::reportIncident(QString eventName, QString dateBegin, QString
         return;
     }
 
-    QUrl url(QString("%1/incidents/").arg(serverAddress));
+    QUrl url(QString("%1/incidents").arg(serverAddress));
     QUrlQuery query;
     query.addQueryItem("name", eventName);
     query.addQueryItem("position", position);
