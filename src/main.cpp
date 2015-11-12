@@ -7,6 +7,7 @@
 #include "itineraryservices.h"
 #include "userservices.h"
 #include "geolocator.h"
+#include "eventservices.h"
 
 int main(int argc, char *argv[])
 {
@@ -18,11 +19,13 @@ int main(int argc, char *argv[])
     GeoLocator geolocator;
     ItineraryServices itineraryServices;
     UserServices userServices;
+    EventServices eventsServices;
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("geolocator", &geolocator);
     engine.rootContext()->setContextProperty("itineraryServices", &itineraryServices);
     engine.rootContext()->setContextProperty("userServices", &userServices);
+    engine.rootContext()->setContextProperty("eventService", &eventsServices);
     engine.load(QUrl(QStringLiteral("qrc:///main.qml")));
 
     return app.exec();

@@ -27,6 +27,7 @@ Window {
 
     Components.Itinerary { id: currentItinerary }
     Components.Session { id: session }
+    ListModel { id: events }
     ListModel { id: sponsors }
 
     Views.Map {

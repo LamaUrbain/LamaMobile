@@ -278,3 +278,20 @@ function logout(then)
 {
     userServices.deleteToken(finish(then));
 }
+
+function getEvents(then)
+{
+    eventService.getIncidentList(finish(then))
+}
+
+
+function reportEvent(username, begin, end, position, address, then)
+{
+    eventService.reportIncident(
+                username,
+                begin,
+                end,
+                position,
+                address,
+                finish(then))
+}

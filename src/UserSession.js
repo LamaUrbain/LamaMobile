@@ -117,6 +117,7 @@ function initialize()
     });
 
     loadSponsors();
+    loadEvents();
 
     if (rootView.session.username && rootView.session.password)
         authenticate(rootView.session.username, rootView.session.password);
@@ -257,4 +258,32 @@ function loadSponsors()
     };
 
     Api.getUsers("", "true", endRequest(callback, false));
+}
+
+function loadEvents()
+{
+    var callback = function(obj)
+    {
+        events.clear();
+
+        if (obj && obj.length > 0)
+        {
+            for (var i = 0; i < obj.length; ++i)
+            {
+                var event = obj[i];
+                events.append({name: event.name, begin: event.begin, end: events.end, position: event.position})
+            }
+        }
+    }
+    Api.getEvents(callback)
+}
+
+function reportEvent(username, begin, end, position, address)
+{
+    var callback = function(obj)
+    {
+        console.log(obj)
+    }
+
+    Api.reportEvent(username, begin, end, position, address, callback)
 }
