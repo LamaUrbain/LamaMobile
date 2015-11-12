@@ -69,6 +69,7 @@
         <file>SuggestionList.qml</file>
         <file>DateField.qml</file>
         <file>FormDateEntry.qml</file>
+        <file>EventPoints.qml</file>
     </qresource>
     <qresource prefix="/Controls">
         <file>BackButton.qml</file>

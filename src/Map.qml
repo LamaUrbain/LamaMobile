@@ -10,6 +10,7 @@ import "qrc:/Views" as Views
 import "qrc:/Components/" as Components
 import "qrc:/Controls/" as Controls
 import "qrc:/Constants.js" as Constants
+import "qrc:/Views/ViewsLogic.js" as ViewsLogic
 
 Item {
     id: mapView
@@ -80,6 +81,13 @@ Item {
                     }
                 };
                 rootView.getMapAddress(coords, callback(coords));
+            }
+        }
+
+        Connections {
+            target: events
+            onEventChanged: {
+                rootView.displayEvent(events, mapComponent)
             }
         }
 
