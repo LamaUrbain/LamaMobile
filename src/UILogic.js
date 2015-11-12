@@ -277,10 +277,7 @@ function displayEvent(events, parentMap)
         }
 
         var attrs = {
-            coordinate: {
-                longitude: event.position.longitude,
-                latitude: event.position.latitude,
-            }
+            coordinate: Qt.point(event.position.longitude, event.position.latitude)
         }
 
         console.debug("placing event", event.name, "at", event.position.latitude, ",", event.position.longitude)
