@@ -232,19 +232,27 @@ function moveMapDestination(position, coords)
     getMapAddress(coords, callback(position));
 }
 
-function reportEvent(username, begin, end, position, address)
+function reportEvent(username, begin, end, address)
 {
     var callback = function(name, begin, end, address)
     {
         return function (obj)
         {
+            console.log("reportEvent", obj)
             if (obj)
             {
-                console.log(obj.latitude, obj.longitude)
-                var position = JSON.toString({
-                    longitude: obj.longitude,
-                    latitude: obj.latitude
+                var latlong = obj["address"].split(", ")
+                var lat = latlong[0]
+                var long = latlong[1]
+
+                console.log("reportEvent", obj["address"], lat, long)
+
+                var position = JSON.stringify({
+                    longitude: lat,
+                    latitude: long,
                 })
+                console.log("reportEvent: position", position)
+
                 var callback = function(status, obj)
                 {
                     if (!status)
@@ -260,6 +268,7 @@ function reportEvent(username, begin, end, position, address)
         }
     };
 
+    console.log("reportEvent: address", address)
     Api.prepare(address, callback(username, begin, end, address))
 }
 

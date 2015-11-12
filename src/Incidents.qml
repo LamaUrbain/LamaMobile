@@ -43,6 +43,15 @@ Components.Background {
             }
 
             Components.FormDateEntry {
+                id: beginForm
+                fieldName: "Begin date"
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                }
+            }
+
+            Components.FormDateEntry {
                 id: endForm
                 fieldName: "End date"
                 anchors {
@@ -75,7 +84,8 @@ Components.Background {
             acceptClick: false
             onNavButtonPressed:
             {
-                rootView.reportEvent(nameForm.textFieldText, "", endForm.textFieldText, addressForm.textFieldText)
+                console.log(addressForm)
+                rootView.reportEvent(nameForm.textFieldText, beginForm.textFieldText, endForm.textFieldText, addressForm.textFieldText);
             }
         }
     }
