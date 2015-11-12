@@ -19,26 +19,3 @@ function checkPassword(pass, passConfirm)
 {
     return (pass.length < MinLength * 2 || pass !== passConfirm);
 }
-
-function reportEvent(name, begin, end, address)
-{
-    var callback = function(name, begin, end, address)
-    {
-        return function (obj)
-        {
-            if (obj)
-            {
-                console.log(obj.latitude, obj.longitude)
-                var position = JSON.toString({
-                    longitude: obj.longitude,
-                    latitude: obj.latitude
-                })
-                UserSession.reportEvent(name, begin, end, position, address)
-            }
-            else
-                console.log("geocoging failed.")
-        }
-    };
-
-    Api.prepare(address, callback(name, begin, end, address))
-}

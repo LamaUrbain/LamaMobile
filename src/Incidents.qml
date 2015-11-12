@@ -75,7 +75,7 @@ Components.Background {
             acceptClick: false
             onNavButtonPressed:
             {
-                ViewsLogic.reportEvent(nameForm.textFieldText, "", endForm.textFieldText, addressForm.textFieldText)
+                rootView.reportEvent(nameForm.textFieldText, "", endForm.textFieldText, addressForm.textFieldText)
             }
         }
     }

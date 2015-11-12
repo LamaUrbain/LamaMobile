@@ -262,10 +262,11 @@ function loadSponsors()
 
 function loadEvents()
 {
-    var callback = function(obj)
+    var callback = function(status, obj)
     {
         events.clear();
 
+        console.log("load", obj.length, "events into model", events)
         if (obj && obj.length > 0)
         {
             for (var i = 0; i < obj.length; ++i)
@@ -274,16 +275,7 @@ function loadEvents()
                 events.append({name: event.name, begin: event.begin, end: events.end, position: event.position})
             }
         }
+        events.eventChanged();
     }
     Api.getEvents(callback)
-}
-
-function reportEvent(username, begin, end, position, address)
-{
-    var callback = function(obj)
-    {
-        console.log(obj)
-    }
-
-    Api.reportEvent(username, begin, end, position, address, callback)
 }

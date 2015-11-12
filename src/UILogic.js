@@ -231,3 +231,60 @@ function moveMapDestination(position, coords)
 
     getMapAddress(coords, callback(position));
 }
+
+function reportEvent(username, begin, end, position, address)
+{
+    var callback = function(name, begin, end, address)
+    {
+        return function (obj)
+        {
+            if (obj)
+            {
+                console.log(obj.latitude, obj.longitude)
+                var position = JSON.toString({
+                    longitude: obj.longitude,
+                    latitude: obj.latitude
+                })
+                var callback = function(status, obj)
+                {
+                    if (!status)
+                    {
+                        console.log("event reporting failed")
+                    }
+                }
+
+                Api.reportEvent(username, begin, end, position, address, callback)
+            }
+            else
+                console.log("geocoging failed.")
+        }
+    };
+
+    Api.prepare(address, callback(username, begin, end, address))
+}
+
+function displayEvent(events, parentMap)
+{
+    console.log("display", events.count, "events of model", events)
+    for (var i = 0; i < events.count; ++i)
+    {
+        var event = events.get(i)
+
+        if (event === undefined)
+        {
+            console.debug("events[",i,"] is undefined")
+            continue;
+        }
+
+        var attrs = {
+            coordinate: {
+                longitude: event.position.longitude,
+                latitude: event.position.latitude,
+            }
+        }
+
+        console.debug("placing event", event.name, "at", event.position.latitude, ",", event.position.longitude)
+        var component = Qt.createComponent("qrc:/Components/EventPoints.qml")
+        component.createObject(parentMap, attrs)
+    }
+}

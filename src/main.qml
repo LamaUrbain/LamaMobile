@@ -129,6 +129,9 @@ Window {
     function logout() { UserSession.logout(); }
     function editAccount(password, email) { UserSession.editAccount(password, email); }
     function loadFavorites(username, then) { UserSession.loadFavorites(username, then); }
+    function reportEvent(name, begin, end, address) { UiLogic.reportEvent(name, begin, end, address); }
+    function displayEvent(events, parentMap) { UiLogic.displayEvent(events, parentMap); }
+
 
     Component.onCompleted: {
         // Avoid blocking the UI thread
