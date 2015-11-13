@@ -40,7 +40,6 @@ Components.MaskBackground {
 
         Components.LoadingRing {
             anchors.centerIn: parent
-            ringColor: Constants.LAMA_YELLOW
             visible: modalView.visible && modalView.loading
         }
 

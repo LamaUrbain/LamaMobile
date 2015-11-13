@@ -10,6 +10,14 @@ Item {
     property alias dateField: dateField
     property alias text: dateField.text
 
+    function dateToString(date)
+    {
+        var str = date.toISOString();
+        str = str.replace("T", " ");
+        str = str.substring(0, Math.max(0, str.length - 5));
+        return str;
+    }
+
     Calendar {
         id: datePicker
         visible: false
@@ -22,7 +30,7 @@ Item {
         onDoubleClicked: {
             selectedDate = date;
             field.selectedDate = selectedDate;
-            field.dateField.text = selectedDate;
+            field.dateField.text = dateToString(selectedDate);
             visible = false;
         }
         onVisibleChanged: {

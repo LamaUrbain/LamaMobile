@@ -44,6 +44,7 @@ Components.Background {
 
             Components.FormDateEntry {
                 id: beginForm
+                z: 2
                 fieldName: "Begin date"
                 anchors {
                     left: parent.left
@@ -53,6 +54,7 @@ Components.Background {
 
             Components.FormDateEntry {
                 id: endForm
+                z: 1
                 fieldName: "End date"
                 anchors {
                     left: parent.left

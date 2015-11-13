@@ -284,7 +284,6 @@ function getEvents(then)
     eventService.getIncidentList(finish(then))
 }
 
-
 function reportEvent(username, begin, end, position, address, then)
 {
     eventService.reportIncident(

@@ -1,6 +1,4 @@
 .import QtQml 2.2 as Qml
-.import "qrc:/APILogic.js" as Api
-.import "qrc:/UserSession.js" as UserSession
 
 var MinLength = 2;
 
