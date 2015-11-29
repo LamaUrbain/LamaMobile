@@ -53,6 +53,10 @@ MapWidgetPrivate::MapWidgetPrivate(MapWidget *ptr)
 
     _tilesNumber = pow(2.0, _scale);
     updateCenterValues();
+
+    _updateTimer.setInterval(200);
+    _updateTimer.setSingleShot(true);
+    QObject::connect(&_updateTimer, SIGNAL(timeout()), q, SLOT(update()));
 }
 
 MapWidgetPrivate::~MapWidgetPrivate()
@@ -71,9 +75,9 @@ void MapWidgetPrivate::displayChanged()
 {
     if (!_changed)
     {
-        Q_Q(MapWidget);
         _changed = true;
-        q->update();
+        if (!_updateTimer.isActive())
+            _updateTimer.start();
     }
 }
 
@@ -191,6 +195,9 @@ void MapWidgetPrivate::mouseMove(const QPoint &pos)
         q->offsetXChanged();
         q->offsetYChanged();
         q->update();
+
+        if (_updateTimer.isActive())
+            _updateTimer.stop();
     }
 }
 

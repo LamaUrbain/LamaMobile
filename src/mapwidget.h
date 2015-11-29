@@ -4,6 +4,7 @@
 #include <QImage>
 #include <QQuickItem>
 #include <QSGSimpleTextureNode>
+#include <QTimer>
 
 #ifndef M_PI
 #define M_PI    (3.14159265359)

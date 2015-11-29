@@ -108,6 +108,7 @@ private:
     QSGTexture *_texture;
     QList<QPoint> _missing;
     MapGetter *_mapGetter;
+    QTimer _updateTimer;
 };
 
 inline uint qHash(const QPoint &key)
