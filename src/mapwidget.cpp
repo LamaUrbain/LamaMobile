@@ -77,6 +77,15 @@ void MapWidgetPrivate::displayChanged()
     }
 }
 
+void MapWidgetPrivate::geometryChanged()
+{
+    Q_Q(MapWidget);
+    updateCenter();
+    updateCenterValues();
+    q->mapScaleChanged();
+    displayChanged();
+}
+
 void MapWidgetPrivate::addTile(const MapTile &tile)
 {
     if (!tile.pixmap.isNull() && tile.pixmap.width() > 0 && tile.pixmap.height() > 0)
@@ -866,7 +875,7 @@ void MapWidget::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeom
     if (newGeometry.size() != oldGeometry.size())
     {
         Q_D(MapWidget);
-        d->displayChanged();
+        d->geometryChanged();
     }
     QQuickItem::geometryChanged(newGeometry, oldGeometry);
 }

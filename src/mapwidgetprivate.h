@@ -20,6 +20,7 @@ public:
 
     void initialize();
     void displayChanged();
+    void geometryChanged();
 
     void addTile(const MapTile &tile);
     void removeTile(const MapTile &tile);
