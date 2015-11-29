@@ -46,6 +46,7 @@ MapGetter::MapGetter(QObject *parent)
     {
         Getter *getter = new Getter;
         connect(&getter->_manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(onRequestFinished(QNetworkReply*)));
+        connect(this, SIGNAL(tileReceived()), this, SLOT(onTilesRequired()), Qt::QueuedConnection);
         _getters.append(getter);
     }
 }
@@ -144,6 +145,8 @@ void MapGetter::onTilesRequired()
         request.setRawHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0");
         QNetworkReply *reply = getter->_manager.get(request);
 
+        _widget->removePendingTile(tile.scale, tile.pos);
+
         if (reply)
         {
             tile.reply = reply;
@@ -151,6 +154,9 @@ void MapGetter::onTilesRequired()
             _pending.append(tile);
             getter->_pending.append(tile);
         }
+
+        onTilesRequired();
+        return;
     }
 
     foreach (MapOverlayExtension *ext, _extensions)
@@ -178,6 +184,8 @@ void MapGetter::onTilesRequired()
             request.setRawHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0");
             QNetworkReply *reply = getter->_manager.get(request);
 
+            ext->removePendingTile(tile.scale, tile.pos);
+
             if (reply)
             {
                 tile.reply = reply;
@@ -185,6 +193,9 @@ void MapGetter::onTilesRequired()
                 _pending.append(tile);
                 getter->_pending.append(tile);
             }
+
+            onTilesRequired();
+            return;
         }
     }
 }
@@ -235,7 +246,8 @@ void MapGetter::onRequestFinished(QNetworkReply *reply)
 
                 _pending.removeAll(info);
                 getter->_pending.removeAll(info);
-                onTilesRequired();
+
+                emit tileReceived();
 
                 _replies.removeAll(reply);
                 reply->deleteLater();

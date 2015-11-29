@@ -1,5 +1,8 @@
 #include <cmath>
 #include <QPainter>
+#include <QSGSimpleTextureNode>
+#include <QSGTexture>
+#include <QQuickWindow>
 #include "mapwidget.h"
 #include "mapwidgetprivate.h"
 #include "mapgetter.h"
@@ -40,14 +43,13 @@ MapWidgetPrivate::MapWidgetPrivate(MapWidget *ptr)
       _id(-1),
       _changed(true),
       _currentWheel(0),
+      _texture(NULL),
       _mapGetter(new MapGetter)
 {
     Q_Q(MapWidget);
 
     q->setAcceptedMouseButtons(Qt::LeftButton);
-    q->setRenderTarget(QQuickPaintedItem::FramebufferObject);
-    q->setOpaquePainting(true);
-    q->setFillColor(Qt::white);
+    q->setFlag(QQuickItem::ItemHasContents);
 
     _tilesNumber = pow(2.0, _scale);
     updateCenterValues();
@@ -67,9 +69,12 @@ void MapWidgetPrivate::initialize()
 
 void MapWidgetPrivate::displayChanged()
 {
-    Q_Q(MapWidget);
-    _changed = true;
-    q->update();
+    if (!_changed)
+    {
+        Q_Q(MapWidget);
+        _changed = true;
+        q->update();
+    }
 }
 
 void MapWidgetPrivate::addTile(const MapTile &tile)
@@ -77,26 +82,22 @@ void MapWidgetPrivate::addTile(const MapTile &tile)
     if (!tile.pixmap.isNull() && tile.pixmap.width() > 0 && tile.pixmap.height() > 0)
     {
         _tiles[tile.scale][tile.pos] = tile;
-        displayChanged();
+        if (tile.scale == _scale && isTileVisible(tile.pos))
+            displayChanged();
     }
 }
 
 void MapWidgetPrivate::removeTile(const MapTile &tile)
 {
     _tiles[tile.scale].remove(tile.pos);
-    displayChanged();
+    if (tile.scale == _scale && isTileVisible(tile.pos))
+        displayChanged();
 }
 
-void MapWidgetPrivate::paint(QPainter *painter)
+void MapWidgetPrivate::removePendingTile(int scale, const QPoint &pos)
 {
-    Q_Q(const MapWidget);
-
-    if (painter && q->width() > 0 && q->height() > 0 && _scale > 0)
-    {
-        if (_changed)
-            generateCache();
-        painter->drawImage(_scrollOffset, _cache);
-    }
+    Q_UNUSED(scale);
+    _missing.removeOne(pos);
 }
 
 quint8 MapWidgetPrivate::getMapScale() const
@@ -377,6 +378,49 @@ void MapWidgetPrivate::updateCenter()
     q->offsetYChanged();
 }
 
+QSGNode *MapWidgetPrivate::updatePaintNode(QSGNode *oldNode, QQuickItem::UpdatePaintNodeData *nodeData)
+{
+    Q_Q(const MapWidget);
+    Q_UNUSED(nodeData);
+
+    int w = q->width();
+    int h = q->height();
+
+    if (w > 0 && h > 0 && _scale > 0)
+    {
+        QSGTransformNode *node = static_cast<QSGTransformNode *>(oldNode);
+
+        if (!node)
+            node = new QSGTransformNode;
+
+        QSGSimpleTextureNode *textureNode = static_cast<QSGSimpleTextureNode *>(node->firstChild());
+
+        if (!textureNode)
+        {
+            textureNode = new QSGSimpleTextureNode;
+            node->appendChildNode(textureNode);
+        }
+
+        if (_changed)
+        {
+            generateCache();
+
+            if (_texture)
+                delete _texture;
+
+            _texture = q->window()->createTextureFromImage(_cache, QQuickWindow::TextureCanUseAtlas);
+            textureNode->setTexture(_texture);
+            textureNode->setFiltering(QSGTexture::Nearest);
+            textureNode->setRect(0, 0, w + MAP_EXTRA_SIZE, h + MAP_EXTRA_SIZE);
+        }
+
+        node->setMatrix(QMatrix4x4(QTransform::fromTranslate(_scrollOffset.x(), _scrollOffset.y())));
+        return node;
+    }
+
+    return oldNode;
+}
+
 void MapWidgetPrivate::generateCache()
 {
     Q_Q(MapWidget);
@@ -387,7 +431,10 @@ void MapWidgetPrivate::generateCache()
     QPoint centerPix(size.width() / 2, size.height() / 2);
 
     if (_cache.size() != size)
+    {
         _cache = MapPixmap(size, QImage::Format_RGB32);
+        _cache.fill(Qt::lightGray);
+    }
 
     QPainter painter(&_cache);
 
@@ -452,6 +499,28 @@ void MapWidgetPrivate::addMissingTiles(const QPoint &center, const QSize &size, 
 void MapWidgetPrivate::removeMissingTile(const QPoint &pos)
 {
     _missing.removeOne(pos);
+}
+
+bool MapWidgetPrivate::isTileVisible(const QPoint &tile) const
+{
+    if (tile.x() < 0 || tile.y() < 0)
+        return false;
+
+    Q_Q(const MapWidget);
+    QSize size(q->width() + MAP_EXTRA_SIZE, q->height() + MAP_EXTRA_SIZE);
+    QPoint centerPx = QPoint(size.width() / 2, size.height() / 2) - _centerOffset;
+
+    int leftNbr = (int)ceil(centerPx.x() / 256.0);
+    int rightNbr = (int)ceil((size.width() - centerPx.x()) / 256.0);
+    int topNbr = (int)ceil(centerPx.y() / 256.0);
+    int botNbr = (int)ceil((size.height() - centerPx.y()) / 256.0);
+
+    int tileX = tile.x() - qMax(0, _centerPos.x() - leftNbr);
+    int tileY = tile.y() - qMax(0, _centerPos.y() - topNbr);
+
+    return tileX > 0 && tileY > 0
+            && tileX < qMin(leftNbr + rightNbr, _tilesNumber)
+            && tileY < qMin(topNbr + botNbr, _tilesNumber);
 }
 
 QPointF MapWidgetPrivate::posFromCoords(const QPointF &coords) const
@@ -624,7 +693,7 @@ MapTile::~MapTile()
 }
 
 MapWidget::MapWidget(QQuickItem *parent)
-    : QQuickPaintedItem(parent),
+    : QQuickItem(parent),
       d_ptr(new MapWidgetPrivate(this))
 {
     Q_D(MapWidget);
@@ -648,10 +717,10 @@ void MapWidget::removeTile(const MapTile &tile)
     d->removeTile(tile);
 }
 
-void MapWidget::paint(QPainter *painter)
+void MapWidget::removePendingTile(int scale, const QPoint &pos)
 {
     Q_D(MapWidget);
-    d->paint(painter);
+    d->removePendingTile(scale, pos);
 }
 
 const QList<MapExtension *> &MapWidget::getExtensions() const
@@ -799,7 +868,13 @@ void MapWidget::geometryChanged(const QRectF &newGeometry, const QRectF &oldGeom
         Q_D(MapWidget);
         d->displayChanged();
     }
-    QQuickPaintedItem::geometryChanged(newGeometry, oldGeometry);
+    QQuickItem::geometryChanged(newGeometry, oldGeometry);
+}
+
+QSGNode *MapWidget::updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *nodeData)
+{
+    Q_D(MapWidget);
+    return d->updatePaintNode(oldNode, nodeData);
 }
 
 const QList<QPoint> &MapWidget::getMissingTiles() const

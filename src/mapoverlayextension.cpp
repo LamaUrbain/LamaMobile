@@ -46,6 +46,11 @@ void MapOverlayExtension::removeTile(const MapTile &tile)
     _map->repaint();
 }
 
+void MapOverlayExtension::removePendingTile(int scale, const QPoint &pos)
+{
+    _missing[scale].removeOne(pos);
+}
+
 const QList<QPointF> &MapOverlayExtension::getPoints() const
 {
     return _points;

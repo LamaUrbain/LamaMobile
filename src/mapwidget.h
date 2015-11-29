@@ -2,7 +2,8 @@
 #define MAPWIDGET_H
 
 #include <QImage>
-#include <QQuickPaintedItem>
+#include <QQuickItem>
+#include <QSGSimpleTextureNode>
 
 #ifndef M_PI
 #define M_PI    (3.14159265359)
@@ -31,9 +32,10 @@ struct MapTile
     quint8 scale;
     QPoint pos;
     MapPixmap pixmap;
+    QSGSimpleTextureNode *texture;
 };
 
-class MapWidget : public QQuickPaintedItem
+class MapWidget : public QQuickItem
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(MapWidget)
@@ -52,7 +54,7 @@ public:
 
     void addTile(const MapTile &tile);
     void removeTile(const MapTile &tile);
-    virtual void paint(QPainter *painter);
+    void removePendingTile(int scale, const QPoint &pos);
 
     const QList<MapExtension *> &getExtensions() const;
     void addExtension(MapExtension *ext);
@@ -96,6 +98,7 @@ protected:
     virtual void mouseMoveEvent(QMouseEvent *event);
     virtual void touchEvent(QTouchEvent *event);
     virtual void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry);
+    virtual QSGNode *updatePaintNode(QSGNode *oldNode, UpdatePaintNodeData *nodeData);
 
 private:
     MapWidgetPrivate * const d_ptr;

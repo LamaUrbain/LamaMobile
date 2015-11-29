@@ -2,6 +2,7 @@
 #define MAPWIDGETPRIVATE_H
 
 #include <QHash>
+#include <QSGTexture>
 #include "mapwidget.h"
 #include "quadtree.h"
 
@@ -22,7 +23,7 @@ public:
 
     void addTile(const MapTile &tile);
     void removeTile(const MapTile &tile);
-    void paint(QPainter *painter);
+    void removePendingTile(int scale, const QPoint &pos);
 
     quint8 getMapScale() const;
     void setMapScale(quint8 scale);
@@ -44,6 +45,7 @@ public:
     void mouseReleaseEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void touchEvent(QTouchEvent *event);
+    QSGNode *updatePaintNode(QSGNode *oldNode, QQuickItem::UpdatePaintNodeData *nodeData);
 
     QPointF posFromCoords(const QPointF &coords) const;
     QPointF coordsFromPos(const QPoint &pos) const;
@@ -68,6 +70,7 @@ private:
     void generateCache();
     void addMissingTiles(const QPoint &center, const QSize &size, const QPoint &offset);
     void removeMissingTile(const QPoint &pos);
+    bool isTileVisible(const QPoint &tile) const;
 
 private:
     MapWidget * const q_ptr;
@@ -101,6 +104,7 @@ private:
     bool _changed;
     int _currentWheel;
     MapPixmap _cache;
+    QSGTexture *_texture;
     QList<QPoint> _missing;
     MapGetter *_mapGetter;
 };

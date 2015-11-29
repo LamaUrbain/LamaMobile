@@ -41,6 +41,9 @@ public:
     void addExtension(MapOverlayExtension *ext);
     void removeExtension(MapOverlayExtension *ext);
 
+signals:
+    void tileReceived();
+
 public slots:
     void setWidget(MapWidget *widget);
 

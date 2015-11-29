@@ -15,6 +15,7 @@ public:
 
     void addTile(const MapTile &tile);
     void removeTile(const MapTile &tile);
+    void removePendingTile(int scale, const QPoint &pos);
 
     const QList<QPointF> &getPoints() const;
     void appendPoint(const QPointF &coords);
