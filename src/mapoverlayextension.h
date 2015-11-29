@@ -58,9 +58,9 @@ private:
     QMultiHash<QPoint, PairPointF> _tilePoints[20];
     QList<QPointF> _points;
     QList<PairPoint> _pending;
-    QPixmap _departureIndicator;
-    QPixmap _waypointIndicator;
-    QPixmap _destinationIndicator;
+    MapPixmap _departureIndicator;
+    MapPixmap _waypointIndicator;
+    MapPixmap _destinationIndicator;
     int _selectedPoint;
 
     QList<QPoint> *_itineraryTiles[20];

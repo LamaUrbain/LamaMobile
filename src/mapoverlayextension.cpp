@@ -1,5 +1,5 @@
 #include <cmath>
-#include <QPixmap>
+#include <QImage>
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonParseError>
@@ -274,7 +274,7 @@ void MapOverlayExtension::drawTile(QPainter *painter, const QPoint &pos, const Q
     if (it != _tiles[scale].constEnd())
     {
         const MapTile &tile = it.value();
-        painter->drawPixmap(tilePos, tile.pixmap);
+        painter->drawImage(tilePos, tile.pixmap);
     }
     else if (_itineraryTiles[scale] && _itineraryTiles[scale]->contains(pos))
         _missing[scale].push_back(pos);
@@ -298,14 +298,12 @@ void MapOverlayExtension::end(QPainter *painter)
 
     for (QList<PairPoint>::const_iterator it = _pending.constBegin(); it != _pending.constEnd(); ++it)
     {
-        const QPoint &pos = (*it).first;
+        const PairPoint &pairPoint = *it;
+        const QPoint &pos = pairPoint.first;
+        int index = pairPoint.second;
         painter->save();
-        painter->setOpacity((*it).second == _selectedPoint ? 0.7 : 1);
-        painter->drawPixmap(pos, (*it).second == 0
-                            ? _departureIndicator
-                            : (*it).second + 1 == _points.size()
-                              ? _destinationIndicator
-                              : _waypointIndicator);
+        painter->setOpacity(index == _selectedPoint ? 0.7 : 1);
+        painter->drawImage(pos, index == 0 ? _departureIndicator : index + 1 == _points.size() ? _destinationIndicator : _waypointIndicator);
         painter->restore();
     }
 

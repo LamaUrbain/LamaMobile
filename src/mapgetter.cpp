@@ -222,7 +222,7 @@ void MapGetter::onRequestFinished(QNetworkReply *reply)
                     if (_errors.contains(info))
                     {
                         qDebug() << "Error:" << tile.scale << tile.pos << reply->errorString();
-                        tile.pixmap = QPixmap(1, 1);
+                        tile.pixmap = MapPixmap(1, 1, QImage::Format_RGB32);
                         if (!info.extension)
                             _widget->addTile(tile);
                         else
@@ -249,7 +249,7 @@ void MapGetter::onRequestFinished(QNetworkReply *reply)
 void MapGetter::cancelRequests()
 {
     foreach (Tile tile, _errors)
-        _widget->removeTile(MapTile(tile.scale, tile.pos, QPixmap()));
+        _widget->removeTile(MapTile(tile.scale, tile.pos, MapPixmap()));
 
     _errors.clear();
     _pending.clear();

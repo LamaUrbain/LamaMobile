@@ -100,7 +100,7 @@ private:
     // Other
     bool _changed;
     int _currentWheel;
-    QPixmap _cache;
+    MapPixmap _cache;
     QList<QPoint> _missing;
     MapGetter *_mapGetter;
 };

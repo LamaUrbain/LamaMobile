@@ -95,7 +95,7 @@ void MapWidgetPrivate::paint(QPainter *painter)
     {
         if (_changed)
             generateCache();
-        painter->drawPixmap(_scrollOffset, _cache);
+        painter->drawImage(_scrollOffset, _cache);
     }
 }
 
@@ -387,7 +387,7 @@ void MapWidgetPrivate::generateCache()
     QPoint centerPix(size.width() / 2, size.height() / 2);
 
     if (_cache.size() != size)
-        _cache = QPixmap(size);
+        _cache = MapPixmap(size, QImage::Format_RGB32);
 
     QPainter painter(&_cache);
 
@@ -408,7 +408,7 @@ void MapWidgetPrivate::generateCache()
         {
             const MapTile &tile = it.value();
 
-            painter.drawPixmap(tilePos, tile.pixmap);
+            painter.drawImage(tilePos, tile.pixmap);
             removeMissingTile(pos);
 
             foreach (MapExtension *ext, _extensions)
@@ -601,7 +601,7 @@ MapTile::MapTile()
 {
 }
 
-MapTile::MapTile(quint8 mscale, const QPoint &mpos, const QPixmap &mpixmap)
+MapTile::MapTile(quint8 mscale, const QPoint &mpos, const MapPixmap &mpixmap)
     : scale(mscale), pos(mpos), pixmap(mpixmap)
 {
 }

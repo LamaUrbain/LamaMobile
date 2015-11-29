@@ -1,7 +1,7 @@
 #ifndef MAPWIDGET_H
 #define MAPWIDGET_H
 
-#include <QPixmap>
+#include <QImage>
 #include <QQuickPaintedItem>
 
 #ifndef M_PI
@@ -18,17 +18,19 @@
 class MapWidgetPrivate;
 class MapExtension;
 
+typedef QImage MapPixmap;
+
 struct MapTile
 {
     MapTile();
-    MapTile(quint8 mscale, const QPoint &mpos, const QPixmap &mpixmap);
+    MapTile(quint8 mscale, const QPoint &mpos, const MapPixmap &mpixmap);
     MapTile(const MapTile &other);
     MapTile &operator=(const MapTile &other);
     ~MapTile();
 
     quint8 scale;
     QPoint pos;
-    QPixmap pixmap;
+    MapPixmap pixmap;
 };
 
 class MapWidget : public QQuickPaintedItem
