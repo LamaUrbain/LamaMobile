@@ -16,9 +16,20 @@ RowLayout {
 
     property bool isDeparture: false
     property string address: ""
+    property alias swapSelected: swapBtn.checked
+    property int waypointId: -1
 
     signal editRequest();
     signal deleteRequest();
+    signal swapRequest();
+
+    Components.SwapButton
+    {
+        id: swapBtn
+        Layout.preferredWidth: 50
+        Layout.preferredHeight: 50
+        onSwapClicked: swapRequest();
+    }
 
     Components.TextField {
         id: waypointText

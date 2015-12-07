@@ -24,8 +24,7 @@ Item {
         onClicked: {
             if (root.checkable)
                 root.checked = !root.checked;
-            else
-                root.clicked();
+            root.clicked();
             mouse.accepted = false;
         }
     }

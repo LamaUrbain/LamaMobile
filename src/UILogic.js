@@ -188,6 +188,40 @@ function setMapDeparture(address)
     Api.editItinerary(currentItinerary.id, address, null, null, endRequest(updateItinerary, true));
 }
 
+function swapDestinations(index_A, index_B, then)
+{
+    if (index_A === index_B)
+        return;
+
+    var swap = null;
+    var secondStep = null;
+    var endingSwap = function (obj) { updateItinerary(obj); then(obj); }
+    startRequest();
+    if (index_A === -1 || index_B === -1)
+    {
+        var otherId = index_A === -1 ? index_B : index_A;
+        secondStep = function (success, obj)
+        {
+            if (success)
+                Api.editDestination(currentItinerary.id, otherId, currentItinerary.departure, endRequest(endingSwap, true));
+            else
+                then(null);
+        }
+        Api.editItinerary(currentItinerary.id, currentItinerary.destinations.get(otherId).address, null, null, secondStep);
+    }
+    else
+    {
+        secondStep = function (success, obj)
+        {
+            if (success)
+                Api.editDestination(currentItinerary.id, index_B, currentItinerary.destinations.get(index_A).address, endRequest(endingSwap, true));
+            else
+                then(null);
+        }
+        Api.editDestination(currentItinerary.id, index_A, currentItinerary.destinations.get(index_B).address, secondStep);
+    }
+}
+
 function addMapDestination(address)
 {
     startRequest();

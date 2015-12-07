@@ -45,6 +45,7 @@ var LAMA_ARROW_RESSOURCE = "qrc:/Assets/Images/arrow.png";
 var LAMA_PROFILE_RESSOURCE = "qrc:/Assets/Images/26.png";
 var LAMA_CROSS_RESSOURSE = "qrc:/Assets/Images/2.png";
 var LAMA_ADD_RESSOURCE = "qrc:/Assets/Images/8.png";
+var LAMA_CURVEDARROW_RESSOURCE = "qrc:/Assets/Images/28.png";
 var LAMA_DEPARTURE_RESSOURCE = "qrc:/Assets/Images/departure.png";
 var LAMA_INDICATOR_RESSOURCE = "qrc:/Assets/Images/map_indicator.png";
 var LAMA_ARRIVAL_RESSOURCE = "qrc:/Assets/Images/arrival.png";

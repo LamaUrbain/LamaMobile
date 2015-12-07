@@ -125,6 +125,7 @@ Window {
     function getMapAddress(coords, then) { UiLogic.getMapAddress(coords, then); }
     function setMapDeparture(address) { UiLogic.setMapDeparture(address); }
     function addMapDestination(address) { UiLogic.addMapDestination(address); }
+    function swapDestinations(index_A, index_B, then) { UiLogic.swapDestinations(index_A, index_B, then); }
     function setMapDestination(address) { UiLogic.setMapDestination(address); }
     function moveMapDestination(position, coords) { UiLogic.moveMapDestination(position, coords); }
     function register(username, password, email) { UserSession.register(username, password, email); }

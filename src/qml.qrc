@@ -45,6 +45,7 @@
         <file>Images/map_indicator.png</file>
         <file>Images/shadow_small.png</file>
         <file>Images/arrow.png</file>
+        <file>Images/28.png</file>
     </qresource>
     <qresource prefix="/Components">
         <file>Header.qml</file>
@@ -70,6 +71,7 @@
         <file>DateField.qml</file>
         <file>FormDateEntry.qml</file>
         <file>EventPoints.qml</file>
+        <file>SwapButton.qml</file>
     </qresource>
     <qresource prefix="/Controls">
         <file>BackButton.qml</file>

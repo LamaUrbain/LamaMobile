@@ -16,8 +16,8 @@ MarkerArea {
         id: rect
         anchors.fill: parent
         border.width: input.borderWidth
-        border.color: input.hoverable && input.pressed ? input.borderColor2 : input.borderColor1
-        color: input.hoverable && input.pressed ? input.color2 : input.color1
+        border.color: input.hoverable && (input.pressed || input.checked) ? input.borderColor2 : input.borderColor1
+        color: input.hoverable && (input.pressed || input.checked) ? input.color2 : input.color1
         opacity: enabled ? 1 : 0.6
         radius: input.radius
     }
