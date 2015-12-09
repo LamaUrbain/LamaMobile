@@ -10,20 +10,24 @@ SOURCES += main.cpp \
     $$SRC_PATH/mapwidget.cpp \
     $$SRC_PATH/mapgetter.cpp \
     $$SRC_PATH/mapextension.cpp \
-    $$SRC_PATH/mapoverlayextension.cpp \
     $$SRC_PATH/servicesbase.cpp \
+    $$SRC_PATH/eventservices.cpp \
     $$SRC_PATH/itineraryservices.cpp \
+    $$SRC_PATH/mapoverlayextension.cpp \
     $$SRC_PATH/userservices.cpp \
+    $$SRC_PATH/mapeventsoverlay.cpp \
     itinerarystub.cpp
 
 HEADERS += $$SRC_PATH/mapwidget.h \
     $$SRC_PATH/mapwidgetprivate.h \
     $$SRC_PATH/mapgetter.h \
     $$SRC_PATH/mapextension.h \
-    $$SRC_PATH/mapoverlayextension.h \
     $$SRC_PATH/servicesbase.h \
     $$SRC_PATH/itineraryservices.h \
+    $$SRC_PATH/mapoverlayextension.h \
+    $$SRC_PATH/mapeventsoverlay.h \
     $$SRC_PATH/userservices.h \
+    $$SRC_PATH/eventservices.h \
     itinerarystub.h
 
 RESOURCES += qml.qrc \
