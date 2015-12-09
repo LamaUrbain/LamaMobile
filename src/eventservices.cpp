@@ -32,7 +32,6 @@ void EventServices::reportIncident(QString eventName, QString dateBegin, QString
     QUrl url(QString("%1/incidents").arg(serverAddress));
     QUrlQuery query;
     query.addQueryItem("name", eventName);
-    query.addQueryItem("position", position);
     if (!dateBegin.isEmpty())
         query.addQueryItem("begin", dateBegin);
     if (!dateEnd.isEmpty())

@@ -281,10 +281,7 @@ function reportEvent(username, begin, end, address)
 
                 console.log("reportEvent", obj["address"], lat, long)
 
-                var position = JSON.stringify({
-                    longitude: lat,
-                    latitude: long,
-                })
+                var position = obj["address"]
                 console.log("reportEvent: position", position)
 
                 var callback = function(status, obj)
@@ -298,7 +295,7 @@ function reportEvent(username, begin, end, address)
                 Api.reportEvent(username, begin, end, position, address, callback)
             }
             else
-                console.log("geocoging failed.")
+                console.log("geocoding failed.")
         }
     };
 

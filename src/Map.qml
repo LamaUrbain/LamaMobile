@@ -84,11 +84,36 @@ Item {
             }
         }
 
-        Connections {
-            target: events
-            onEventChanged: {
-                rootView.displayEvent(events, mapComponent)
+        onMapEventSelected: {
+            console.log(id, coords)
+
+            var E = undefined;
+            for (var i = 0; i < events.count; ++i)
+            {
+                var tmp = events.get(i);
+                if (tmp.id == id)
+                {
+                    console.log("found event id", id)
+                    E = tmp;
+                    break;
+                }
             }
+
+            if (E == undefined)
+            {
+                console.log("could not find event id", id);
+                return;
+            }
+
+            popover.address = E.name;
+            popover.street = ""
+            popover.city = "";
+            popover.coordinate = coords
+
+            if (E.position.address != null)
+                popover.street = E.position.address;
+
+            popover.visible = true;
         }
 
         Components.MapCircle {

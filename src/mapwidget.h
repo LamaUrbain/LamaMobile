@@ -72,6 +72,7 @@ signals:
     void offsetXChanged();
     void offsetYChanged();
     void currentItineraryChanged();
+    void mapEventSelected(int id, QPointF coords);
 
 public slots:
     int getCurrentItinerary() const;

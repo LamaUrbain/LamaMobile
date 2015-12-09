@@ -46,12 +46,11 @@ signals:
 private slots:
     void updateTiles();
 
-private:
+protected:
     void onTilesChanged();
     void generateTilePoints(quint8 scale);
     int pointAt(const QPoint &pos) const;
 
-private:
     typedef QPair<QPointF, int> PairPointF;
     typedef QPair<QPoint, int> PairPoint;
 

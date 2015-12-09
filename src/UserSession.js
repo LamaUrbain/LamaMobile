@@ -272,7 +272,7 @@ function loadEvents()
             for (var i = 0; i < obj.length; ++i)
             {
                 var event = obj[i];
-                events.append({name: event.name, begin: event.begin, end: events.end, position: event.position})
+                events.append({id: event.id, name: event.name, begin: event.begin, end: events.end, position: event.position})
             }
         }
         events.eventChanged();
