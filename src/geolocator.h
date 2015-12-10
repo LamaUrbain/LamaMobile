@@ -8,6 +8,10 @@
 #include <QString>
 #include <QGeoAddress>
 #include <QGeoServiceProvider>
+#include <QGeoPositionInfoSource>
+QMATH_H
+
+#define GEOCODE_LIMIT_RESULTS (5)
 
 class GeoLocator : public QObject
 {
@@ -30,6 +34,11 @@ private slots:
 private:
     QGeoServiceProvider _provider;
     QGeoCodingManager *_manager;
+    QGeoPositionInfoSource *_positioner;
+    QGeoPositionInfo _currentPosition;
+
+    void _positionUpdated(const QGeoPositionInfo &info);
+    double _calculateDistance(const QGeoCoordinate &ref);
 };
 
 #endif // GEOLOCATOR_H
