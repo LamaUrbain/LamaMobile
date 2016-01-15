@@ -12,4 +12,3 @@ Components.MarkerArea {
         source: Constants.LAMA_HOME
     }
 }
-

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <QtGlobal>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
@@ -8,8 +9,6 @@
 #include "userservices.h"
 #include "geolocator.h"
 #include "eventservices.h"
-
-#include <QtGlobal>
 
 int main(int argc, char *argv[])
 {
