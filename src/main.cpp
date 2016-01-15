@@ -9,8 +9,15 @@
 #include "geolocator.h"
 #include "eventservices.h"
 
+#include <QtGlobal>
+
 int main(int argc, char *argv[])
 {
+#ifdef Q_OS_IOS
+    qputenv("QT_SCALE_FACTOR", QByteArray("0.5"));
+    qputenv("QT_AUTO_SCREEN_SCALE_FACTOR", QByteArray("0"));
+#endif
+
     QGuiApplication app(argc, argv);
 
     qmlRegisterType<MapWidget>("MapControls", 1, 0, "MapWidget");
