@@ -8,7 +8,6 @@
 #include "mapgetter.h"
 #include "mapextension.h"
 #include "mapoverlayextension.h"
-#include "mapeventsoverlay.h"
 
 struct WhirlLessThan
 {
@@ -628,12 +627,7 @@ void MapWidgetPrivate::displayItinerary(int id)
         q->addExtension(ext);
         q->currentItineraryChanged();
 
-        MapEventsOverlay* events = new MapEventsOverlay(q);
-        events->updateEvents();
-        q->addExtension(events);
-
         QObject::connect(ext, SIGNAL(pointMoved(int, int, QPointF)), q, SIGNAL(mapPointMoved(int, int, QPointF)));
-        QObject::connect(events, SIGNAL(eventSelected(int, QPointF)), q, SIGNAL(mapEventSelected(int, QPointF)));
     }
     else
     {

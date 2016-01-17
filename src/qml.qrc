@@ -89,6 +89,7 @@
         <file>ItineraryToggle.qml</file>
         <file>FacebookButton.qml</file>
         <file>TwitterButton.qml</file>
+        <file>EventIndicator.qml</file>
     </qresource>
     <qresource prefix="/Views">
         <file>FavoriteItineraries.qml</file>

@@ -84,36 +84,45 @@ Item {
             }
         }
 
-        onMapEventSelected: {
-            console.log(id, coords)
+        Repeater {
+            anchors.fill: parent
+            model: rootView.events
+            delegate: Controls.EventIndicator {
+                parent: mapComponent
+                eventId: model.id
+                coordinate: Qt.point(model.position.longitude, model.position.latitude)
+                onClicked: {
+                    console.log(id, coordinate)
 
-            var E = undefined;
-            for (var i = 0; i < events.count; ++i)
-            {
-                var tmp = events.get(i);
-                if (tmp.id == id)
-                {
-                    console.log("found event id", id)
-                    E = tmp;
-                    break;
+                    var E = undefined;
+                    for (var i = 0; i < events.count; ++i)
+                    {
+                        var tmp = events.get(i);
+                        if (tmp.id == id)
+                        {
+                            console.log("found event id", id)
+                            E = tmp;
+                            break;
+                        }
+                    }
+
+                    if (E == undefined)
+                    {
+                        console.log("could not find event id", id);
+                        return;
+                    }
+
+                    popover.address = E.name;
+                    popover.street = "";
+                    popover.city = "";
+                    popover.coordinate = coordinate;
+
+                    if (E.position.address)
+                        popover.street = E.position.address;
+
+                    popover.visible = true;
                 }
             }
-
-            if (E == undefined)
-            {
-                console.log("could not find event id", id);
-                return;
-            }
-
-            popover.address = E.name;
-            popover.street = ""
-            popover.city = "";
-            popover.coordinate = coords
-
-            if (E.position.address != null)
-                popover.street = E.position.address;
-
-            popover.visible = true;
         }
 
         Components.MapCircle {

@@ -13,8 +13,7 @@ SOURCES += main.cpp \
     mapoverlayextension.cpp \
     userservices.cpp \
     eventservices.cpp \
-    geolocator.cpp \
-    mapeventsoverlay.cpp
+    geolocator.cpp
 RESOURCES += qml.qrc \
     images.qrc \
     fonts.qrc
@@ -35,5 +34,4 @@ HEADERS += mapgetter.h \
     quadtree.h \
     userservices.h \
     eventservices.h \
-    geolocator.h \
-    mapeventsoverlay.h
+    geolocator.h

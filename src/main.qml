@@ -20,6 +20,7 @@ Window {
     property alias currentItinerary: currentItinerary
     property alias session: session
     property alias sponsors: sponsors
+    property alias events: events
     property alias modal: mainModal
     property alias mainView: mainView
     property alias menuView: menuView
@@ -27,11 +28,8 @@ Window {
 
     Components.Itinerary { id: currentItinerary }
     Components.Session { id: session }
-    ListModel {
-        id: events
-        signal eventChanged()
-    }
     ListModel { id: sponsors }
+    ListModel { id: events }
 
     Views.Map {
         id: mapView

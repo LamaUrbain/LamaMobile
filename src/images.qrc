@@ -4,5 +4,6 @@
         <file>Images/map_indicator_selected.png</file>
         <file>Images/arrival.png</file>
         <file>Images/departure.png</file>
+        <file>Images/incident.png</file>
     </qresource>
 </RCC>
