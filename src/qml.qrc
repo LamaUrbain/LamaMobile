@@ -90,6 +90,7 @@
         <file>FacebookButton.qml</file>
         <file>TwitterButton.qml</file>
         <file>EventIndicator.qml</file>
+        <file>VehicleButton.qml</file>
     </qresource>
     <qresource prefix="/Views">
         <file>FavoriteItineraries.qml</file>

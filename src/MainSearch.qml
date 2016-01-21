@@ -42,6 +42,69 @@ Components.Background {
             onTextChanged: itinerary.name = text;
         }
 
+        RowLayout {
+            Layout.preferredHeight: 40
+            Layout.fillWidth: true
+
+            function checkCurrentVehicle()
+            {
+                if (!footButton.checked
+                        && !bicycleButton.checked
+                        && !motorVehicleButton.checked)
+                {
+                    footButton.checked = true;
+                }
+            }
+
+            Controls.VehicleButton {
+                id: footButton
+                Layout.preferredHeight: 40
+                Layout.fillWidth: true
+                source: Constants.LAMA_FOOT_RESSOURCE
+                text: "Foot"
+                onCheckedChanged: {
+                    if (checked) {
+                        bicycleButton.checked = false;
+                        motorVehicleButton.checked = false;
+                    }
+                    else
+                        parent.checkCurrentVehicle();
+                }
+            }
+
+            Controls.VehicleButton {
+                id: bicycleButton
+                Layout.preferredHeight: 40
+                Layout.fillWidth: true
+                source: Constants.LAMA_BICYCLE_RESSOURCE
+                text: "Bicycle"
+                onCheckedChanged: {
+                    if (checked) {
+                        footButton.checked = false;
+                        motorVehicleButton.checked = false;
+                    }
+                    else
+                        parent.checkCurrentVehicle();
+                }
+            }
+
+            Controls.VehicleButton {
+                id: motorVehicleButton
+                Layout.preferredHeight: 40
+                Layout.fillWidth: true
+                source: Constants.LAMA_MOTOR_VEHICLE_RESSOURCE
+                text: "Car"
+                onCheckedChanged: {
+                    if (checked) {
+                        footButton.checked = false;
+                        bicycleButton.checked = false;
+                    }
+                    else
+                        parent.checkCurrentVehicle();
+                }
+            }
+        }
+
         Components.Separator {
             isTopSeparator: true
             Layout.fillWidth: true
