@@ -129,6 +129,7 @@ function createItinerary(departure, name, then)
                         "",
                         "",
                         "",
+                        "",
                         finish(then));
         }
     };
@@ -136,9 +137,9 @@ function createItinerary(departure, name, then)
     prepare(departure, callback(departure, name, then));
 }
 
-function editItinerary(itinerary, departure, name, favorite, then)
+function editItinerary(itinerary, departure, name, vehicle, favorite, then)
 {
-    var callback = function(itinerary, departure, name, favorite, then)
+    var callback = function(itinerary, departure, name, vehicle, favorite, then)
     {
         return function(obj)
         {
@@ -153,6 +154,7 @@ function editItinerary(itinerary, departure, name, favorite, then)
                         name,
                         (obj ? obj["address"] : ""),
                         (obj ? obj["addressStr"] : ""),
+                        (vehicle ? vehicle : ""),
                         (favorite ? (favorite === "true" ? "true" : "false") : ""),
                         finish(then));
         }
@@ -160,11 +162,11 @@ function editItinerary(itinerary, departure, name, favorite, then)
 
     if (!departure)
     {
-        (callback(itinerary, departure, name, favorite, then))(null);
+        (callback(itinerary, departure, name, vehicle, favorite, then))(null);
         return;
     }
 
-    prepare(departure, callback(itinerary, departure, name, favorite, then));
+    prepare(departure, callback(itinerary, departure, name, vehicle, favorite, then));
 }
 
 function addDestination(itinerary, position, destination, then)

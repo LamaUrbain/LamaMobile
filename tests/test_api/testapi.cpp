@@ -155,7 +155,7 @@ void TestApi::testNoAuthCreateItinerary()
     int itineraryId = -1;
     TestWaiter waiter;
 
-    _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
+    _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "", "", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
     {
         QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
@@ -184,7 +184,7 @@ void TestApi::testNoAuthCreateItinerary()
 
     waiter.waitForDone();
 
-    _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "48.832672, 2.288375", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
+    _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "48.832672, 2.288375", "", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
     {
         QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
@@ -234,7 +234,7 @@ void TestApi::testNoAuthGetItineraries()
     int itineraryId = -1;
     TestWaiter waiter;
 
-    _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
+    _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "", "", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
     {
         QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
@@ -288,7 +288,7 @@ void TestApi::testNoAuthGetItinerary()
     int itineraryId = -1;
     TestWaiter waiter;
 
-    _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
+    _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "", "", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
     {
         QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
@@ -338,7 +338,7 @@ void TestApi::testNoAuthEditItinerary()
     TestWaiter waiter;
 
     // Epitech
-    _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
+    _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "", "", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
     {
         QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
@@ -547,7 +547,7 @@ void TestApi::testAuthCreateItinerary()
     UserSession session(waiter, _userServices);
     Q_UNUSED(session);
 
-    _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
+    _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "", "", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
     {
         QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
@@ -586,7 +586,7 @@ void TestApi::testAuthGetItineraries()
     UserSession session(waiter, _userServices);
     Q_UNUSED(session);
 
-    _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
+    _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "", "", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
     {
         QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
@@ -644,7 +644,7 @@ void TestApi::testAuthGetItinerary()
     UserSession session(waiter, _userServices);
     Q_UNUSED(session);
 
-    _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
+    _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "", "", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
     {
         QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
@@ -698,7 +698,7 @@ void TestApi::testAuthEditItinerary()
     Q_UNUSED(session);
 
     // Epitech
-    _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
+    _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "", "", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
     {
         QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 
@@ -963,7 +963,7 @@ void TestApi::testSponsorsItineraries()
 
     waiter.waitForDone();
 
-    _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
+    _itineraryServices.createItinerary("testItinerary", "48.815346, 2.363165", "", "", "", "", "false", [&waiter, &itineraryId] (int errorType, QString jsonStr) mutable
     {
         QVERIFY2(errorType == 0, qUtf8Printable(QString("%1 : [%2]").arg(errorType).arg(jsonStr)));
 

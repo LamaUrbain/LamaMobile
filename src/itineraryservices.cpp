@@ -56,7 +56,7 @@ void ItineraryServices::getItinerary(int id, QJSValue callback)
     getItinerary(id, fromJSCallback(callback));
 }
 
-void ItineraryServices::createItinerary(QString name, QString departure, QString departure_address, QString destination, QString destination_address, QString favorite, ServicesBase::CallbackType callback)
+void ItineraryServices::createItinerary(QString name, QString departure, QString departure_address, QString destination, QString destination_address, QString vehicle, QString favorite, ServicesBase::CallbackType callback)
 {
     QUrl url(QString("%1/itineraries/").arg(serverAddress));
 
@@ -72,18 +72,25 @@ void ItineraryServices::createItinerary(QString name, QString departure, QString
         query.addQueryItem("destination_address", destination_address);
     if (!favorite.isEmpty())
         query.addQueryItem("favorite", !UserServices::getToken().isEmpty() && favorite == "true" ? "true" : "false");
+    if (!vehicle.isEmpty())
+    {
+        if (vehicle == "foot") vehicle = "0";
+        else if (vehicle == "bicycle") vehicle = "1";
+        else vehicle = "2";
+        query.addQueryItem("vehicle", vehicle);
+    }
     if (!UserServices::getToken().isEmpty())
         query.addQueryItem("token", UserServices::getToken());
 
     postRequest(url, query.query().toUtf8(), callback);
 }
 
-void ItineraryServices::createItinerary(QString name, QString departure, QString departure_address, QString destination, QString destination_address, QString favorite, QJSValue callback)
+void ItineraryServices::createItinerary(QString name, QString departure, QString departure_address, QString destination, QString destination_address, QString vehicle, QString favorite, QJSValue callback)
 {
-    createItinerary(name, departure, departure_address, destination, destination_address, favorite, fromJSCallback(callback));
+    createItinerary(name, departure, departure_address, destination, destination_address, vehicle, favorite, fromJSCallback(callback));
 }
 
-void ItineraryServices::editItinerary(int id, QString name, QString departure, QString departure_address, QString favorite, ServicesBase::CallbackType callback)
+void ItineraryServices::editItinerary(int id, QString name, QString departure, QString departure_address, QString vehicle, QString favorite, ServicesBase::CallbackType callback)
 {
     QUrl url(QString("%1/itineraries/%2").arg(serverAddress).arg(id));
 
@@ -96,6 +103,13 @@ void ItineraryServices::editItinerary(int id, QString name, QString departure, Q
         query.addQueryItem("departure_address", departure_address);
     if (favorite == "true" || favorite == "false")
         query.addQueryItem("favorite", favorite);
+    if (!vehicle.isEmpty())
+    {
+        if (vehicle == "foot") vehicle = "0";
+        else if (vehicle == "bicycle") vehicle = "1";
+        else vehicle = "2";
+        query.addQueryItem("vehicle", vehicle);
+    }
     if (!UserServices::getToken().isEmpty())
         query.addQueryItem("token", UserServices::getToken());
     url.setQuery(query.query());
@@ -103,9 +117,9 @@ void ItineraryServices::editItinerary(int id, QString name, QString departure, Q
     putRequest(url, QByteArray(), callback);
 }
 
-void ItineraryServices::editItinerary(int id, QString name, QString departure, QString departure_address, QString favorite, QJSValue callback)
+void ItineraryServices::editItinerary(int id, QString name, QString departure, QString departure_address, QString vehicle, QString favorite, QJSValue callback)
 {
-    editItinerary(id, name, departure, departure_address, favorite, fromJSCallback(callback));
+    editItinerary(id, name, departure, departure_address, vehicle, favorite, fromJSCallback(callback));
 }
 
 void ItineraryServices::addDestination(int id, QString destination, QString destination_address, int position, ServicesBase::CallbackType callback)

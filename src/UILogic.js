@@ -81,6 +81,15 @@ function updateItinerary(obj)
             }
         }
     }
+    if ("vehicle" in obj)
+    {
+        if (obj.vehicle == "0")
+            rootView.currentItinerary.vehicle = "foot";
+        else if (obj.vehicle == "1")
+            rootView.currentItinerary.vehicle = "bicycle";
+        else
+            rootView.currentItinerary.vehicle = "motor_vehicle";
+    }
 
     mapView.mapComponent.displayItinerary(rootView.currentItinerary.id);
 }
@@ -145,12 +154,14 @@ function mainSearch(itinerary)
     // 1) Edit what is necesary (departure, name and/or favorite)
     if (itinerary.departure != rootView.currentItinerary.departure
             || itinerary.name != rootView.currentItinerary.name
+            || itinerary.vehicle != rootView.currentItinerary.vehicle
             || itinerary.favorite != rootView.currentItinerary.favorite)
     {
         var departure = itinerary.departure != rootView.currentItinerary.departure ? itinerary.departure : "";
         var favorite = itinerary.favorite != rootView.currentItinerary.favorite ? (itinerary.favorite ? "true" : "false") : "";
+        var vehicle = itinerary.vehicle != rootView.currentItinerary.vehicle ? itinerary.vehicle : "";
         var editCallback = function(itinerary) { return function(obj) { destinationsStep(obj, 0, itinerary); } };
-        Api.editItinerary(itinerary.id, departure, itinerary.name, favorite, endRequest(editCallback(itinerary), false));
+        Api.editItinerary(itinerary.id, departure, itinerary.name, vehicle, favorite, endRequest(editCallback(itinerary), false));
     }
     else
         destinationsStep(null, 0, itinerary);
@@ -191,7 +202,7 @@ function getMapAddress(coords, then)
 function setMapDeparture(address)
 {
     startRequest();
-    Api.editItinerary(currentItinerary.id, address, null, null, endRequest(updateItinerary, true));
+    Api.editItinerary(currentItinerary.id, address, null, null, null, endRequest(updateItinerary, true));
 }
 
 function addMapDestination(address)
@@ -229,7 +240,7 @@ function moveMapDestination(position, coords)
             startRequest();
 
             if (position == 0)
-                Api.editItinerary(currentItinerary.id, obj.address, null, null, endRequest(updateItinerary, true));
+                Api.editItinerary(currentItinerary.id, obj.address, null, null, null, endRequest(updateItinerary, true));
             else
                 Api.editDestination(currentItinerary.id, position - 1, obj.address, endRequest(updateItinerary, true));
         }

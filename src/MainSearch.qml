@@ -12,7 +12,7 @@ Components.Background {
         nameField.text = itinerary.name ? itinerary.name : "";
         footButton.checked = itinerary.vehicle == "foot";
         bicycleButton.checked = itinerary.vehicle == "bicycle";
-        motorVehicleButton.checked = itinerary.vehicle == "car";
+        motorVehicleButton.checked = itinerary.vehicle == "motor_vehicle";
         checkCurrentVehicle();
     }
 
@@ -104,7 +104,7 @@ Components.Background {
                     if (checked) {
                         footButton.checked = false;
                         bicycleButton.checked = false;
-                        itinerary.vehicle = "car";
+                        itinerary.vehicle = "motor_vehicle";
                     }
                     else
                         checkCurrentVehicle();
