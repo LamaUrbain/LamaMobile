@@ -10,6 +10,20 @@ Components.Background {
     Component.onCompleted: {
         itinerary.copy(rootView.currentItinerary);
         nameField.text = itinerary.name ? itinerary.name : "";
+        footButton.checked = itinerary.vehicle == "foot";
+        bicycleButton.checked = itinerary.vehicle == "bicycle";
+        motorVehicleButton.checked = itinerary.vehicle == "car";
+        checkCurrentVehicle();
+    }
+
+    function checkCurrentVehicle()
+    {
+        if (!footButton.checked
+                && !bicycleButton.checked
+                && !motorVehicleButton.checked)
+        {
+            footButton.checked = true;
+        }
     }
 
     Components.Itinerary { id: itinerary }
@@ -46,23 +60,12 @@ Components.Background {
             Layout.preferredHeight: 40
             Layout.fillWidth: true
 
-            function checkCurrentVehicle()
-            {
-                if (!footButton.checked
-                        && !bicycleButton.checked
-                        && !motorVehicleButton.checked)
-                {
-                    footButton.checked = true;
-                }
-            }
-
             Controls.VehicleButton {
                 id: footButton
                 Layout.preferredHeight: 40
                 Layout.fillWidth: true
                 source: Constants.LAMA_FOOT_RESSOURCE
                 text: "Walking"
-                checked: true
                 onCheckedChanged: {
                     if (checked) {
                         bicycleButton.checked = false;
@@ -70,7 +73,7 @@ Components.Background {
                         itinerary.vehicle = "foot";
                     }
                     else
-                        parent.checkCurrentVehicle();
+                        checkCurrentVehicle();
                 }
             }
 
@@ -87,7 +90,7 @@ Components.Background {
                         itinerary.vehicle = "bicycle";
                     }
                     else
-                        parent.checkCurrentVehicle();
+                        checkCurrentVehicle();
                 }
             }
 
@@ -104,7 +107,7 @@ Components.Background {
                         itinerary.vehicle = "car";
                     }
                     else
-                        parent.checkCurrentVehicle();
+                        checkCurrentVehicle();
                 }
             }
         }

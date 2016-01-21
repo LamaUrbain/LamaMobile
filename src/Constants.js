@@ -51,7 +51,7 @@ var LAMA_INDICATOR_RESSOURCE = "qrc:/Assets/Images/map_indicator.png";
 var LAMA_ARRIVAL_RESSOURCE = "qrc:/Assets/Images/arrival.png";
 var LAMA_FOOT_RESSOURCE = "qrc:/Assets/Images/27.png";
 var LAMA_BICYCLE_RESSOURCE = "qrc:/Assets/Images/18.png";
-var LAMA_MOTOR_VEHICLE_RESSOURCE = "qrc:/Assets/Images/24.png";
+var LAMA_MOTOR_VEHICLE_RESSOURCE = "qrc:/Assets/Images/6.png";
 
 var LAMA_MIN_INPUT_LENGTH = 2;
 var LAMA_PASSWORD_RANDOM_LENGTH = LAMA_MIN_INPUT_LENGTH * 2;
