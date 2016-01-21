@@ -49,63 +49,49 @@ Components.Background {
         }
 
         ListView {
-            property bool canSwap: false
-            property var waypoint_swap: [null, null]
-            property int waypoint_swapSwitch: 0
+            property int selectedIndex: -1
+            property QtObject selectedItem: null
 
-            function swapWaypoints()
+            function resetSwap()
             {
-                if (!canSwap)
-                    return;
+                if (selectedIndex != -1 && selectedItem)
+                    selectedItem.swapSelected = false;
 
-                rootView.modal.loading = true;
-                rootView.modal.title = "Swaping..."
-                rootView.modal.message = ""
-                rootView.modal.visible = true;
-
-                var then = function (obj)
-                {
-                    if (obj !== null)
-                    {
-                        var swap = waypoint_swap[0].address;
-                        waypoint_swap[0].address = waypoint_swap[1].address;
-                        waypoint_swap[1].address = swap;
-                        swap = waypoint_swap[0].waypointId;
-                        waypoint_swap[0].waypointId = waypoint_swap[1].waypointId;
-                        waypoint_swap[1].waypointId = swap;
-
-                        waypoint_swap[0].swapSelected = false;
-                        waypoint_swap[0] = null;
-                        waypoint_swap[1].swapSelected = false;
-                        waypoint_swap[1] = null;
-                        rootView.modal.visible = false; // paranoia
-                    }
-                    else
-                    {
-                        rootView.modal.message = "We could not swap the waypoints :(";
-                        rootView.modal.loading = false;
-                    }
-                }
-                rootView.swapDestinations(waypoint_swap[0].waypointId, waypoint_swap[1].waypointId, then);
+                selectedIndex = -1;
+                selectedItem = null;
             }
 
-            function toggleTagForSwap(model)
+            function toggleTagForSwap(index, item)
             {
-                if (model.swapSelected === false)
+                if (selectedIndex == -1)
                 {
-                    if (waypoint_swap[0] === model)
-                        waypoint_swap[(waypoint_swapSwitch = 0)] = null;
+                    selectedIndex = index;
+                    selectedItem = item;
+                }
+                else if (selectedIndex == index)
+                {
+                    selectedIndex = -1;
+                    selectedItem = null;
+                }
+                else if ((index == 0 || index - 1 < itinerary.destinations.count)
+                         && (selectedIndex == 0 || selectedIndex - 1 < itinerary.destinations.count))
+                {
+                    var from = index == 0 ? itinerary.departure : itinerary.destinations.get(index - 1).address;
+                    var dest = selectedIndex == 0 ? itinerary.departure : itinerary.destinations.get(selectedIndex - 1).address;
+
+                    if (index == 0)
+                        itinerary.departure = dest;
                     else
-                        waypoint_swap[(waypoint_swapSwitch = 1)] = null;
+                        itinerary.destinations.setProperty(index - 1, "address", dest);
+
+                    if (selectedIndex == 0)
+                        itinerary.departure = from;
+                    else
+                        itinerary.destinations.setProperty(selectedIndex - 1, "address", from);
+
+                    item.swapSelected = false;
+                    resetSwap();
                 }
-                else
-                {
-                    if (waypoint_swap[waypoint_swapSwitch] !== null)
-                        waypoint_swap[waypoint_swapSwitch].swapSelected = false;
-                    waypoint_swap[waypoint_swapSwitch] = model;
-                    waypoint_swapSwitch = !waypoint_swapSwitch;
-                }
-                canSwap = waypoint_swap[0] !== null && waypoint_swap[1] !== null;
             }
 
             id: searchListView
@@ -130,16 +116,16 @@ Components.Background {
                         top: parent.top
                         topMargin: 1
                     }
-                    onSwapRequest: searchListView.toggleTagForSwap(headerItem);
+                    onSwapRequest: searchListView.toggleTagForSwap(0, headerItem);
                 }
             }
             delegate: Components.Waypoint {
                 id: delegateItem
                 waypointId: index
                 address: model.address
-                onDeleteRequest: itinerary.destinations.remove(index);
+                onDeleteRequest: { searchListView.resetSwap(); itinerary.destinations.remove(index); }
                 onEditRequest: rootView.mainViewTo("Suggestions", false, { model: itinerary, destinationId: waypointId });
-                onSwapRequest: searchListView.toggleTagForSwap(delegateItem);
+                onSwapRequest: searchListView.toggleTagForSwap(index + 1, delegateItem);
             }
             footer: Item {
                 height: footerItem.height + (searchListView.model.count == 0 ? 2 : 10)
@@ -155,29 +141,8 @@ Components.Background {
                     image.height: 50
                     anchors.bottom: parent.bottom
                     source: Constants.LAMA_ADD_RESSOURCE
-                    onClicked: itinerary.destinations.append({address: ""});
+                    onClicked: { searchListView.resetSwap(); itinerary.destinations.append({address: ""}); }
                 }
-            }
-        }
-
-        Rectangle {
-            anchors.bottom: bottomSeparator.top
-            height: 100
-            Layout.fillWidth: true
-            color: "transparent"
-            visible: searchListView.canSwap
-            Controls.Button
-            {
-                anchors.fill: parent;
-                anchors.margins: 30
-
-                Components.TextLabel {
-                    text: "Swap waypoints !"
-                    color: "#FFF"
-                    font.pixelSize: Constants.LAMA_PIXELSIZE_MEDIUM
-                    anchors.centerIn: parent
-                }
-                onClicked: searchListView.swapWaypoints()
             }
         }
 
