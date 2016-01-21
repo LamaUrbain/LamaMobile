@@ -61,11 +61,13 @@ Components.Background {
                 Layout.preferredHeight: 40
                 Layout.fillWidth: true
                 source: Constants.LAMA_FOOT_RESSOURCE
-                text: "Foot"
+                text: "Walking"
+                checked: true
                 onCheckedChanged: {
                     if (checked) {
                         bicycleButton.checked = false;
                         motorVehicleButton.checked = false;
+                        itinerary.vehicle = "foot";
                     }
                     else
                         parent.checkCurrentVehicle();
@@ -77,11 +79,12 @@ Components.Background {
                 Layout.preferredHeight: 40
                 Layout.fillWidth: true
                 source: Constants.LAMA_BICYCLE_RESSOURCE
-                text: "Bicycle"
+                text: "Cycling"
                 onCheckedChanged: {
                     if (checked) {
                         footButton.checked = false;
                         motorVehicleButton.checked = false;
+                        itinerary.vehicle = "bicycle";
                     }
                     else
                         parent.checkCurrentVehicle();
@@ -93,11 +96,12 @@ Components.Background {
                 Layout.preferredHeight: 40
                 Layout.fillWidth: true
                 source: Constants.LAMA_MOTOR_VEHICLE_RESSOURCE
-                text: "Car"
+                text: "Driving"
                 onCheckedChanged: {
                     if (checked) {
                         footButton.checked = false;
                         bicycleButton.checked = false;
+                        itinerary.vehicle = "car";
                     }
                     else
                         parent.checkCurrentVehicle();

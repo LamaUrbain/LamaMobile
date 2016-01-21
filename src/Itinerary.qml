@@ -9,6 +9,7 @@ QtObject {
     property var creation: null
     property bool favorite: false
     property string departure: ""
+    property string vehicle: "foot"
     property ListModel destinations: ListModel {}
 
     function clear()
@@ -29,6 +30,7 @@ QtObject {
         itineraryObj.name = other.name;
         itineraryObj.creation = other.creation;
         itineraryObj.favorite = other.favorite;
+        itineraryObj.vehicle = other.vehicle;
         itineraryObj.departure = other.departure;
 
         destinations.clear();
@@ -50,6 +52,7 @@ QtObject {
             creation: itineraryObj.creation,
             favorite: itineraryObj.favorite,
             departure: itineraryObj.departure,
+            vehicle: itineraryObj.vehicle,
             destinations: array
         };
     }
